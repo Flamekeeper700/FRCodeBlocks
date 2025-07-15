@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>FRC Blockly</title>
+  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+  <script src="./blocks/custom_blocks.js"></script>
+  <script src="./generators/java_generator.js"></script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    #blocklyDiv { height: 80vh; width: 100%; }
+    #codeArea { height: 20vh; width: 100%; background: #111; color: #0f0; padding: 10px; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div id="blocklyDiv"></div>
+  <pre id="codeArea">// Java output will show here</pre>
+
+  <xml id="toolbox" style="display: none">
+    <category name="FRC">
+      <block type="drive_forward"></block>
+    </category>
+    <category name="Logic" categorystyle="logic_category">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+    </category>
+    <category name="Loops" categorystyle="loop_category">
+      <block type="controls_repeat_ext">
+        <value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+      </block>
+    </category>
+  </xml>
+
+  <script>
+    const workspace = Blockly.inject('blocklyDiv', {
+      toolbox: document.getElementById('toolbox')
+    });
+
+    function updateCode() {
+      const code = Blockly.Java.workspaceToCode(workspace);
+      document.getElementById('codeArea').textContent = code;
+    }
+
+    workspace.addChangeListener(updateCode);
+  </script>
+</body>
+</html>

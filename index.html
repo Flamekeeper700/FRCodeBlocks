@@ -84,45 +84,48 @@
   </xml>
 
   <script>
-    // Inject Blockly
-    const workspace = Blockly.inject('blocklyDiv', {
-      toolbox: document.getElementById('toolbox')
-    });
+    window.onload = function() {
+      // Inject Blockly
+      const workspace = Blockly.inject('blocklyDiv', {
+        toolbox: document.getElementById('toolbox')
+      });
 
-    // Live update of Java code
-    function updateCode() {
-      const code = Blockly.Java.workspaceToCode(workspace);
-      document.getElementById('codeArea').textContent = code || '// No Java code generated.';
-    }
-
-    workspace.addChangeListener(updateCode);
-
-    // Resizer logic
-    const resizer = document.getElementById('resizer');
-    const codeArea = document.getElementById('codeArea');
-    const blocklyDiv = document.getElementById('blocklyDiv');
-
-    let isResizing = false;
-
-    resizer.addEventListener('mousedown', (e) => {
-      isResizing = true;
-      document.body.style.cursor = 'row-resize';
-    });
-
-    window.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
-      const newHeight = window.innerHeight - e.clientY;
-      codeArea.style.height = `${newHeight}px`;
-      blocklyDiv.style.height = `${window.innerHeight - newHeight - resizer.offsetHeight}px`;
-      Blockly.svgResize(workspace);
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (isResizing) {
-        isResizing = false;
-        document.body.style.cursor = 'default';
+      // Live update of Java code
+      function updateCode() {
+        const code = Blockly.Java.workspaceToCode(workspace);
+        console.log("Generated code:", code); // Debug output
+        document.getElementById('codeArea').textContent = code || '// No Java code generated.';
       }
-    });
+
+      workspace.addChangeListener(updateCode);
+
+      // Resizer logic
+      const resizer = document.getElementById('resizer');
+      const codeArea = document.getElementById('codeArea');
+      const blocklyDiv = document.getElementById('blocklyDiv');
+
+      let isResizing = false;
+
+      resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        document.body.style.cursor = 'row-resize';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const newHeight = window.innerHeight - e.clientY;
+        codeArea.style.height = `${newHeight}px`;
+        blocklyDiv.style.height = `${window.innerHeight - newHeight - resizer.offsetHeight}px`;
+        Blockly.svgResize(workspace);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isResizing) {
+          isResizing = false;
+          document.body.style.cursor = 'default';
+        }
+      });
+    }
   </script>
 </body>
 </html>

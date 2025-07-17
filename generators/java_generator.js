@@ -35,6 +35,22 @@ Blockly.Java['dio_pwm_example'] = function(block) {
            `${camName}.getLatestResult().getBestTarget().getYaw()`;
   };
   
+  Blockly.Java['controls_repeat_ext'] = function(block) {
+    return '// Repeat loop not implemented in Java generator.\n';
+  };
+  
+  Blockly.Java['controls_if'] = function(block) {
+    return '// If statement not implemented in Java generator.\n';
+  };
+  
+  Blockly.Java['logic_compare'] = function(block) {
+    return 'true';
+  };
+  
+  Blockly.Java['math_number'] = function(block) {
+    return block.getFieldValue('NUM');
+  };
+
 
 // Needed for general structure
 Blockly.Java.scrub_ = function(block, code) {
@@ -42,3 +58,8 @@ Blockly.Java.scrub_ = function(block, code) {
   const nextCode = nextBlock ? Blockly.Java.blockToCode(nextBlock) : '';
   return code + nextCode;
 };
+
+window.Blockly = window.Blockly || {};
+window.Blockly.Java = Blockly.Java;
+
+console.log("Java generator loaded!");

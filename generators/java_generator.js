@@ -1,8 +1,13 @@
+// Create FRCJava generator
 Blockly.FRCJava = new Blockly.Generator('FRCJava');
 
 Blockly.FRCJava.ORDER_ATOMIC = 0;
 
-Blockly.FRCJava.RESERVED_WORDS_ = 'abstract,assert,boolean,break,byte,case,catch,char,class,const,continue,default,do,double,else,enum,extends,final,finally,float,for,goto,if,implements,import,instanceof,int,interface,long,native,new,null,package,private,protected,public,return,short,static,strictfp,super,switch,synchronized,this,throw,throws,transient,try,void,volatile,while';
+Blockly.FRCJava.RESERVED_WORDS_ =
+  'abstract,assert,boolean,break,byte,case,catch,char,class,const,continue,default,do,double,' +
+  'else,enum,extends,final,finally,float,for,goto,if,implements,import,instanceof,int,interface,' +
+  'long,native,new,null,package,private,protected,public,return,short,static,strictfp,super,' +
+  'switch,synchronized,this,throw,throws,transient,try,void,volatile,while';
 
 Blockly.FRCJava.init = function(workspace) {
   this.definitions_ = Object.create(null);
@@ -31,7 +36,7 @@ Blockly.FRCJava.blockToCode = function(block) {
   }
   const func = this[block.type];
   if (!func) {
-    throw Error('FRCJava generator does not know how to generate code for block type "' + block.type + '".');
+    throw Error(`FRCJava generator does not know how to generate code for block type "${block.type}".`);
   }
   return func.call(this, block);
 };
@@ -41,7 +46,7 @@ Blockly.FRCJava.workspaceToCode = function(workspace) {
   let code = '';
   const blocks = workspace.getTopBlocks(true);
   for (const block of blocks) {
-    let blockCode = this.blockToCode.call(this, block);
+    let blockCode = this.blockToCode(block);
     if (Array.isArray(blockCode)) {
       blockCode = blockCode[0];
     }
@@ -54,7 +59,7 @@ Blockly.FRCJava.workspaceToCode = function(workspace) {
 Blockly.FRCJava.statementToCode = function(block, name) {
   const targetBlock = block.getInputTargetBlock(name);
   if (!targetBlock) return '';
-  let code = this.blockToCode.call(this, targetBlock);
+  let code = this.blockToCode(targetBlock);
   if (Array.isArray(code)) code = code[0];
   return code;
 };
@@ -62,7 +67,7 @@ Blockly.FRCJava.statementToCode = function(block, name) {
 Blockly.FRCJava.valueToCode = function(block, name, order) {
   const targetBlock = block.getInputTargetBlock(name);
   if (!targetBlock) return '';
-  let code = this.blockToCode.call(this, targetBlock);
+  let code = this.blockToCode(targetBlock);
   if (Array.isArray(code)) code = code[0];
   return code;
 };
@@ -97,7 +102,7 @@ Blockly.FRCJava['math_arithmetic'] = function(block) {
   const B = Blockly.FRCJava.valueToCode(block, 'B', Blockly.FRCJava.ORDER_ATOMIC) || '0';
 
   if (op === 'POWER') {
-    return [`${OPERATORS[op]}(${A}, ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
+    return [`Math.pow(${A}, ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
   }
   return [`(${A} ${OPERATORS[op]} ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
 };

@@ -1,131 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FRC Blockly</title>
-  <script src="https://unpkg.com/blockly/blockly.min.js"></script>
-  <script src="./blocks/custom_blocks.js"></script>
-  <script src="./generators/java_generator.js"></script>
+  <meta charset="UTF-8" />
+  <title>FRC Blockly Visual IDE</title>
+  <script src="https://unpkg.com/blockly@^12/blockly.min.js"></script>
+  <script src="blocks/custom_blocks.js"></script>
+  <script src="generators/java_generator.js"></script>
   <style>
-    html, body {
-      height: 100%;
-      margin: 0;
+    body { font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+    #tabs { display: flex; border-bottom: 1px solid #ccc; background: #f5f5f5; }
+    #tabs button {
+      padding: 8px 16px; border: none; background: none; cursor: pointer;
+      border-bottom: 3px solid transparent;
+      font-weight: 600;
+      outline-offset: 2px;
+    }
+    #tabs button.active {
+      border-bottom-color: #0066cc;
+      background: #fff;
+      font-weight: 700;
+    }
+    #workspaceContainer {
+      flex: 1; position: relative; 
+      border: 1px solid #ccc;
+    }
+    .blocklyDiv {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      display: none;
+    }
+    .blocklyDiv.active {
+      display: block;
+    }
+    #controls {
+      padding: 8px;
+      background: #eee;
       display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      gap: 10px;
+      align-items: center;
     }
-
-    #blocklyDiv {
+    #output {
       flex: 1;
-      width: 100%;
-    }
-
-    #resizer {
-      height: 6px;
-      background: #444;
-      cursor: row-resize;
-    }
-
-    #codeArea {
-      height: 20vh;
-      width: 100%;
       background: #111;
       color: #0f0;
-      padding: 10px;
+      padding: 12px;
       font-family: monospace;
-      overflow-y: auto;
       white-space: pre-wrap;
+      overflow-y: auto;
+      max-height: 200px;
+      border-top: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
-  <div id="blocklyDiv"></div>
-  <div id="resizer"></div>
-  <pre id="codeArea">// Java output will show here</pre>
 
-  <xml id="toolbox" style="display: none">
-    <category name="FRC" expanded="true">
-      <category name="Drivetrain" colour="#e53935">
-        <block type="drive_forward"></block>
-      </category>
-      <category name="DIO/PWM Pins" colour="#fdd835">
-        <block type="dio_pwm_example"></block>
-      </category>
-      <category name="TalonFX" colour="#43a047">
-        <block type="talonfx_example"></block>
-      </category>
-      <category name="SparkMax" colour="#26c6da">
-        <block type="sparkmax_example"></block>
-      </category>
-      <category name="LED Strip (PWM)" colour="#ec407a">
-        <block type="ledstrip_example"></block>
-      </category>
-      <category name="PhotonVision" colour="#42a5f5">
-        <block type="photonvision_example"></block>
-      </category>
-    </category>
+  <div id="tabs">
+    <button data-tab="robot" class="active">Robot</button>
+    <button data-tab="robotContainer">Robot Container</button>
+    <button data-tab="commands">Commands</button>
+    <button data-tab="subsystem1">Subsystem 1</button>
+    <button data-tab="subsystem2">Subsystem 2</button>
+  </div>
 
-    <sep></sep>
+  <div id="workspaceContainer">
+    <div id="robot" class="blocklyDiv active" style="height: 500px;"></div>
+    <div id="robotContainer" class="blocklyDiv" style="height: 500px;"></div>
+    <div id="commands" class="blocklyDiv" style="height: 500px;"></div>
+    <div id="subsystem1" class="blocklyDiv" style="height: 500px;"></div>
+    <div id="subsystem2" class="blocklyDiv" style="height: 500px;"></div>
+  </div>
 
-    <category name="Logic" categorystyle="logic_category">
+  <div id="controls">
+    <button id="generateJava">Generate Java</button>
+  </div>
+
+  <pre id="output"></pre>
+
+  <!-- Toolbox XML -->
+  <xml id="toolbox" style="display:none">
+    <category name="Logic" colour="#5C81A6">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>
     </category>
-
-    <category name="Loops" categorystyle="loop_category">
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <shadow type="math_number">
-            <field name="NUM">10</field>
-          </shadow>
-        </value>
-      </block>
+    <category name="Loops" colour="#5CA65C">
+      <block type="controls_repeat_ext"></block>
+    </category>
+    <category name="Math" colour="#5C68A6">
+      <block type="math_number"></block>
+      <block type="math_arithmetic"></block>
+    </category>
+    <category name="Text" colour="#5CA68D">
+      <block type="text"></block>
+      <block type="text_print"></block>
+    </category>
+    <category name="Custom FRC" colour="#A65C81">
+      <block type="set_motor_speed"></block>
     </category>
   </xml>
 
   <script>
-    window.onload = function() {
-      // Inject Blockly
-      const workspace = Blockly.inject('blocklyDiv', {
+    const tabs = document.querySelectorAll('#tabs button');
+    const workspaceDivs = {
+      robot: document.getElementById('robot'),
+      robotContainer: document.getElementById('robotContainer'),
+      commands: document.getElementById('commands'),
+      subsystem1: document.getElementById('subsystem1'),
+      subsystem2: document.getElementById('subsystem2')
+    };
+
+    const workspaces = {};
+
+    for (const key in workspaceDivs) {
+      workspaces[key] = Blockly.inject(workspaceDivs[key], {
         toolbox: document.getElementById('toolbox')
       });
-
-      // Live update of Java code
-      function updateCode() {
-        const code = Blockly.Java.workspaceToCode(workspace);
-        console.log("Generated code:", code); // Debug output
-        document.getElementById('codeArea').textContent = code || '// No Java code generated.';
-      }
-
-      workspace.addChangeListener(updateCode);
-
-      // Resizer logic
-      const resizer = document.getElementById('resizer');
-      const codeArea = document.getElementById('codeArea');
-      const blocklyDiv = document.getElementById('blocklyDiv');
-
-      let isResizing = false;
-
-      resizer.addEventListener('mousedown', (e) => {
-        isResizing = true;
-        document.body.style.cursor = 'row-resize';
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!isResizing) return;
-        const newHeight = window.innerHeight - e.clientY;
-        codeArea.style.height = `${newHeight}px`;
-        blocklyDiv.style.height = `${window.innerHeight - newHeight - resizer.offsetHeight}px`;
-        Blockly.svgResize(workspace);
-      });
-
-      window.addEventListener('mouseup', () => {
-        if (isResizing) {
-          isResizing = false;
-          document.body.style.cursor = 'default';
-        }
-      });
     }
+
+    tabs.forEach(button => {
+      button.addEventListener('click', () => {
+        // Hide all workspaces & deactivate tabs
+        for (const key in workspaceDivs) {
+          workspaceDivs[key].classList.remove('active');
+        }
+        tabs.forEach(b => b.classList.remove('active'));
+
+        // Show selected workspace & activate tab
+        const tab = button.dataset.tab;
+        workspaceDivs[tab].classList.add('active');
+        button.classList.add('active');
+
+        // Delay resize a bit to ensure proper rendering
+        setTimeout(() => {
+          workspaces[tab].resize();
+        }, 50);
+      });
+    });
+
+    document.getElementById('generateJava').addEventListener('click', () => {
+      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
+      const workspace = workspaces[activeTab];
+      try {
+        const code = Blockly.FRCJava.workspaceToCode(workspace);
+        document.getElementById('output').textContent = code || '// No code generated';
+      } catch (e) {
+        document.getElementById('output').textContent = '// Error generating code:\n' + e;
+      }
+    });
+
+    // Initial resize on load and on window resize
+    window.addEventListener('resize', () => {
+      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
+      workspaces[activeTab].resize();
+    });
+    window.addEventListener('load', () => {
+      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
+      workspaces[activeTab].resize();
+    });
   </script>
+
 </body>
 </html>

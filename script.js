@@ -1,58 +1,93 @@
-const tabs = document.querySelectorAll('.tab-button');
-const workspacesDivs = document.querySelectorAll('.workspace-container');
+const tabs = document.querySelector('#tabs');
+const addTabBtn = document.getElementById('addTab');
+const workspaceContainer = document.getElementById('workspaceContainer');
+const output = document.getElementById('output');
 
 const workspaces = {};
-const toolboxXml = `
-<xml>
-  <category name="Logic" colour="#5C81A6">
-    <block type="controls_if"></block>
-    <block type="logic_compare"></block>
-  </category>
-  <category name="Loops" colour="#5CA65C">
-    <block type="controls_repeat_ext"></block>
-  </category>
-  <category name="Math" colour="#5C68A6">
-    <block type="math_number"></block>
-  </category>
-  <category name="Text" colour="#5CA68C">
-    <block type="text"></block>
-  </category>
-  <!-- Add custom FRC blocks here -->
-</xml>
-`;
+let tabCounter = 1;
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    // Show the selected workspace and hide others
-    const selected = tab.getAttribute('data-tab');
-    workspacesDivs.forEach(div => {
-      div.style.display = div.id === selected ? 'block' : 'none';
-    });
+function createTab(tabName, type) {
+  // Create tab button
+  const button = document.createElement('button');
+  button.textContent = `${tabName} ✖`;
+  button.dataset.tab = tabName;
+  button.classList.add('tab');
 
-    // Highlight active tab
-    tabs.forEach(t => t.style.background = '');
-    tab.style.background = '#ddd';
+  button.addEventListener('click', () => {
+    // Switch to this tab
+    switchTab(tabName);
   });
-});
 
-// Initialize Blockly workspaces for each tab
-workspacesDivs.forEach(div => {
-  workspaces[div.id] = Blockly.inject(div.id, {
-    toolbox: toolboxXml,
-    scrollbars: true,
-    trashcan: true,
+  // Remove tab on middle click
+  button.addEventListener('auxclick', (e) => {
+    if (e.button === 1) { removeTab(tabName, button); }
   });
-});
 
-// Select the first tab by default
-tabs[0].click();
+  tabs.insertBefore(button, addTabBtn);
 
-document.getElementById('generate-code').addEventListener('click', () => {
-  let fullCode = '';
-  for (const [tabName, workspace] of Object.entries(workspaces)) {
-    const code = Blockly.Java['robot'] ? Blockly.Java.workspaceToCode(workspace) : '// Java generator not defined\n';
-    fullCode += `// --- ${tabName.toUpperCase()} ---\n`;
-    fullCode += code + '\n\n';
+  // Create workspace div
+  const div = document.createElement('div');
+  div.id = tabName;
+  div.className = 'blocklyDiv';
+  div.style.height = '500px';
+  workspaceContainer.appendChild(div);
+
+  // Inject Blockly with preset content
+  const workspace = Blockly.inject(div, {
+    toolbox: document.getElementById('toolbox')
+  });
+  workspaces[tabName] = workspace;
+
+  const preset = document.getElementById(`preset-${type}`);
+  if (preset) {
+    Blockly.Xml.domToWorkspace(preset, workspace);
   }
-  document.getElementById('output').textContent = fullCode;
+
+  switchTab(tabName);
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.blocklyDiv').forEach(div => div.style.display = 'none');
+  document.querySelectorAll('#tabs .tab').forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById(tabName).style.display = 'block';
+  document.querySelector(`#tabs [data-tab="${tabName}"]`).classList.add('active');
+
+  workspaces[tabName].resize();
+}
+
+function removeTab(tabName, button) {
+  workspaces[tabName].dispose();
+  delete workspaces[tabName];
+
+  document.getElementById(tabName).remove();
+  button.remove();
+
+  // Switch to any remaining tab
+  const remaining = document.querySelector('#tabs .tab');
+  if (remaining) switchTab(remaining.dataset.tab);
+}
+
+addTabBtn.addEventListener('click', () => {
+  const type = prompt('Tab type? (robotContainer, commands, subsystem)').trim();
+  if (!['robotContainer', 'commands', 'subsystem'].includes(type)) {
+    alert('Invalid type');
+    return;
+  }
+  const tabName = `${type}_${tabCounter++}`;
+  createTab(tabName, type);
 });
+
+document.getElementById('generateJava').addEventListener('click', () => {
+  const activeTab = document.querySelector('#tabs .tab.active').dataset.tab;
+  const workspace = workspaces[activeTab];
+  try {
+    const code = Blockly.FRCJava.workspaceToCode(workspace);
+    output.textContent = code || '// No code generated';
+  } catch (e) {
+    output.textContent = '// Error generating code:\n' + e;
+  }
+});
+
+// Init default Robot tab
+createTab('robot', 'robot');

@@ -1,161 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>FRC Blockly Visual IDE</title>
-  <script src="https://unpkg.com/blockly@^12/blockly.min.js"></script>
-  <script src="blocks/custom_blocks.js"></script>
-  <script src="generators/java_generator.js"></script>
-  <style>
-    body { font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; }
-    #tabs { display: flex; border-bottom: 1px solid #ccc; background: #f5f5f5; }
-    #tabs button {
-      padding: 8px 16px; border: none; background: none; cursor: pointer;
-      border-bottom: 3px solid transparent;
-      font-weight: 600;
-      outline-offset: 2px;
-    }
-    #tabs button.active {
-      border-bottom-color: #0066cc;
-      background: #fff;
-      font-weight: 700;
-    }
-    #workspaceContainer {
-      flex: 1; position: relative; 
-      border: 1px solid #ccc;
-    }
-    .blocklyDiv {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      display: none;
-    }
-    .blocklyDiv.active {
-      display: block;
-    }
-    #controls {
-      padding: 8px;
-      background: #eee;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    #output {
-      flex: 1;
-      background: #111;
-      color: #0f0;
-      padding: 12px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      overflow-y: auto;
-      max-height: 200px;
-      border-top: 1px solid #ccc;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>FRC Blockly IDE</title>
+<script src="https://unpkg.com/blockly@^12/blockly.min.js"></script>
+<script src="blocks/custom_blocks.js"></script>
+<script src="generators/java_generator.js"></script>
+<style>
+  body { font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+  #tabs { display: flex; border-bottom: 1px solid #ccc; background: #f5f5f5; }
+  #tabs .tab {
+    position: relative;
+    padding: 6px 12px; cursor: pointer; border: none; background: none;
+    border-bottom: 3px solid transparent; font-weight: 600;
+  }
+  #tabs .tab.active {
+    border-bottom-color: #0066cc; background: #fff;
+  }
+  #tabs .close {
+    position: absolute; right: 2px; top: 2px;
+    font-size: 10px; cursor: pointer; color: red;
+  }
+  #workspaceContainer {
+    flex: 1; position: relative; border: 1px solid #ccc;
+  }
+  .blocklyDiv {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: none;
+  }
+  .blocklyDiv.active { display: block; }
+  #controls {
+    padding: 8px; background: #eee; display: flex; gap: 10px; align-items: center;
+  }
+  #output {
+    flex: 1; background: #111; color: #0f0; padding: 12px;
+    font-family: monospace; white-space: pre-wrap; overflow-y: auto;
+    max-height: 200px; border-top: 1px solid #ccc;
+  }
+  #tabTypeSelect {
+    padding: 4px 8px;
+  }
+</style>
 </head>
 <body>
 
-  <div id="tabs">
-    <button data-tab="robot" class="active">Robot</button>
-    <button data-tab="robotContainer">Robot Container</button>
-    <button data-tab="commands">Commands</button>
-    <button data-tab="subsystem1">Subsystem 1</button>
-    <button data-tab="subsystem2">Subsystem 2</button>
-  </div>
+<div id="tabs">
+  <!-- tabs will be dynamically inserted here -->
+</div>
 
-  <div id="workspaceContainer">
-    <div id="robot" class="blocklyDiv active" style="height: 500px;"></div>
-    <div id="robotContainer" class="blocklyDiv" style="height: 500px;"></div>
-    <div id="commands" class="blocklyDiv" style="height: 500px;"></div>
-    <div id="subsystem1" class="blocklyDiv" style="height: 500px;"></div>
-    <div id="subsystem2" class="blocklyDiv" style="height: 500px;"></div>
-  </div>
+<div id="workspaceContainer"></div>
 
-  <div id="controls">
-    <button id="generateJava">Generate Java</button>
-  </div>
+<div id="controls">
+  <label for="tabTypeSelect">Tab Type:</label>
+  <select id="tabTypeSelect">
+    <option value="robot">robot</option>
+    <option value="robotContainer">robotContainer</option>
+    <option value="commands">commands</option>
+    <option value="subsystem">subsystem</option>
+  </select>
+  <button id="addTab">➕ Add Tab</button>
+  <button id="generateJava">Generate Java</button>
+</div>
 
-  <pre id="output"></pre>
+<pre id="output"></pre>
 
-  <!-- Toolbox XML -->
-  <xml id="toolbox" style="display:none">
-    <category name="Logic" colour="#5C81A6">
-      <block type="controls_if"></block>
-      <block type="logic_compare"></block>
-    </category>
-    <category name="Loops" colour="#5CA65C">
-      <block type="controls_repeat_ext"></block>
-    </category>
-    <category name="Math" colour="#5C68A6">
-      <block type="math_number"></block>
-      <block type="math_arithmetic"></block>
-    </category>
-    <category name="Text" colour="#5CA68D">
-      <block type="text"></block>
-      <block type="text_print"></block>
-    </category>
-    <category name="Custom FRC" colour="#A65C81">
-      <block type="set_motor_speed"></block>
-    </category>
-  </xml>
+<xml id="toolbox" style="display:none">
+  <category name="Logic" colour="#5C81A6">
+    <block type="controls_if"></block>
+    <block type="logic_compare"></block>
+  </category>
+  <category name="Loops" colour="#5CA65C">
+    <block type="controls_repeat_ext"></block>
+  </category>
+  <category name="Math" colour="#5C68A6">
+    <block type="math_number"></block>
+    <block type="math_arithmetic"></block>
+  </category>
+  <category name="Text" colour="#5CA68D">
+    <block type="text"></block>
+    <block type="text_print"></block>
+  </category>
+  <category name="Custom FRC" colour="#A65C81">
+    <block type="set_motor_speed"></block>
+  </category>
+</xml>
 
-  <script>
-    const tabs = document.querySelectorAll('#tabs button');
-    const workspaceDivs = {
-      robot: document.getElementById('robot'),
-      robotContainer: document.getElementById('robotContainer'),
-      commands: document.getElementById('commands'),
-      subsystem1: document.getElementById('subsystem1'),
-      subsystem2: document.getElementById('subsystem2')
-    };
+<xml id="preset-robot" style="display:none">
+  <block type="text_print"><field name="TEXT">Robot Initialized</field></block>
+</xml>
 
-    const workspaces = {};
+<xml id="preset-robotContainer" style="display:none">
+  <block type="controls_if"></block>
+</xml>
 
-    for (const key in workspaceDivs) {
-      workspaces[key] = Blockly.inject(workspaceDivs[key], {
-        toolbox: document.getElementById('toolbox')
-      });
-    }
+<xml id="preset-commands" style="display:none">
+  <block type="controls_repeat_ext"></block>
+</xml>
 
-    tabs.forEach(button => {
-      button.addEventListener('click', () => {
-        // Hide all workspaces & deactivate tabs
-        for (const key in workspaceDivs) {
-          workspaceDivs[key].classList.remove('active');
-        }
-        tabs.forEach(b => b.classList.remove('active'));
+<xml id="preset-subsystem" style="display:none">
+  <block type="math_number"><field name="NUM">42</field></block>
+</xml>
 
-        // Show selected workspace & activate tab
-        const tab = button.dataset.tab;
-        workspaceDivs[tab].classList.add('active');
-        button.classList.add('active');
+<script>
+const tabs = document.getElementById('tabs');
+const addTabBtn = document.getElementById('addTab');
+const workspaceContainer = document.getElementById('workspaceContainer');
+const output = document.getElementById('output');
+const tabTypeSelect = document.getElementById('tabTypeSelect');
 
-        // Delay resize a bit to ensure proper rendering
-        setTimeout(() => {
-          workspaces[tab].resize();
-        }, 50);
-      });
-    });
+const workspaces = {};
+let tabCounter = 1;
 
-    document.getElementById('generateJava').addEventListener('click', () => {
-      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
-      const workspace = workspaces[activeTab];
-      try {
-        const code = Blockly.FRCJava.workspaceToCode(workspace);
-        document.getElementById('output').textContent = code || '// No code generated';
-      } catch (e) {
-        document.getElementById('output').textContent = '// Error generating code:\n' + e;
-      }
-    });
+function createTab(tabName, type) {
+  // Create tab button
+  const button = document.createElement('div');
+  button.className = 'tab';
+  button.dataset.tab = tabName;
+  button.textContent = `${tabName} `;
+  const closeBtn = document.createElement('span');
+  closeBtn.textContent = '×';
+  closeBtn.className = 'close';
+  button.appendChild(closeBtn);
+  tabs.appendChild(button);
 
-    // Initial resize on load and on window resize
-    window.addEventListener('resize', () => {
-      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
-      workspaces[activeTab].resize();
-    });
-    window.addEventListener('load', () => {
-      const activeTab = document.querySelector('#tabs button.active').dataset.tab;
-      workspaces[activeTab].resize();
-    });
-  </script>
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    removeTab(tabName, button);
+  });
 
+  button.addEventListener('click', () => switchTab(tabName));
+
+  // Workspace div
+  const div = document.createElement('div');
+  div.id = tabName;
+  div.className = 'blocklyDiv';
+  div.style.height = '500px';
+  workspaceContainer.appendChild(div);
+
+  switchTab(tabName); // Activate before injecting Blockly
+
+  const workspace = Blockly.inject(div, {
+    toolbox: document.getElementById('toolbox')
+  });
+  workspaces[tabName] = workspace;
+
+  const preset = document.getElementById(`preset-${type}`);
+  if (preset) Blockly.Xml.domToWorkspace(preset, workspace);
+
+  requestAnimationFrame(() => workspace.resize());
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.blocklyDiv').forEach(div => div.classList.remove('active'));
+  document.querySelectorAll('#tabs .tab').forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById(tabName).classList.add('active');
+  document.querySelector(`#tabs .tab[data-tab="${tabName}"]`).classList.add('active');
+
+  requestAnimationFrame(() => workspaces[tabName].resize());
+}
+
+function removeTab(tabName, button) {
+  if (workspaces[tabName]) {
+    workspaces[tabName].dispose();
+    delete workspaces[tabName];
+  }
+  const div = document.getElementById(tabName);
+  if(div) div.remove();
+  if(button) button.remove();
+
+  // Activate first remaining tab if any
+  const firstTab = document.querySelector('#tabs .tab');
+  if (firstTab) switchTab(firstTab.dataset.tab);
+  else output.textContent = '// No tabs open';
+}
+
+addTabBtn.addEventListener('click', () => {
+  const type = tabTypeSelect.value;
+  const tabName = `${type}_${tabCounter++}`;
+  createTab(tabName, type);
+});
+
+document.getElementById('generateJava').addEventListener('click', () => {
+  const activeTabBtn = document.querySelector('#tabs .tab.active');
+  if (!activeTabBtn) {
+    output.textContent = '// No active tab';
+    return;
+  }
+  const workspace = workspaces[activeTabBtn.dataset.tab];
+  try {
+    const code = Blockly.FRCJava.workspaceToCode(workspace);
+    output.textContent = code || '// No code generated';
+  } catch (e) {
+    output.textContent = '// Error generating code:\n' + e;
+  }
+});
+
+// Create initial robot tab on load
+createTab('robot', 'robot');
+</script>
 </body>
 </html>

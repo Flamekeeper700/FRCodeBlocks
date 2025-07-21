@@ -112,39 +112,111 @@
 <div id="workspaceArea">
   <div id="toolboxContainer">
     <xml id="toolbox">
-      <category name="FRC Robot" colour="#A65C5C">
+      <category name="Robot" colour="#A65C5C">
         <block type="frc_robot_init"></block>
         <block type="frc_robot_periodic"></block>
+        <block type="frc_robot_simulation_init"></block>
+        <block type="frc_robot_simulation_periodic"></block>
         <block type="frc_autonomous_init"></block>
+        <block type="frc_autonomous_periodic"></block>
         <block type="frc_teleop_init"></block>
+        <block type="frc_teleop_periodic"></block>
+        <block type="frc_test_init"></block>
+        <block type="frc_test_periodic"></block>
+        <block type="frc_disabled_init"></block>
+        <block type="frc_disabled_periodic"></block>
       </category>
-      <category name="FRC Commands" colour="#5C81A6">
+      
+      <category name="Subsystems" colour="#5CA65C">
+        <block type="frc_subsystem"></block>
+        <block type="frc_subsystem_default_command"></block>
+        <block type="frc_drivetrain"></block>
+        <block type="frc_arm_subsystem"></block>
+        <block type="frc_intake_subsystem"></block>
+        <block type="frc_shooter_subsystem"></block>
+        <block type="frc_elevator_subsystem"></block>
+        <block type="frc_climber_subsystem"></block>
+      </category>
+      
+      <category name="Commands" colour="#5C81A6">
         <block type="frc_command"></block>
         <block type="frc_run_command"></block>
+        <block type="frc_parallel_command_group"></block>
+        <block type="frc_sequential_command_group"></block>
+        <block type="frc_instant_command"></block>
+        <block type="frc_wait_command"></block>
+        <block type="frc_wait_until_command"></block>
+        <block type="frc_print_command"></block>
+        <block type="frc_run_end_command"></block>
       </category>
-      <category name="FRC Subsystems" colour="#5CA65C">
-        <block type="frc_subsystem"></block>
+      
+      <category name="Hardware" colour="#5C68A6">
         <block type="frc_motor_set"></block>
+        <block type="frc_motor_config"></block>
+        <block type="frc_encoder"></block>
         <block type="frc_pid_config"></block>
+        <block type="frc_pid_controller"></block>
+        <block type="frc_servo_set"></block>
+        <block type="frc_solenoid"></block>
+        <block type="frc_compressor"></block>
+        <block type="frc_joystick_button"></block>
+        <block type="frc_joystick_axis"></block>
+        <block type="frc_limit_switch"></block>
+        <block type="frc_ultrasonic"></block>
+        <block type="frc_gyro"></block>
+        <block type="frc_accelerometer"></block>
       </category>
+      
+      <category name="Control" colour="#A67CA6">
+        <block type="frc_controls_if"></block>
+        <block type="frc_controls_ifelse"></block>
+        <block type="frc_controls_repeat_ext"></block>
+        <block type="frc_controls_while"></block>
+        <block type="frc_controls_for"></block>
+        <block type="frc_controls_switch"></block>
+      </category>
+      
       <category name="Logic" colour="#5C81A6">
         <block type="frc_logic_compare"></block>
         <block type="frc_logic_boolean"></block>
         <block type="frc_logic_operation"></block>
         <block type="frc_logic_negate"></block>
+        <block type="frc_logic_null"></block>
+        <block type="frc_logic_ternary"></block>
       </category>
-      <category name="Loops" colour="#5CA65C">
-        <block type="frc_controls_repeat_ext"></block>
-        <block type="frc_controls_while"></block>
-      </category>
+      
       <category name="Math" colour="#5C68A6">
         <block type="frc_math_number"></block>
         <block type="frc_math_arithmetic"></block>
+        <block type="frc_math_single"></block>
+        <block type="frc_math_trig"></block>
+        <block type="frc_math_constant"></block>
         <block type="frc_math_random_int"></block>
+        <block type="frc_math_random_float"></block>
+        <block type="frc_math_round"></block>
+        <block type="frc_math_modulo"></block>
+        <block type="frc_math_constrain"></block>
+        <block type="frc_math_map"></block>
       </category>
+      
       <category name="Text" colour="#5CA68D">
         <block type="frc_text"></block>
         <block type="frc_text_print"></block>
+        <block type="frc_text_join"></block>
+        <block type="frc_text_length"></block>
+        <block type="frc_text_isEmpty"></block>
+      </category>
+      
+      <category name="Variables" colour="#A68D5C">
+        <block type="variables_get"></block>
+        <block type="variables_set"></block>
+      </category>
+      
+      <category name="Functions" colour="#9A5CA6">
+        <block type="procedures_defnoreturn"></block>
+        <block type="procedures_defreturn"></block>
+        <block type="procedures_callnoreturn"></block>
+        <block type="procedures_callreturn"></block>
       </category>
     </xml>
   </div>
@@ -153,13 +225,18 @@
 
 <div id="controls">
   <select id="tabTypeSelector">
+    <option value="robot">Robot.java</option>
+    <option value="robotContainer">RobotContainer.java</option>
     <option value="command">Command</option>
     <option value="subsystem">Subsystem</option>
-    <option value="robotJava">Robot.java</option>
+    <option value="constants">Constants.java</option>
+    <option value="auto">Autonomous</option>
+    <option value="test">Test</option>
   </select>
   <button id="addTabBtn">Add Tab</button>
   <button id="downloadJavaBtn">Download .java</button>
   <button id="copyCodeBtn">Copy Text</button>
+  <button id="downloadAllBtn">Download All</button>
   <button id="openCredits">Credits</button>
 </div>
 
@@ -246,14 +323,54 @@ Blockly.FRCJava['frc_robot_periodic'] = function(block) {
   return `@Override\npublic void robotPeriodic() {\n${statements}}\n\n`;
 };
 
+Blockly.FRCJava['frc_robot_simulation_init'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void simulationInit() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_robot_simulation_periodic'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void simulationPeriodic() {\n${statements}}\n\n`;
+};
+
 Blockly.FRCJava['frc_autonomous_init'] = function(block) {
   const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
   return `@Override\npublic void autonomousInit() {\n${statements}}\n\n`;
 };
 
+Blockly.FRCJava['frc_autonomous_periodic'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void autonomousPeriodic() {\n${statements}}\n\n`;
+};
+
 Blockly.FRCJava['frc_teleop_init'] = function(block) {
   const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
   return `@Override\npublic void teleopInit() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_teleop_periodic'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void teleopPeriodic() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_test_init'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void testInit() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_test_periodic'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void testPeriodic() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_disabled_init'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void disabledInit() {\n${statements}}\n\n`;
+};
+
+Blockly.FRCJava['frc_disabled_periodic'] = function(block) {
+  const statements = Blockly.FRCJava.statementToCode(block, 'STATEMENTS');
+  return `@Override\npublic void disabledPeriodic() {\n${statements}}\n\n`;
 };
 
 Blockly.FRCJava['frc_subsystem'] = function(block) {
@@ -266,6 +383,41 @@ Blockly.FRCJava['frc_subsystem'] = function(block) {
     `public class ${className} extends SubsystemBase {\n` +
     `  public ${className}() {\n` +
     `    ${init}\n` +
+    `  }\n\n` +
+    `  @Override\n` +
+    `  public void periodic() {\n` +
+    `    ${periodic}\n` +
+    `  }\n` +
+    `}\n\n`;
+  
+  this.definitions_[`subsystem_${className}`] = code;
+  return [`new ${className}()`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_subsystem_default_command'] = function(block) {
+  const subsystem = Blockly.FRCJava.valueToCode(block, 'SUBSYSTEM', Blockly.FRCJava.ORDER_ATOMIC) || 'null';
+  const command = Blockly.FRCJava.valueToCode(block, 'COMMAND', Blockly.FRCJava.ORDER_ATOMIC) || 'null';
+  return `${subsystem}.setDefaultCommand(${command});\n`;
+};
+
+Blockly.FRCJava['frc_drivetrain'] = function(block) {
+  const name = block.getFieldValue('NAME') || 'Drivetrain';
+  const leftMotor = block.getFieldValue('LEFT_MOTOR') || '0';
+  const rightMotor = block.getFieldValue('RIGHT_MOTOR') || '1';
+  const init = Blockly.FRCJava.statementToCode(block, 'INIT');
+  const periodic = Blockly.FRCJava.statementToCode(block, 'PERIODIC');
+  
+  const className = name.replace(/\s+/g, '') + 'Subsystem';
+  const code = 
+    `public class ${className} extends SubsystemBase {\n` +
+    `  private final MotorController leftMotor = new PWMVictorSPX(${leftMotor});\n` +
+    `  private final MotorController rightMotor = new PWMVictorSPX(${rightMotor});\n` +
+    `  private final DifferentialDrive drive = new DifferentialDrive(leftMotor, rightMotor);\n\n` +
+    `  public ${className}() {\n` +
+    `    ${init}\n` +
+    `  }\n\n` +
+    `  public void arcadeDrive(double speed, double rotation) {\n` +
+    `    drive.arcadeDrive(speed, rotation);\n` +
     `  }\n\n` +
     `  @Override\n` +
     `  public void periodic() {\n` +
@@ -314,17 +466,86 @@ Blockly.FRCJava['frc_run_command'] = function(block) {
   return `CommandScheduler.getInstance().schedule(${command});\n`;
 };
 
+Blockly.FRCJava['frc_parallel_command_group'] = function(block) {
+  const commands = [];
+  for (let i = 0; i < block.itemCount_; i++) {
+    commands.push(Blockly.FRCJava.valueToCode(block, 'COMMAND' + i, Blockly.FRCJava.ORDER_ATOMIC) || 'null');
+  }
+  return [`new ParallelCommandGroup(${commands.join(', ')})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_sequential_command_group'] = function(block) {
+  const commands = [];
+  for (let i = 0; i < block.itemCount_; i++) {
+    commands.push(Blockly.FRCJava.valueToCode(block, 'COMMAND' + i, Blockly.FRCJava.ORDER_ATOMIC) || 'null');
+  }
+  return [`new SequentialCommandGroup(${commands.join(', ')})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_instant_command'] = function(block) {
+  const run = Blockly.FRCJava.statementToCode(block, 'RUN');
+  return [`new InstantCommand(() -> {\n${run}\n})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_wait_command'] = function(block) {
+  const seconds = Blockly.FRCJava.valueToCode(block, 'SECONDS', Blockly.FRCJava.ORDER_ATOMIC) || '1.0';
+  return [`new WaitCommand(${seconds})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_wait_until_command'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'CONDITION', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  return [`new WaitUntilCommand(${condition})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_print_command'] = function(block) {
+  const message = Blockly.FRCJava.valueToCode(block, 'MESSAGE', Blockly.FRCJava.ORDER_ATOMIC) || '""';
+  return [`new PrintCommand(${message})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_run_end_command'] = function(block) {
+  const run = Blockly.FRCJava.statementToCode(block, 'RUN');
+  const end = Blockly.FRCJava.statementToCode(block, 'END');
+  return [`new RunEndCommand(() -> {\n${run}\n}, (interrupted) -> {\n${end}\n})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
 Blockly.FRCJava['frc_motor_set'] = function(block) {
-  const motor = block.getFieldValue('MOTOR') || 'left';
+  const motor = block.getFieldValue('MOTOR') || 'motor';
   const speed = Blockly.FRCJava.valueToCode(block, 'SPEED', Blockly.FRCJava.ORDER_ATOMIC) || '0';
   
-  const motorVar = `motor_${motor.toLowerCase()}`;
+  const motorVar = motor.toLowerCase();
   if (!this.definitions_[`motor_${motorVar}`]) {
     this.definitions_[`motor_${motorVar}`] = 
-      `private MotorController ${motorVar} = new PWMVictorSPX(${motor === 'LEFT' ? 0 : 1});\n`;
+      `private MotorController ${motorVar} = new PWMVictorSPX(0);\n`;
   }
   
   return `${motorVar}.set(${speed});\n`;
+};
+
+Blockly.FRCJava['frc_motor_config'] = function(block) {
+  const motor = block.getFieldValue('MOTOR') || 'motor';
+  const channel = Blockly.FRCJava.valueToCode(block, 'CHANNEL', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const inverted = block.getFieldValue('INVERTED') === 'TRUE';
+  
+  const motorVar = motor.toLowerCase();
+  this.definitions_[`motor_${motorVar}`] = 
+    `private MotorController ${motorVar} = new PWMVictorSPX(${channel});\n` +
+    `  ${motorVar}.setInverted(${inverted});\n`;
+  
+  return '';
+};
+
+Blockly.FRCJava['frc_encoder'] = function(block) {
+  const name = block.getFieldValue('NAME') || 'encoder';
+  const channelA = Blockly.FRCJava.valueToCode(block, 'CHANNEL_A', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const channelB = Blockly.FRCJava.valueToCode(block, 'CHANNEL_B', Blockly.FRCJava.ORDER_ATOMIC) || '1';
+  const distancePerPulse = Blockly.FRCJava.valueToCode(block, 'DISTANCE_PER_PULSE', Blockly.FRCJava.ORDER_ATOMIC) || '1.0';
+  
+  const encoderVar = name.toLowerCase();
+  this.definitions_[`encoder_${encoderVar}`] = 
+    `private Encoder ${encoderVar} = new Encoder(${channelA}, ${channelB});\n` +
+    `  ${encoderVar}.setDistancePerPulse(${distancePerPulse});\n`;
+  
+  return '';
 };
 
 Blockly.FRCJava['frc_pid_config'] = function(block) {
@@ -332,6 +553,131 @@ Blockly.FRCJava['frc_pid_config'] = function(block) {
   const i = Blockly.FRCJava.valueToCode(block, 'I', Blockly.FRCJava.ORDER_ATOMIC) || '0';
   const d = Blockly.FRCJava.valueToCode(block, 'D', Blockly.FRCJava.ORDER_ATOMIC) || '0';
   return [`new PIDConfig(${p}, ${i}, ${d})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_pid_controller'] = function(block) {
+  const name = block.getFieldValue('NAME') || 'pid';
+  const config = Blockly.FRCJava.valueToCode(block, 'CONFIG', Blockly.FRCJava.ORDER_ATOMIC) || 'new PIDConfig(0, 0, 0)';
+  const source = Blockly.FRCJava.valueToCode(block, 'SOURCE', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const output = Blockly.FRCJava.valueToCode(block, 'OUTPUT', Blockly.FRCJava.ORDER_ATOMIC) || '(value) -> {}';
+  
+  const pidVar = name.toLowerCase();
+  this.definitions_[`pid_${pidVar}`] = 
+    `private PIDController ${pidVar} = new PIDController(${config}.kP, ${config}.kI, ${config}.kD);\n` +
+    `  ${pidVar}.setSetpoint(0);\n`;
+  
+  return `${pidVar}.calculate(${source}, ${output});\n`;
+};
+
+Blockly.FRCJava['frc_servo_set'] = function(block) {
+  const servo = block.getFieldValue('SERVO') || 'servo';
+  const position = Blockly.FRCJava.valueToCode(block, 'POSITION', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  
+  const servoVar = servo.toLowerCase();
+  if (!this.definitions_[`servo_${servoVar}`]) {
+    this.definitions_[`servo_${servoVar}`] = 
+      `private Servo ${servoVar} = new Servo(0);\n`;
+  }
+  
+  return `${servoVar}.set(${position});\n`;
+};
+
+Blockly.FRCJava['frc_solenoid'] = function(block) {
+  const solenoid = block.getFieldValue('SOLENOID') || 'solenoid';
+  const channel = Blockly.FRCJava.valueToCode(block, 'CHANNEL', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const state = Blockly.FRCJava.valueToCode(block, 'STATE', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  
+  const solenoidVar = solenoid.toLowerCase();
+  this.definitions_[`solenoid_${solenoidVar}`] = 
+    `private Solenoid ${solenoidVar} = new Solenoid(PneumaticsModuleType.CTREPCM, ${channel});\n`;
+  
+  return `${solenoidVar}.set(${state});\n`;
+};
+
+Blockly.FRCJava['frc_compressor'] = function(block) {
+  const enable = block.getFieldValue('ENABLE') === 'TRUE';
+  const module = Blockly.FRCJava.valueToCode(block, 'MODULE', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  
+  if (!this.definitions_['compressor']) {
+    this.definitions_['compressor'] = 
+      `private Compressor compressor = new Compressor(${module}, PneumaticsModuleType.CTREPCM);\n`;
+  }
+  
+  return `compressor.${enable ? 'enableDigital()' : 'disable()'};\n`;
+};
+
+Blockly.FRCJava['frc_joystick_button'] = function(block) {
+  const joystick = block.getFieldValue('JOYSTICK') || '0';
+  const button = Blockly.FRCJava.valueToCode(block, 'BUTTON', Blockly.FRCJava.ORDER_ATOMIC) || '1';
+  const command = Blockly.FRCJava.valueToCode(block, 'COMMAND', Blockly.FRCJava.ORDER_ATOMIC) || 'null';
+  const when = block.getFieldValue('WHEN') || 'WHEN_PRESSED';
+  
+  const joystickVar = `joystick${joystick}`;
+  if (!this.definitions_[`joystick_${joystickVar}`]) {
+    this.definitions_[`joystick_${joystickVar}`] = 
+      `private Joystick ${joystickVar} = new Joystick(${joystick});\n`;
+  }
+  
+  return `new JoystickButton(${joystickVar}, ${button}).${when.toLowerCase()}(${command});\n`;
+};
+
+Blockly.FRCJava['frc_joystick_axis'] = function(block) {
+  const joystick = block.getFieldValue('JOYSTICK') || '0';
+  const axis = Blockly.FRCJava.valueToCode(block, 'AXIS', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  
+  const joystickVar = `joystick${joystick}`;
+  if (!this.definitions_[`joystick_${joystickVar}`]) {
+    this.definitions_[`joystick_${joystickVar}`] = 
+      `private Joystick ${joystickVar} = new Joystick(${joystick});\n`;
+  }
+  
+  return [`${joystickVar}.getRawAxis(${axis})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_limit_switch'] = function(block) {
+  const channel = Blockly.FRCJava.valueToCode(block, 'CHANNEL', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const inverted = block.getFieldValue('INVERTED') === 'TRUE';
+  
+  const limitSwitchVar = `limitSwitch${channel}`;
+  this.definitions_[`limit_${limitSwitchVar}`] = 
+    `private DigitalInput ${limitSwitchVar} = new DigitalInput(${channel});\n`;
+  
+  return [`${limitSwitchVar}.get() ${inverted ? '!' : ''}= true`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_ultrasonic'] = function(block) {
+  const channel = Blockly.FRCJava.valueToCode(block, 'CHANNEL', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  
+  const ultrasonicVar = `ultrasonic${channel}`;
+  this.definitions_[`ultrasonic_${ultrasonicVar}`] = 
+    `private AnalogInput ${ultrasonicVar} = new AnalogInput(${channel});\n`;
+  
+  return [`${ultrasonicVar}.getVoltage() * 1000 / 9.8`, Blockly.FRCJava.ORDER_ATOMIC]; // Convert voltage to cm
+};
+
+Blockly.FRCJava['frc_gyro'] = function(block) {
+  const type = block.getFieldValue('TYPE') || 'ADXRS450';
+  
+  const gyroVar = 'gyro';
+  if (type === 'ADXRS450') {
+    this.definitions_[`gyro_${gyroVar}`] = 
+      `private ADXRS450_Gyro ${gyroVar} = new ADXRS450_Gyro();\n`;
+    return [`${gyroVar}.getAngle()`, Blockly.FRCJava.ORDER_ATOMIC];
+  } else {
+    this.definitions_[`gyro_${gyroVar}`] = 
+      `private AHRS ${gyroVar} = new AHRS(SerialPort.Port.kMXP);\n`;
+    return [`${gyroVar}.getAngle()`, Blockly.FRCJava.ORDER_ATOMIC];
+  }
+};
+
+Blockly.FRCJava['frc_accelerometer'] = function(block) {
+  const axis = block.getFieldValue('AXIS') || 'X';
+  
+  const accelerometerVar = 'accelerometer';
+  this.definitions_[`accelerometer_${accelerometerVar}`] = 
+    `private BuiltInAccelerometer ${accelerometerVar} = new BuiltInAccelerometer();\n`;
+  
+  return [`${accelerometerVar}.get${axis.toUpperCase()}()`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
 // Custom generators for standard blocks
@@ -410,6 +756,19 @@ Blockly.FRCJava['frc_logic_negate'] = function(block) {
   return [`(!${value})`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
+Blockly.FRCJava['frc_controls_if'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'IF0', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  const statements = Blockly.FRCJava.statementToCode(block, 'DO0');
+  return `if (${condition}) {\n${statements}}\n`;
+};
+
+Blockly.FRCJava['frc_controls_ifelse'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'IF0', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  const do0 = Blockly.FRCJava.statementToCode(block, 'DO0');
+  const do1 = Blockly.FRCJava.statementToCode(block, 'DO1');
+  return `if (${condition}) {\n${do0}} else {\n${do1}}\n`;
+};
+
 Blockly.FRCJava['frc_controls_repeat_ext'] = function(block) {
   const times = Blockly.FRCJava.valueToCode(block, 'TIMES', Blockly.FRCJava.ORDER_ATOMIC) || '10';
   const statements = Blockly.FRCJava.statementToCode(block, 'DO');
@@ -422,16 +781,27 @@ Blockly.FRCJava['frc_controls_while'] = function(block) {
   return `while (${condition}) {\n${statements}}\n`;
 };
 
-// Simplified if block without mutator
-Blockly.FRCJava['frc_controls_if'] = function(block) {
-  const condition = Blockly.FRCJava.valueToCode(block, 'IF0', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
-  const statements = Blockly.FRCJava.statementToCode(block, 'DO0');
-  return `if (${condition}) {\n${statements}}\n`;
+Blockly.FRCJava['frc_controls_for'] = function(block) {
+  const varName = block.getFieldValue('VAR') || 'i';
+  const from = Blockly.FRCJava.valueToCode(block, 'FROM', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const to = Blockly.FRCJava.valueToCode(block, 'TO', Blockly.FRCJava.ORDER_ATOMIC) || '10';
+  const by = Blockly.FRCJava.valueToCode(block, 'BY', Blockly.FRCJava.ORDER_ATOMIC) || '1';
+  const statements = Blockly.FRCJava.statementToCode(block, 'DO');
+  
+  return `for (int ${varName} = ${from}; ${varName} < ${to}; ${varName} += ${by}) {\n${statements}}\n`;
+};
+
+Blockly.FRCJava['frc_controls_switch'] = function(block) {
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const cases = Blockly.FRCJava.statementToCode(block, 'CASES');
+  const defaultCase = Blockly.FRCJava.statementToCode(block, 'DEFAULT');
+  
+  return `switch (${value}) {\n${cases}\ndefault:\n${defaultCase}}\n`;
 };
 
 // Define all blocks with custom implementations
 Blockly.defineBlocksWithJsonArray([
-  // FRC Robot Blocks
+  // Robot lifecycle blocks
   {
     "type": "frc_robot_init",
     "message0": "robotInit %1",
@@ -457,6 +827,30 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Called periodically during all robot modes"
   },
   {
+    "type": "frc_robot_simulation_init",
+    "message0": "simulationInit %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 160,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called when simulation starts"
+  },
+  {
+    "type": "frc_robot_simulation_periodic",
+    "message0": "simulationPeriodic %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 160,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called periodically during simulation"
+  },
+  {
     "type": "frc_autonomous_init",
     "message0": "autonomousInit %1",
     "args0": [{
@@ -467,6 +861,18 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "tooltip": "Called when autonomous mode starts"
+  },
+  {
+    "type": "frc_autonomous_periodic",
+    "message0": "autonomousPeriodic %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called periodically during autonomous mode"
   },
   {
     "type": "frc_teleop_init",
@@ -480,6 +886,68 @@ Blockly.defineBlocksWithJsonArray([
     "nextStatement": null,
     "tooltip": "Called when teleop mode starts"
   },
+  {
+    "type": "frc_teleop_periodic",
+    "message0": "teleopPeriodic %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called periodically during teleop mode"
+  },
+  {
+    "type": "frc_test_init",
+    "message0": "testInit %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called when test mode starts"
+  },
+  {
+    "type": "frc_test_periodic",
+    "message0": "testPeriodic %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called periodically during test mode"
+  },
+  {
+    "type": "frc_disabled_init",
+    "message0": "disabledInit %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called when disabled"
+  },
+  {
+    "type": "frc_disabled_periodic",
+    "message0": "disabledPeriodic %1",
+    "args0": [{
+      "type": "input_statement",
+      "name": "STATEMENTS"
+    }],
+    "colour": 200,
+    "previousStatement": null,
+    "nextStatement": null,
+    "tooltip": "Called periodically while disabled"
+  },
+  
+  // Subsystem blocks
   {
     "type": "frc_subsystem",
     "message0": "subsystem %1 initialize %2 periodic %3",
@@ -501,6 +969,59 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 120,
     "tooltip": "Defines a subsystem with initialization and periodic code"
   },
+  {
+    "type": "frc_subsystem_default_command",
+    "message0": "set default command for %1 to %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "SUBSYSTEM",
+        "check": "Subsystem"
+      },
+      {
+        "type": "input_value",
+        "name": "COMMAND",
+        "check": "Command"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Sets the default command for a subsystem"
+  },
+  {
+    "type": "frc_drivetrain",
+    "message0": "drivetrain %1 left motor %2 right motor %3 initialize %4 periodic %5",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "DriveTrain"
+      },
+      {
+        "type": "field_number",
+        "name": "LEFT_MOTOR",
+        "value": 0
+      },
+      {
+        "type": "field_number",
+        "name": "RIGHT_MOTOR",
+        "value": 1
+      },
+      {
+        "type": "input_statement",
+        "name": "INIT"
+      },
+      {
+        "type": "input_statement",
+        "name": "PERIODIC"
+      }
+    ],
+    "colour": 120,
+    "tooltip": "Defines a drivetrain subsystem"
+  },
+  
+  // Command blocks
   {
     "type": "frc_command",
     "message0": "command %1 initialize %2 execute %3 end %4 isFinished? %5",
@@ -548,16 +1069,123 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Schedule a command to run"
   },
   {
+    "type": "frc_parallel_command_group",
+    "message0": "parallel group %1 %2",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "COMMANDS",
+        "check": "Command"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Runs commands in parallel",
+    "mutator": "controls_if_mutator"
+  },
+  {
+    "type": "frc_sequential_command_group",
+    "message0": "sequential group %1 %2",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "COMMANDS",
+        "check": "Command"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Runs commands in sequence",
+    "mutator": "controls_if_mutator"
+  },
+  {
+    "type": "frc_instant_command",
+    "message0": "instant command run %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "RUN"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Command that runs once and finishes"
+  },
+  {
+    "type": "frc_wait_command",
+    "message0": "wait command %1 seconds",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "SECONDS",
+        "check": "Number"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Command that waits for a specified time"
+  },
+  {
+    "type": "frc_wait_until_command",
+    "message0": "wait until %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONDITION",
+        "check": "Boolean"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Command that waits until a condition is true"
+  },
+  {
+    "type": "frc_print_command",
+    "message0": "print command %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MESSAGE",
+        "check": "String"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Command that prints a message"
+  },
+  {
+    "type": "frc_run_end_command",
+    "message0": "run command run %1 end %2",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "RUN"
+      },
+      {
+        "type": "input_statement",
+        "name": "END"
+      }
+    ],
+    "output": "Command",
+    "colour": 60,
+    "tooltip": "Command that runs continuously with an end action"
+  },
+  
+  // Hardware blocks
+  {
     "type": "frc_motor_set",
     "message0": "set motor %1 speed to %2",
     "args0": [
       {
-        "type": "field_dropdown",
+        "type": "field_input",
         "name": "MOTOR",
-        "options": [
-          ["left", "LEFT"],
-          ["right", "RIGHT"]
-        ]
+        "text": "motor"
       },
       {
         "type": "input_value",
@@ -568,7 +1196,65 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Set the speed of the selected motor."
+    "tooltip": "Set the speed of a motor."
+  },
+  {
+    "type": "frc_motor_config",
+    "message0": "configure motor %1 channel %2 inverted %3",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "MOTOR",
+        "text": "motor"
+      },
+      {
+        "type": "input_value",
+        "name": "CHANNEL",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "INVERTED",
+        "options": [
+          ["yes", "TRUE"],
+          ["no", "FALSE"]
+        ]
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Configure a motor controller"
+  },
+  {
+    "type": "frc_encoder",
+    "message0": "encoder %1 channel A %2 channel B %3 distance per pulse %4",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "encoder"
+      },
+      {
+        "type": "input_value",
+        "name": "CHANNEL_A",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "CHANNEL_B",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "DISTANCE_PER_PULSE",
+        "check": "Number"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Configure an encoder"
   },
   {
     "type": "frc_pid_config",
@@ -582,8 +1268,380 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 120,
     "tooltip": "Configure PID constants"
   },
+  {
+    "type": "frc_pid_controller",
+    "message0": "PID controller %1 config %2 source %3 output %4",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "pid"
+      },
+      {
+        "type": "input_value",
+        "name": "CONFIG",
+        "check": "PIDConfig"
+      },
+      {
+        "type": "input_value",
+        "name": "SOURCE",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "OUTPUT",
+        "check": null
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Configure a PID controller"
+  },
+  {
+    "type": "frc_servo_set",
+    "message0": "set servo %1 position to %2",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "SERVO",
+        "text": "servo"
+      },
+      {
+        "type": "input_value",
+        "name": "POSITION",
+        "check": "Number"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Set the position of a servo"
+  },
+  {
+    "type": "frc_solenoid",
+    "message0": "set solenoid %1 channel %2 to %3",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "SOLENOID",
+        "text": "solenoid"
+      },
+      {
+        "type": "input_value",
+        "name": "CHANNEL",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "STATE",
+        "check": "Boolean"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Set the state of a solenoid"
+  },
+  {
+    "type": "frc_compressor",
+    "message0": "compressor module %1 enable %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "MODULE",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "ENABLE",
+        "options": [
+          ["on", "TRUE"],
+          ["off", "FALSE"]
+        ]
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Configure the compressor"
+  },
+  {
+    "type": "frc_joystick_button",
+    "message0": "joystick %1 button %2 when %3 run %4",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "JOYSTICK",
+        "options": [
+          ["1", "1"],
+          ["2", "2"],
+          ["3", "3"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "BUTTON",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "WHEN",
+        "options": [
+          ["pressed", "WHEN_PRESSED"],
+          ["released", "WHEN_RELEASED"],
+          ["held", "WHEN_HELD"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "COMMAND",
+        "check": "Command"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Bind a command to a joystick button"
+  },
+  {
+    "type": "frc_joystick_axis",
+    "message0": "joystick %1 axis %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "JOYSTICK",
+        "options": [
+          ["1", "1"],
+          ["2", "2"],
+          ["3", "3"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "AXIS",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Get the value of a joystick axis"
+  },
+  {
+    "type": "frc_limit_switch",
+    "message0": "limit switch channel %1 inverted %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CHANNEL",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "INVERTED",
+        "options": [
+          ["yes", "TRUE"],
+          ["no", "FALSE"]
+        ]
+      }
+    ],
+    "output": "Boolean",
+    "colour": 230,
+    "tooltip": "Get the state of a limit switch"
+  },
+  {
+    "type": "frc_ultrasonic",
+    "message0": "ultrasonic channel %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CHANNEL",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Get distance from ultrasonic sensor in cm"
+  },
+  {
+    "type": "frc_gyro",
+    "message0": "gyro type %1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "TYPE",
+        "options": [
+          ["ADXRS450", "ADXRS450"],
+          ["NavX", "NAVX"]
+        ]
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Get angle from gyro"
+  },
+  {
+    "type": "frc_accelerometer",
+    "message0": "accelerometer axis %1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "AXIS",
+        "options": [
+          ["X", "X"],
+          ["Y", "Y"],
+          ["Z", "Z"]
+        ]
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Get accelerometer value"
+  },
   
-  // Logic Blocks
+  // Control blocks with proper layout
+  {
+    "type": "frc_controls_if",
+    "message0": "if %1 then %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "IF0",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO0"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 210,
+    "tooltip": "If a condition is true, then do some statements."
+  },
+  {
+    "type": "frc_controls_ifelse",
+    "message0": "if %1 then %2 else %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "IF0",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO0"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO1"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 210,
+    "tooltip": "If a condition is true, then do some statements, otherwise do other statements."
+  },
+  {
+    "type": "frc_controls_repeat_ext",
+    "message0": "repeat %1 times %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TIMES",
+        "check": "Number"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Repeat the enclosed blocks a specified number of times."
+  },
+  {
+    "type": "frc_controls_while",
+    "message0": "while %1 do %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONDITION",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Repeat the enclosed blocks while a condition is true."
+  },
+  {
+    "type": "frc_controls_for",
+    "message0": "for %1 from %2 to %3 by %4 do %5",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "i"
+      },
+      {
+        "type": "input_value",
+        "name": "FROM",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "TO",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "BY",
+        "check": "Number"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Repeat the enclosed blocks with a counter."
+  },
+  {
+    "type": "frc_controls_switch",
+    "message0": "switch %1 %2 cases %3 default %4",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE",
+        "check": null
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "CASES"
+      },
+      {
+        "type": "input_statement",
+        "name": "DEFAULT"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Execute different blocks depending on a value."
+  },
+  
+  // Logic blocks
   {
     "type": "frc_logic_compare",
     "message0": "%1 %2 %3",
@@ -613,25 +1671,6 @@ Blockly.defineBlocksWithJsonArray([
     "output": "Boolean",
     "colour": 210,
     "tooltip": "Compare two values"
-  },
-  {
-    "type": "frc_controls_if",
-    "message0": "if %1 then %2",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "IF0",
-        "check": "Boolean"
-      },
-      {
-        "type": "input_statement",
-        "name": "DO0"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 210,
-    "tooltip": "If a condition is true, then do some statements."
   },
   {
     "type": "frc_logic_boolean",
@@ -692,48 +1731,37 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 210,
     "tooltip": "Negates a boolean value"
   },
-  
-  // Loop Blocks
   {
-    "type": "frc_controls_repeat_ext",
-    "message0": "repeat %1 times %2",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "TIMES",
-        "check": "Number"
-      },
-      {
-        "type": "input_statement",
-        "name": "DO"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Repeat the enclosed blocks a specified number of times."
+    "type": "frc_logic_null",
+    "message0": "null",
+    "output": null,
+    "colour": 210,
+    "tooltip": "Returns null"
   },
   {
-    "type": "frc_controls_while",
-    "message0": "while %1 do %2",
+    "type": "frc_logic_ternary",
+    "message0": "test %1 if true %2 if false %3",
     "args0": [
       {
         "type": "input_value",
-        "name": "CONDITION",
+        "name": "TEST",
         "check": "Boolean"
       },
       {
-        "type": "input_statement",
-        "name": "DO"
+        "type": "input_value",
+        "name": "IF_TRUE"
+      },
+      {
+        "type": "input_value",
+        "name": "IF_FALSE"
       }
     ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Repeat the enclosed blocks while a condition is true."
+    "output": null,
+    "colour": 210,
+    "tooltip": "Returns one of two values based on a condition"
   },
   
-  // Math Blocks
+  // Math blocks
   {
     "type": "frc_math_number",
     "message0": "%1",
@@ -780,6 +1808,80 @@ Blockly.defineBlocksWithJsonArray([
     "tooltip": "Basic arithmetic operations"
   },
   {
+    "type": "frc_math_single",
+    "message0": "%1 %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["√", "ROOT"],
+          ["abs", "ABS"],
+          ["-", "NEG"],
+          ["ln", "LN"],
+          ["log10", "LOG10"],
+          ["e^", "EXP"],
+          ["10^", "POW10"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Advanced math operations"
+  },
+  {
+    "type": "frc_math_trig",
+    "message0": "%1 %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["sin", "SIN"],
+          ["cos", "COS"],
+          ["tan", "TAN"],
+          ["asin", "ASIN"],
+          ["acos", "ACOS"],
+          ["atan", "ATAN"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Trigonometric functions"
+  },
+  {
+    "type": "frc_math_constant",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "CONSTANT",
+        "options": [
+          ["π", "PI"],
+          ["e", "E"],
+          ["φ", "GOLDEN_RATIO"],
+          ["√2", "SQRT2"],
+          ["√½", "SQRT1_2"],
+          ["∞", "INFINITY"]
+        ]
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Mathematical constants"
+  },
+  {
     "type": "frc_math_random_int",
     "message0": "random integer from %1 to %2",
     "args0": [
@@ -800,8 +1902,115 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 230,
     "tooltip": "Returns a random integer between the two specified numbers"
   },
+  {
+    "type": "frc_math_random_float",
+    "message0": "random float",
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Returns a random float between 0 and 1"
+  },
+  {
+    "type": "frc_math_round",
+    "message0": "round %1 %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["round", "ROUND"],
+          ["round up", "CEIL"],
+          ["round down", "FLOOR"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Rounding functions"
+  },
+  {
+    "type": "frc_math_modulo",
+    "message0": "remainder of %1 ÷ %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "DIVIDEND",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "DIVISOR",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Returns the remainder after division"
+  },
+  {
+    "type": "frc_math_constrain",
+    "message0": "constrain %1 low %2 high %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "LOW",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "HIGH",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Constrain a number between two values"
+  },
+  {
+    "type": "frc_math_map",
+    "message0": "map %1 from %2 %3 to %4 %5",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "VALUE",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "FROM_LOW",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "FROM_HIGH",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "TO_LOW",
+        "check": "Number"
+      },
+      {
+        "type": "input_value",
+        "name": "TO_HIGH",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Map a number from one range to another"
+  },
   
-  // Text Blocks
+  // Text blocks
   {
     "type": "frc_text",
     "message0": "%1",
@@ -830,6 +2039,169 @@ Blockly.defineBlocksWithJsonArray([
     "nextStatement": null,
     "colour": 160,
     "tooltip": "Print text to the console"
+  },
+  {
+    "type": "frc_text_join",
+    "message0": "join %1 %2",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "ITEMS"
+      }
+    ],
+    "output": "String",
+    "colour": 160,
+    "tooltip": "Join multiple strings together",
+    "mutator": "controls_if_mutator"
+  },
+  {
+    "type": "frc_text_length",
+    "message0": "length of %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TEXT",
+        "check": "String"
+      }
+    ],
+    "output": "Number",
+    "colour": 160,
+    "tooltip": "Returns the length of a string"
+  },
+  {
+    "type": "frc_text_isEmpty",
+    "message0": "%1 is empty",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TEXT",
+        "check": "String"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 160,
+    "tooltip": "Returns true if the string is empty"
+  },
+  
+  // Variables and functions (using standard Blockly blocks)
+  {
+    "type": "variables_get",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "item"
+      }
+    ],
+    "output": null,
+    "colour": 330,
+    "tooltip": "Returns the value of this variable"
+  },
+  {
+    "type": "variables_set",
+    "message0": "set %1 to %2",
+    "args0": [
+      {
+        "type": "field_variable",
+        "name": "VAR",
+        "variable": "item"
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 330,
+    "tooltip": "Sets this variable to be equal to the input"
+  },
+  {
+    "type": "procedures_defnoreturn",
+    "message0": "function %1 %2 %3",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "do something"
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "STACK"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 290,
+    "tooltip": "A function with no return value"
+  },
+  {
+    "type": "procedures_defreturn",
+    "message0": "function %1 %2 %3 return %4",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "calculate"
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_statement",
+        "name": "STACK"
+      },
+      {
+        "type": "input_value",
+        "name": "RETURN"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 290,
+    "tooltip": "A function with a return value"
+  },
+  {
+    "type": "procedures_callnoreturn",
+    "message0": "call %1 %2",
+    "args0": [
+      {
+        "type": "field_label",
+        "name": "NAME",
+        "text": "do something"
+      },
+      {
+        "type": "input_dummy"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 290,
+    "tooltip": "Call a function with no return value"
+  },
+  {
+    "type": "procedures_callreturn",
+    "message0": "call %1 %2",
+    "args0": [
+      {
+        "type": "field_label",
+        "name": "NAME",
+        "text": "calculate"
+      },
+      {
+        "type": "input_dummy"
+      }
+    ],
+    "output": null,
+    "colour": 290,
+    "tooltip": "Call a function with a return value"
   }
 ]);
 
@@ -838,14 +2210,48 @@ const tabPresets = {
   robot: `<xml xmlns="https://developers.google.com/blockly/xml">
     <block type="frc_robot_init" x="50" y="50"></block>
     <block type="frc_robot_periodic" x="50" y="150"></block>
-    <block type="frc_autonomous_init" x="50" y="250"></block>
-    <block type="frc_teleop_init" x="50" y="350"></block>
+    <block type="frc_robot_simulation_init" x="50" y="250"></block>
+    <block type="frc_robot_simulation_periodic" x="50" y="350"></block>
+    <block type="frc_autonomous_init" x="50" y="450"></block>
+    <block type="frc_autonomous_periodic" x="50" y="550"></block>
+    <block type="frc_teleop_init" x="50" y="650"></block>
+    <block type="frc_teleop_periodic" x="50" y="750"></block>
+    <block type="frc_test_init" x="50" y="850"></block>
+    <block type="frc_test_periodic" x="50" y="950"></block>
+    <block type="frc_disabled_init" x="50" y="1050"></block>
+    <block type="frc_disabled_periodic" x="50" y="1150"></block>
   </xml>`,
+  
   robotContainer: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="frc_subsystem" x="50" y="50">
-      <field name="NAME">ExampleSubsystem</field>
+    <block type="frc_drivetrain" x="50" y="50">
+      <field name="NAME">DriveTrain</field>
+      <field name="LEFT_MOTOR">0</field>
+      <field name="RIGHT_MOTOR">1</field>
     </block>
-    <block type="frc_command" x="50" y="150">
+    <block type="frc_command" x="50" y="200">
+      <field name="NAME">DriveCommand</field>
+      <value name="FINISHED">
+        <block type="frc_logic_boolean">
+          <field name="BOOL">FALSE</field>
+        </block>
+      </value>
+    </block>
+    <block type="frc_subsystem_default_command" x="50" y="350">
+      <value name="SUBSYSTEM">
+        <block type="variables_get">
+          <field name="VAR">driveTrain</field>
+        </block>
+      </value>
+      <value name="COMMAND">
+        <block type="variables_get">
+          <field name="VAR">driveCommand</field>
+        </block>
+      </value>
+    </block>
+  </xml>`,
+  
+  command: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_command" x="50" y="50">
       <field name="NAME">ExampleCommand</field>
       <value name="FINISHED">
         <block type="frc_logic_boolean">
@@ -854,30 +2260,72 @@ const tabPresets = {
       </value>
     </block>
   </xml>`,
+  
+  subsystem: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_subsystem" x="50" y="50">
+      <field name="NAME">ExampleSubsystem</field>
+    </block>
+  </xml>`,
+  
+  constants: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="variables_set" x="50" y="50">
+      <field name="VAR">kDriveMotorPort</field>
+      <value name="VALUE">
+        <block type="frc_math_number">
+          <field name="NUM">0</field>
+        </block>
+      </value>
+    </block>
+    <block type="variables_set" x="50" y="100">
+      <field name="VAR">kArmMotorPort</field>
+      <value name="VALUE">
+        <block type="frc_math_number">
+          <field name="NUM">1</field>
+        </block>
+      </value>
+    </block>
+  </xml>`,
+  
+  auto: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_sequential_command_group" x="50" y="50">
+      <statement name="COMMANDS">
+        <block type="frc_run_command">
+          <value name="COMMAND">
+            <block type="variables_get">
+              <field name="VAR">driveCommand</field>
+            </block>
+          </value>
+        </block>
+        <block type="frc_wait_command">
+          <value name="SECONDS">
+            <block type="frc_math_number">
+              <field name="NUM">2</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+  </xml>`,
+  
+  test: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_text_print" x="50" y="50">
+      <value name="TEXT">
+        <block type="frc_text">
+          <field name="TEXT">Running tests...</field>
+        </block>
+      </value>
+    </block>
+  </xml>`,
+  
   credits: `<xml xmlns="https://developers.google.com/blockly/xml">
     <block type="frc_text_print" x="50" y="50">
       <value name="TEXT">
-        <shadow type="frc_text">
+        <block type="frc_text">
           <field name="TEXT">FRC Blockly IDE</field>
-        </shadow>
+        </block>
       </value>
     </block>
-  </xml>`,
-  command: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="frc_controls_repeat_ext" x="50" y="50">
-      <value name="TIMES">
-        <shadow type="frc_math_number">
-          <field name="NUM">10</field>
-        </shadow>
-      </value>
-    </block>
-  </xml>`,
-  subsystem: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="frc_math_number" x="50" y="50">
-      <field name="NUM">123</field>
-    </block>
-  </xml>`,
-  robotJava: `<xml xmlns="https://developers.google.com/blockly/xml"></xml>`
+  </xml>`
 };
 
 // Main application
@@ -887,6 +2335,7 @@ const tabTypeSelector = document.getElementById('tabTypeSelector');
 const addTabBtn = document.getElementById('addTabBtn');
 const downloadJavaBtn = document.getElementById('downloadJavaBtn');
 const copyCodeBtn = document.getElementById('copyCodeBtn');
+const downloadAllBtn = document.getElementById('downloadAllBtn');
 const openCreditsBtn = document.getElementById('openCredits');
 const outputArea = document.getElementById('output');
 
@@ -896,31 +2345,102 @@ let activeTabId = null;
 let tabCounter = 0;
 
 const coreTabs = [
-  { id: 'robot', title: 'Robot', type: 'robot', removable: false },
-  { id: 'robotContainer', title: 'Robot Container', type: 'robotContainer', removable: false },
+  { id: 'robot', title: 'Robot.java', type: 'robot', removable: false },
+  { id: 'robotContainer', title: 'RobotContainer.java', type: 'robotContainer', removable: false },
+  { id: 'constants', title: 'Constants.java', type: 'constants', removable: false },
   { id: 'credits', title: 'Credits', type: 'credits', removable: false }
 ];
 
-function generateJavaCode() {
-  if (!activeTabId) return '';
-  const ws = workspaces[activeTabId];
+function generateJavaCode(tabId) {
+  if (!tabId) tabId = activeTabId;
+  if (!tabId) return '';
+  const ws = workspaces[tabId];
   if (!ws) return '';
   
   try {
-    // Generate base structure
-    let code = 
-      `package frc.robot;\n\n` +
-      `import edu.wpi.first.wpilibj.TimedRobot;\n` +
-      `import edu.wpi.first.wpilibj2.command.Command;\n` +
-      `import edu.wpi.first.wpilibj2.command.CommandScheduler;\n` +
-      `import edu.wpi.first.wpilibj2.command.SubsystemBase;\n` +
-      `import edu.wpi.first.wpilibj.motorcontrol.MotorController;\n` +
-      `import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;\n\n` +
-      `public class Robot extends TimedRobot {\n`;
+    let code = '';
+    const tab = tabs.find(t => t.id === tabId);
     
-    // Generate code from workspace
-    code += Blockly.FRCJava.workspaceToCode(ws);
-    code += `}\n`;
+    if (tab.type === 'robot') {
+      code = 
+        `package frc.robot;\n\n` +
+        `import edu.wpi.first.wpilibj.TimedRobot;\n` +
+        `import edu.wpi.first.wpilibj2.command.Command;\n` +
+        `import edu.wpi.first.wpilibj2.command.CommandScheduler;\n\n` +
+        `public class Robot extends TimedRobot {\n` +
+        `  private Command autonomousCommand;\n\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `}\n`;
+    }
+    else if (tab.type === 'robotContainer') {
+      code = 
+        `package frc.robot;\n\n` +
+        `import edu.wpi.first.wpilibj2.command.Command;\n` +
+        `import edu.wpi.first.wpilibj2.command.button.JoystickButton;\n` +
+        `import edu.wpi.first.wpilibj.Joystick;\n` +
+        `import frc.robot.commands.*;\n` +
+        `import frc.robot.subsystems.*;\n\n` +
+        `public class RobotContainer {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `}\n`;
+    }
+    else if (tab.type === 'constants') {
+      code = 
+        `package frc.robot;\n\n` +
+        `public final class Constants {\n` +
+        `  public static class DriveConstants {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `  }\n\n` +
+        `  public static class ArmConstants {\n` +
+        `    // Add arm constants here\n` +
+        `  }\n\n` +
+        `  public static class OIConstants {\n` +
+        `    public static final int kDriverControllerPort = 0;\n` +
+        `  }\n` +
+        `}\n`;
+    }
+    else if (tab.type === 'command') {
+      const className = tab.title.replace(/\s+\d+$/, '') || 'ExampleCommand';
+      code = 
+        `package frc.robot.commands;\n\n` +
+        `import edu.wpi.first.wpilibj2.command.CommandBase;\n` +
+        `import frc.robot.subsystems.*;\n\n` +
+        `public class ${className} extends CommandBase {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `}\n`;
+    }
+    else if (tab.type === 'subsystem') {
+      const className = tab.title.replace(/\s+\d+$/, '') || 'ExampleSubsystem';
+      code = 
+        `package frc.robot.subsystems;\n\n` +
+        `import edu.wpi.first.wpilibj2.command.SubsystemBase;\n\n` +
+        `public class ${className} extends SubsystemBase {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `}\n`;
+    }
+    else if (tab.type === 'auto') {
+      code = 
+        `package frc.robot.autonomous;\n\n` +
+        `import edu.wpi.first.wpilibj2.command.Command;\n` +
+        `import edu.wpi.first.wpilibj2.command.CommandBase;\n` +
+        `import frc.robot.subsystems.*;\n\n` +
+        `public class AutonomousRoutines {\n` +
+        `  public static Command getExampleAuto() {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `  }\n` +
+        `}\n`;
+    }
+    else if (tab.type === 'test') {
+      code = 
+        `package frc.robot;\n\n` +
+        `import edu.wpi.first.wpilibj.TimedRobot;\n\n` +
+        `public class TestMode extends TimedRobot {\n` +
+        Blockly.FRCJava.workspaceToCode(ws) +
+        `}\n`;
+    }
+    else {
+      code = Blockly.FRCJava.workspaceToCode(ws);
+    }
     
     return code || '// No code generated';
   } catch (e) {
@@ -934,18 +2454,48 @@ function updateOutput() {
 }
 
 function downloadJavaFile() {
+  const tab = tabs.find(t => t.id === activeTabId);
+  if (!tab) return;
+  
   const code = generateJavaCode();
   if (!code) return;
+  
+  let filename = tab.title;
+  if (!filename.endsWith('.java')) {
+    filename += '.java';
+  }
   
   const blob = new Blob([code], { type: 'text/x-java-source' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'Robot.java';
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+function downloadAllFiles() {
+  tabs.forEach(tab => {
+    const code = generateJavaCode(tab.id);
+    if (!code) return;
+    
+    let filename = tab.title;
+    if (!filename.endsWith('.java')) {
+      filename += '.java';
+    }
+    
+    const blob = new Blob([code], { type: 'text/x-java-source' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
 }
 
 function copyCodeToClipboard() {
@@ -1088,7 +2638,19 @@ function addTab() {
   const type = tabTypeSelector.value;
   tabCounter++;
   const id = type + '_' + tabCounter;
-  const title = type.charAt(0).toUpperCase() + type.slice(1) + ' ' + tabCounter;
+  let title = type.charAt(0).toUpperCase() + type.slice(1);
+  
+  // Special naming for certain tab types
+  if (type === 'command') {
+    title = 'Command' + (tabCounter > 1 ? ' ' + tabCounter : '');
+  } else if (type === 'subsystem') {
+    title = 'Subsystem' + (tabCounter > 1 ? ' ' + tabCounter : '');
+  } else if (type === 'auto') {
+    title = 'Autonomous' + (tabCounter > 1 ? ' ' + tabCounter : '');
+  } else {
+    title += ' ' + tabCounter;
+  }
+  
   const tab = { id, title, type, removable: true };
   tabs.push(tab);
   renderTabs();
@@ -1129,6 +2691,7 @@ function init() {
 addTabBtn.addEventListener('click', addTab);
 downloadJavaBtn.addEventListener('click', downloadJavaFile);
 copyCodeBtn.addEventListener('click', copyCodeToClipboard);
+downloadAllBtn.addEventListener('click', downloadAllFiles);
 openCreditsBtn.addEventListener('click', () => switchTab('credits'));
 
 // Initialize when Blockly is ready

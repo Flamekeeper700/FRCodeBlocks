@@ -13,14 +13,6 @@
   <script src="https://unpkg.com/blockly@8.0.0/javascript_compressed.js"></script>
   <script src="https://unpkg.com/blockly@8.0.0/xml_compressed.js"></script>
   
-  <!-- Blockly Messages -->
-  <script src="https://unpkg.com/blockly@8.0.0/msg/en.js"></script>
-  <script src="https://unpkg.com/blockly@8.0.0/blocks/msg/en.js"></script>
-  <script src="https://unpkg.com/blockly@8.0.0/msg/en/math.js"></script>
-  <script src="https://unpkg.com/blockly@8.0.0/msg/en/logic.js"></script>
-  <script src="https://unpkg.com/blockly@8.0.0/msg/en/loops.js"></script>
-  <script src="https://unpkg.com/blockly@8.0.0/msg/en/text.js"></script>
-  
   <style>
     body {
       font-family: sans-serif;
@@ -136,19 +128,23 @@
         <block type="frc_pid_config"></block>
       </category>
       <category name="Logic" colour="#5C81A6">
-        <block type="controls_if"></block>
-        <block type="logic_compare"></block>
+        <block type="frc_logic_compare"></block>
+        <block type="frc_logic_boolean"></block>
+        <block type="frc_logic_operation"></block>
+        <block type="frc_logic_negate"></block>
       </category>
       <category name="Loops" colour="#5CA65C">
-        <block type="controls_repeat_ext"></block>
+        <block type="frc_controls_repeat_ext"></block>
+        <block type="frc_controls_while"></block>
       </category>
       <category name="Math" colour="#5C68A6">
-        <block type="math_number"></block>
-        <block type="math_arithmetic"></block>
+        <block type="frc_math_number"></block>
+        <block type="frc_math_arithmetic"></block>
+        <block type="frc_math_random_int"></block>
       </category>
       <category name="Text" colour="#5CA68D">
-        <block type="text"></block>
-        <block type="text_print"></block>
+        <block type="frc_text"></block>
+        <block type="frc_text_print"></block>
       </category>
     </xml>
   </div>
@@ -162,7 +158,8 @@
     <option value="robotJava">Robot.java</option>
   </select>
   <button id="addTabBtn">Add Tab</button>
-  <button id="generateJava">Generate Java</button>
+  <button id="downloadJavaBtn">Download .java</button>
+  <button id="copyCodeBtn">Copy Text</button>
   <button id="openCredits">Credits</button>
 </div>
 
@@ -337,23 +334,23 @@ Blockly.FRCJava['frc_pid_config'] = function(block) {
   return [`new PIDConfig(${p}, ${i}, ${d})`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-// Define standard block generators
-Blockly.FRCJava['text_print'] = function(block) {
+// Custom generators for standard blocks
+Blockly.FRCJava['frc_text_print'] = function(block) {
   const msg = Blockly.FRCJava.valueToCode(block, 'TEXT', Blockly.FRCJava.ORDER_ATOMIC) || '""';
   return `System.out.println(${msg});\n`;
 };
 
-Blockly.FRCJava['text'] = function(block) {
+Blockly.FRCJava['frc_text'] = function(block) {
   const text = block.getFieldValue('TEXT') || '';
   return [`"${text.replace(/"/g, '\\"')}"`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['math_number'] = function(block) {
+Blockly.FRCJava['frc_math_number'] = function(block) {
   const num = block.getFieldValue('NUM');
   return [num, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['math_arithmetic'] = function(block) {
+Blockly.FRCJava['frc_math_arithmetic'] = function(block) {
   const OPERATORS = {
     'ADD': '+',
     'MINUS': '-',
@@ -371,13 +368,13 @@ Blockly.FRCJava['math_arithmetic'] = function(block) {
   return [`(${A} ${OPERATORS[op]} ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['controls_if'] = function(block) {
-  const condition = Blockly.FRCJava.valueToCode(block, 'IF0', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
-  const statements = Blockly.FRCJava.statementToCode(block, 'DO0');
-  return `if (${condition}) {\n${statements}}\n`;
+Blockly.FRCJava['frc_math_random_int'] = function(block) {
+  const from = Blockly.FRCJava.valueToCode(block, 'FROM', Blockly.FRCJava.ORDER_ATOMIC) || '0';
+  const to = Blockly.FRCJava.valueToCode(block, 'TO', Blockly.FRCJava.ORDER_ATOMIC) || '1';
+  return [`(int)Math.floor(Math.random() * (${to} - ${from} + 1) + ${from})`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['logic_compare'] = function(block) {
+Blockly.FRCJava['frc_logic_compare'] = function(block) {
   const OPERATORS = {
     'EQ': '==',
     'NEQ': '!=',
@@ -392,49 +389,49 @@ Blockly.FRCJava['logic_compare'] = function(block) {
   return [`(${A} ${operator} ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['controls_repeat_ext'] = function(block) {
+Blockly.FRCJava['frc_logic_boolean'] = function(block) {
+  const value = block.getFieldValue('BOOL') === 'TRUE';
+  return [value ? 'true' : 'false', Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_logic_operation'] = function(block) {
+  const OPERATORS = {
+    'AND': '&&',
+    'OR': '||'
+  };
+  const operator = OPERATORS[block.getFieldValue('OP')] || '&&';
+  const A = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  const B = Blockly.FRCJava.valueToCode(block, 'B', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  return [`(${A} ${operator} ${B})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_logic_negate'] = function(block) {
+  const value = Blockly.FRCJava.valueToCode(block, 'BOOL', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  return [`(!${value})`, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_controls_repeat_ext'] = function(block) {
   const times = Blockly.FRCJava.valueToCode(block, 'TIMES', Blockly.FRCJava.ORDER_ATOMIC) || '10';
   const statements = Blockly.FRCJava.statementToCode(block, 'DO');
   return `for (int i = 0; i < ${times}; i++) {\n${statements}}\n`;
 };
 
-// Define custom blocks
+Blockly.FRCJava['frc_controls_while'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'CONDITION', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  const statements = Blockly.FRCJava.statementToCode(block, 'DO');
+  return `while (${condition}) {\n${statements}}\n`;
+};
+
+// Simplified if block without mutator
+Blockly.FRCJava['frc_controls_if'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'IF0', Blockly.FRCJava.ORDER_ATOMIC) || 'false';
+  const statements = Blockly.FRCJava.statementToCode(block, 'DO0');
+  return `if (${condition}) {\n${statements}}\n`;
+};
+
+// Define all blocks with custom implementations
 Blockly.defineBlocksWithJsonArray([
-  {
-    "type": "frc_motor_set",
-    "message0": "set motor %1 speed to %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MOTOR",
-        "options": [
-          ["left", "LEFT"],
-          ["right", "RIGHT"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "SPEED",
-        "check": "Number"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 230,
-    "tooltip": "Set the speed of the selected motor."
-  },
-  {
-    "type": "frc_pid_config",
-    "message0": "PID config P: %1 I: %2 D: %3",
-    "args0": [
-      {"type": "input_value", "name": "P", "check": "Number"},
-      {"type": "input_value", "name": "I", "check": "Number"},
-      {"type": "input_value", "name": "D", "check": "Number"}
-    ],
-    "output": "PIDConfig",
-    "colour": 120,
-    "tooltip": "Configure PID constants"
-  },
+  // FRC Robot Blocks
   {
     "type": "frc_robot_init",
     "message0": "robotInit %1",
@@ -549,6 +546,290 @@ Blockly.defineBlocksWithJsonArray([
     "nextStatement": null,
     "colour": 60,
     "tooltip": "Schedule a command to run"
+  },
+  {
+    "type": "frc_motor_set",
+    "message0": "set motor %1 speed to %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "MOTOR",
+        "options": [
+          ["left", "LEFT"],
+          ["right", "RIGHT"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "SPEED",
+        "check": "Number"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Set the speed of the selected motor."
+  },
+  {
+    "type": "frc_pid_config",
+    "message0": "PID config P: %1 I: %2 D: %3",
+    "args0": [
+      {"type": "input_value", "name": "P", "check": "Number"},
+      {"type": "input_value", "name": "I", "check": "Number"},
+      {"type": "input_value", "name": "D", "check": "Number"}
+    ],
+    "output": "PIDConfig",
+    "colour": 120,
+    "tooltip": "Configure PID constants"
+  },
+  
+  // Logic Blocks
+  {
+    "type": "frc_logic_compare",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "A"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["=", "EQ"],
+          ["≠", "NEQ"],
+          ["<", "LT"],
+          ["≤", "LTE"],
+          [">", "GT"],
+          ["≥", "GTE"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B"
+      }
+    ],
+    "inputsInline": true,
+    "output": "Boolean",
+    "colour": 210,
+    "tooltip": "Compare two values"
+  },
+  {
+    "type": "frc_controls_if",
+    "message0": "if %1 then %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "IF0",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO0"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 210,
+    "tooltip": "If a condition is true, then do some statements."
+  },
+  {
+    "type": "frc_logic_boolean",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "BOOL",
+        "options": [
+          ["true", "TRUE"],
+          ["false", "FALSE"]
+        ]
+      }
+    ],
+    "output": "Boolean",
+    "colour": 210,
+    "tooltip": "Returns either true or false."
+  },
+  {
+    "type": "frc_logic_operation",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "A",
+        "check": "Boolean"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["and", "AND"],
+          ["or", "OR"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B",
+        "check": "Boolean"
+      }
+    ],
+    "inputsInline": true,
+    "output": "Boolean",
+    "colour": 210,
+    "tooltip": "Logical AND or OR operation"
+  },
+  {
+    "type": "frc_logic_negate",
+    "message0": "not %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "BOOL",
+        "check": "Boolean"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 210,
+    "tooltip": "Negates a boolean value"
+  },
+  
+  // Loop Blocks
+  {
+    "type": "frc_controls_repeat_ext",
+    "message0": "repeat %1 times %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TIMES",
+        "check": "Number"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Repeat the enclosed blocks a specified number of times."
+  },
+  {
+    "type": "frc_controls_while",
+    "message0": "while %1 do %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONDITION",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "DO"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Repeat the enclosed blocks while a condition is true."
+  },
+  
+  // Math Blocks
+  {
+    "type": "frc_math_number",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_number",
+        "name": "NUM",
+        "value": 0
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "A number value"
+  },
+  {
+    "type": "frc_math_arithmetic",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "A",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["+", "ADD"],
+          ["-", "MINUS"],
+          ["×", "MULTIPLY"],
+          ["÷", "DIVIDE"],
+          ["^", "POWER"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B",
+        "check": "Number"
+      }
+    ],
+    "inputsInline": true,
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Basic arithmetic operations"
+  },
+  {
+    "type": "frc_math_random_int",
+    "message0": "random integer from %1 to %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "FROM",
+        "check": "Number",
+        "align": "RIGHT"
+      },
+      {
+        "type": "input_value",
+        "name": "TO",
+        "check": "Number",
+        "align": "RIGHT"
+      }
+    ],
+    "output": "Number",
+    "colour": 230,
+    "tooltip": "Returns a random integer between the two specified numbers"
+  },
+  
+  // Text Blocks
+  {
+    "type": "frc_text",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "TEXT",
+        "text": ""
+      }
+    ],
+    "output": "String",
+    "colour": 160,
+    "tooltip": "A text string"
+  },
+  {
+    "type": "frc_text_print",
+    "message0": "print %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "TEXT",
+        "check": "String"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 160,
+    "tooltip": "Print text to the console"
   }
 ]);
 
@@ -567,32 +848,32 @@ const tabPresets = {
     <block type="frc_command" x="50" y="150">
       <field name="NAME">ExampleCommand</field>
       <value name="FINISHED">
-        <block type="logic_boolean">
+        <block type="frc_logic_boolean">
           <field name="BOOL">FALSE</field>
         </block>
       </value>
     </block>
   </xml>`,
   credits: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="text_print" x="50" y="50">
+    <block type="frc_text_print" x="50" y="50">
       <value name="TEXT">
-        <shadow type="text">
+        <shadow type="frc_text">
           <field name="TEXT">FRC Blockly IDE</field>
         </shadow>
       </value>
     </block>
   </xml>`,
   command: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="controls_repeat_ext" x="50" y="50">
+    <block type="frc_controls_repeat_ext" x="50" y="50">
       <value name="TIMES">
-        <shadow type="math_number">
+        <shadow type="frc_math_number">
           <field name="NUM">10</field>
         </shadow>
       </value>
     </block>
   </xml>`,
   subsystem: `<xml xmlns="https://developers.google.com/blockly/xml">
-    <block type="math_number" x="50" y="50">
+    <block type="frc_math_number" x="50" y="50">
       <field name="NUM">123</field>
     </block>
   </xml>`,
@@ -604,7 +885,8 @@ const workspaceContainer = document.getElementById('workspaceContainer');
 const tabsContainer = document.getElementById('tabs');
 const tabTypeSelector = document.getElementById('tabTypeSelector');
 const addTabBtn = document.getElementById('addTabBtn');
-const generateJavaBtn = document.getElementById('generateJava');
+const downloadJavaBtn = document.getElementById('downloadJavaBtn');
+const copyCodeBtn = document.getElementById('copyCodeBtn');
 const openCreditsBtn = document.getElementById('openCredits');
 const outputArea = document.getElementById('output');
 
@@ -618,6 +900,69 @@ const coreTabs = [
   { id: 'robotContainer', title: 'Robot Container', type: 'robotContainer', removable: false },
   { id: 'credits', title: 'Credits', type: 'credits', removable: false }
 ];
+
+function generateJavaCode() {
+  if (!activeTabId) return '';
+  const ws = workspaces[activeTabId];
+  if (!ws) return '';
+  
+  try {
+    // Generate base structure
+    let code = 
+      `package frc.robot;\n\n` +
+      `import edu.wpi.first.wpilibj.TimedRobot;\n` +
+      `import edu.wpi.first.wpilibj2.command.Command;\n` +
+      `import edu.wpi.first.wpilibj2.command.CommandScheduler;\n` +
+      `import edu.wpi.first.wpilibj2.command.SubsystemBase;\n` +
+      `import edu.wpi.first.wpilibj.motorcontrol.MotorController;\n` +
+      `import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;\n\n` +
+      `public class Robot extends TimedRobot {\n`;
+    
+    // Generate code from workspace
+    code += Blockly.FRCJava.workspaceToCode(ws);
+    code += `}\n`;
+    
+    return code || '// No code generated';
+  } catch (e) {
+    console.error('Code generation error:', e);
+    return '// Error generating code:\n' + e;
+  }
+}
+
+function updateOutput() {
+  outputArea.textContent = generateJavaCode();
+}
+
+function downloadJavaFile() {
+  const code = generateJavaCode();
+  if (!code) return;
+  
+  const blob = new Blob([code], { type: 'text/x-java-source' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Robot.java';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function copyCodeToClipboard() {
+  const code = generateJavaCode();
+  if (!code) return;
+  
+  navigator.clipboard.writeText(code).then(() => {
+    const originalText = copyCodeBtn.textContent;
+    copyCodeBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      copyCodeBtn.textContent = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy text: ', err);
+    outputArea.textContent = 'Failed to copy text to clipboard';
+  });
+}
 
 function createTabElement(tab) {
   const btn = document.createElement('button');
@@ -677,6 +1022,13 @@ function createWorkspace(tab) {
   // Store the workspace
   workspaces[tab.id] = workspace;
 
+  // Add change listener for real-time updates
+  workspace.addChangeListener(() => {
+    if (activeTabId === tab.id) {
+      updateOutput();
+    }
+  });
+
   // Load preset if available
   const presetXml = tabPresets[tab.type];
   if (presetXml) {
@@ -726,11 +1078,10 @@ function switchTab(tabId) {
       setTimeout(() => {
         Blockly.svgResize(workspaces[tab.id]);
         workspaces[tab.id].render();
+        updateOutput();
       }, 10);
     }
   });
-
-  outputArea.textContent = '';
 }
 
 function addTab() {
@@ -767,33 +1118,6 @@ function removeTab(tabId) {
   renderTabs();
 }
 
-function generateJava() {
-  if (!activeTabId) return;
-  const ws = workspaces[activeTabId];
-  if (!ws) return;
-  try {
-    // Generate base structure
-    let code = 
-      `package frc.robot;\n\n` +
-      `import edu.wpi.first.wpilibj.TimedRobot;\n` +
-      `import edu.wpi.first.wpilibj2.command.Command;\n` +
-      `import edu.wpi.first.wpilibj2.command.CommandScheduler;\n` +
-      `import edu.wpi.first.wpilibj2.command.SubsystemBase;\n` +
-      `import edu.wpi.first.wpilibj.motorcontrol.MotorController;\n` +
-      `import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;\n\n` +
-      `public class Robot extends TimedRobot {\n`;
-    
-    // Generate code from workspace
-    code += Blockly.FRCJava.workspaceToCode(ws);
-    code += `}\n`;
-    
-    outputArea.textContent = code || '// No code generated';
-  } catch (e) {
-    console.error('Code generation error:', e);
-    outputArea.textContent = '// Error generating code:\n' + e;
-  }
-}
-
 function init() {
   coreTabs.forEach(tab => tabs.push(tab));
   renderTabs();
@@ -803,7 +1127,8 @@ function init() {
 
 // Event listeners
 addTabBtn.addEventListener('click', addTab);
-generateJavaBtn.addEventListener('click', generateJava);
+downloadJavaBtn.addEventListener('click', downloadJavaFile);
+copyCodeBtn.addEventListener('click', copyCodeToClipboard);
 openCreditsBtn.addEventListener('click', () => switchTab('credits'));
 
 // Initialize when Blockly is ready

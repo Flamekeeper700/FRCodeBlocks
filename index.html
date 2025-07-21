@@ -13,6 +13,10 @@
   <script src="https://unpkg.com/blockly@8.0.0/javascript_compressed.js"></script>
   <script src="https://unpkg.com/blockly@8.0.0/xml_compressed.js"></script>
   
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  
   <style>
     body {
       font-family: sans-serif;
@@ -21,7 +25,45 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      background-color: #f5f5f5;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
     }
+    
+    body.dark-mode {
+      background-color: #222;
+      color: #eee;
+    }
+    
+    body.dark-mode #tabs {
+      background: #333;
+      border-bottom-color: #444;
+    }
+    
+    body.dark-mode #tabs button.active {
+      background: #444;
+      border-bottom-color: #0066cc;
+    }
+    
+    body.dark-mode #tabs button .close-btn:hover {
+      color: #ff6666;
+    }
+    
+    body.dark-mode #toolboxContainer {
+      background: #333;
+      border-right-color: #444;
+    }
+    
+    body.dark-mode #controls {
+      background: #444;
+    }
+    
+    body.dark-mode #output {
+      background: #000;
+      color: #0f0;
+      border-top-color: #444;
+    }
+    
     #tabs {
       display: flex;
       border-bottom: 1px solid #ccc;
@@ -103,6 +145,82 @@
     .blocklyTreeRow {
       margin-bottom: 4px;
       border-radius: 4px;
+    }
+    
+    /* Zoom controls */
+    .zoom-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .zoom-controls button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid #ccc;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .zoom-controls button:hover {
+      background: #f0f0f0;
+    }
+    
+    /* Help modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      width: 90%;
+    }
+    
+    body.dark-mode .modal-content {
+      background: #333;
+      color: #eee;
+    }
+    
+    .modal h2 {
+      margin-top: 0;
+      color: #0066cc;
+    }
+    
+    .close-modal {
+      float: right;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+    
+    /* Sample projects dropdown */
+    #sampleProjects {
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -218,9 +336,20 @@
         <block type="procedures_callnoreturn"></block>
         <block type="procedures_callreturn"></block>
       </category>
+      
+      <category name="Comments" colour="#999999">
+        <block type="frc_comment"></block>
+      </category>
     </xml>
   </div>
   <div id="workspaceContainer"></div>
+  
+  <!-- Zoom controls -->
+  <div class="zoom-controls">
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">-</button>
+    <button id="zoomReset">1:1</button>
+  </div>
 </div>
 
 <div id="controls">
@@ -237,10 +366,56 @@
   <button id="downloadJavaBtn">Download .java</button>
   <button id="copyCodeBtn">Copy Text</button>
   <button id="downloadAllBtn">Download All</button>
+  <button id="saveProjectBtn">Save Project</button>
+  <button id="loadProjectBtn">Load Project</button>
+  <button id="darkModeToggle">Dark Mode</button>
+  <button id="helpBtn">Help</button>
+  
+  <select id="sampleProjects">
+    <option value="">Load Sample...</option>
+    <option value="tankDrive">Tank Drive</option>
+    <option value="arcadeDrive">Arcade Drive</option>
+    <option value="autoRoutine">Basic Auto Routine</option>
+    <option value="armControl">Arm Control</option>
+  </select>
+  
   <button id="openCredits">Credits</button>
 </div>
 
 <pre id="output">// Your generated Java code will appear here</pre>
+
+<!-- Help Modal -->
+<div id="helpModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>FRC Blockly IDE Help</h2>
+    
+    <h3>Getting Started</h3>
+    <p>Drag blocks from the toolbox on the left onto the workspace to build your robot code. Connect blocks together to create programs.</p>
+    
+    <h3>Basic Concepts</h3>
+    <ul>
+      <li><strong>Robot.java</strong>: Contains the main robot lifecycle methods</li>
+      <li><strong>RobotContainer.java</strong>: Where you configure subsystems and commands</li>
+      <li><strong>Subsystems</strong>: Represent physical parts of your robot</li>
+      <li><strong>Commands</strong>: Actions your robot can perform</li>
+    </ul>
+    
+    <h3>Common Patterns</h3>
+    <h4>Drivetrain</h4>
+    <p>Create a drivetrain subsystem with motor controllers, then create commands to control it.</p>
+    
+    <h4>Autonomous</h4>
+    <p>Use sequential command groups to create autonomous routines.</p>
+    
+    <h3>Tips</h3>
+    <ul>
+      <li>Right-click on blocks for more options</li>
+      <li>Use comments to document your code</li>
+      <li>Try the sample projects to see working examples</li>
+    </ul>
+  </div>
+</div>
 
 <script>
 // Initialize the FRC Java generator with all required methods
@@ -799,6 +974,12 @@ Blockly.FRCJava['frc_controls_switch'] = function(block) {
   return `switch (${value}) {\n${cases}\ndefault:\n${defaultCase}}\n`;
 };
 
+// Comment block
+Blockly.FRCJava['frc_comment'] = function(block) {
+  const comment = block.getFieldValue('COMMENT') || '';
+  return `// ${comment.replace(/\n/g, '\n// ')}\n`;
+};
+
 // Define all blocks with custom implementations
 Blockly.defineBlocksWithJsonArray([
   // Robot lifecycle blocks
@@ -812,7 +993,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 160,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when the robot first starts up"
+    "tooltip": "Called when the robot first starts up\nOverride this method for one-time initialization"
   },
   {
     "type": "frc_robot_periodic",
@@ -824,7 +1005,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 160,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically during all robot modes"
+    "tooltip": "Called periodically during all robot modes\nOverride this method for code that runs every loop"
   },
   {
     "type": "frc_robot_simulation_init",
@@ -836,7 +1017,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 160,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when simulation starts"
+    "tooltip": "Called when simulation starts\nOverride this method for simulation-specific initialization"
   },
   {
     "type": "frc_robot_simulation_periodic",
@@ -848,7 +1029,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 160,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically during simulation"
+    "tooltip": "Called periodically during simulation\nOverride this method for simulation-specific periodic code"
   },
   {
     "type": "frc_autonomous_init",
@@ -860,7 +1041,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when autonomous mode starts"
+    "tooltip": "Called when autonomous mode starts\nOverride this method for autonomous initialization"
   },
   {
     "type": "frc_autonomous_periodic",
@@ -872,7 +1053,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically during autonomous mode"
+    "tooltip": "Called periodically during autonomous mode\nOverride this method for autonomous periodic code"
   },
   {
     "type": "frc_teleop_init",
@@ -884,7 +1065,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when teleop mode starts"
+    "tooltip": "Called when teleop mode starts\nOverride this method for teleop initialization"
   },
   {
     "type": "frc_teleop_periodic",
@@ -896,7 +1077,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically during teleop mode"
+    "tooltip": "Called periodically during teleop mode\nOverride this method for teleop periodic code"
   },
   {
     "type": "frc_test_init",
@@ -908,7 +1089,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when test mode starts"
+    "tooltip": "Called when test mode starts\nOverride this method for test initialization"
   },
   {
     "type": "frc_test_periodic",
@@ -920,7 +1101,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically during test mode"
+    "tooltip": "Called periodically during test mode\nOverride this method for test periodic code"
   },
   {
     "type": "frc_disabled_init",
@@ -932,7 +1113,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called when disabled"
+    "tooltip": "Called when disabled\nOverride this method for disabled initialization"
   },
   {
     "type": "frc_disabled_periodic",
@@ -944,7 +1125,7 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 200,
     "previousStatement": null,
     "nextStatement": null,
-    "tooltip": "Called periodically while disabled"
+    "tooltip": "Called periodically while disabled\nOverride this method for disabled periodic code"
   },
   
   // Subsystem blocks
@@ -967,7 +1148,7 @@ Blockly.defineBlocksWithJsonArray([
       }
     ],
     "colour": 120,
-    "tooltip": "Defines a subsystem with initialization and periodic code"
+    "tooltip": "Defines a subsystem with initialization and periodic code\nSubsystems represent physical parts of your robot"
   },
   {
     "type": "frc_subsystem_default_command",
@@ -987,7 +1168,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 120,
-    "tooltip": "Sets the default command for a subsystem"
+    "tooltip": "Sets the default command for a subsystem\nThis command will run when no other commands are using the subsystem"
   },
   {
     "type": "frc_drivetrain",
@@ -1018,7 +1199,7 @@ Blockly.defineBlocksWithJsonArray([
       }
     ],
     "colour": 120,
-    "tooltip": "Defines a drivetrain subsystem"
+    "tooltip": "Defines a drivetrain subsystem\nCreates motor controllers and differential drive"
   },
   
   // Command blocks
@@ -1051,7 +1232,7 @@ Blockly.defineBlocksWithJsonArray([
       }
     ],
     "colour": 60,
-    "tooltip": "Defines a complete command with all lifecycle methods"
+    "tooltip": "Defines a complete command with all lifecycle methods\nCommands represent actions your robot can perform"
   },
   {
     "type": "frc_run_command",
@@ -1066,7 +1247,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 60,
-    "tooltip": "Schedule a command to run"
+    "tooltip": "Schedule a command to run\nThis will start the command immediately"
   },
   {
     "type": "frc_parallel_command_group",
@@ -1083,7 +1264,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Runs commands in parallel",
+    "tooltip": "Runs commands in parallel\nAll commands will run simultaneously",
     "mutator": "controls_if_mutator"
   },
   {
@@ -1101,7 +1282,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Runs commands in sequence",
+    "tooltip": "Runs commands in sequence\nCommands will run one after another",
     "mutator": "controls_if_mutator"
   },
   {
@@ -1115,7 +1296,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Command that runs once and finishes"
+    "tooltip": "Command that runs once and finishes\nUseful for one-time actions"
   },
   {
     "type": "frc_wait_command",
@@ -1129,7 +1310,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Command that waits for a specified time"
+    "tooltip": "Command that waits for a specified time\nUseful for delays in autonomous"
   },
   {
     "type": "frc_wait_until_command",
@@ -1143,7 +1324,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Command that waits until a condition is true"
+    "tooltip": "Command that waits until a condition is true\nUseful for waiting for sensors"
   },
   {
     "type": "frc_print_command",
@@ -1157,7 +1338,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Command that prints a message"
+    "tooltip": "Command that prints a message\nUseful for debugging"
   },
   {
     "type": "frc_run_end_command",
@@ -1174,7 +1355,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Command",
     "colour": 60,
-    "tooltip": "Command that runs continuously with an end action"
+    "tooltip": "Command that runs continuously with an end action\nUseful for commands that need cleanup"
   },
   
   // Hardware blocks
@@ -1196,7 +1377,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Set the speed of a motor."
+    "tooltip": "Set the speed of a motor.\nSpeed should be between -1.0 and 1.0"
   },
   {
     "type": "frc_motor_config",
@@ -1224,7 +1405,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Configure a motor controller"
+    "tooltip": "Configure a motor controller\nSet the PWM channel and inversion state"
   },
   {
     "type": "frc_encoder",
@@ -1254,7 +1435,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Configure an encoder"
+    "tooltip": "Configure an encoder\nSet the DIO channels and distance per pulse"
   },
   {
     "type": "frc_pid_config",
@@ -1266,7 +1447,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "PIDConfig",
     "colour": 120,
-    "tooltip": "Configure PID constants"
+    "tooltip": "Configure PID constants\nProportional, Integral, and Derivative gains"
   },
   {
     "type": "frc_pid_controller",
@@ -1296,7 +1477,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 120,
-    "tooltip": "Configure a PID controller"
+    "tooltip": "Configure a PID controller\nCreates a PID controller with the given config"
   },
   {
     "type": "frc_servo_set",
@@ -1316,7 +1497,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Set the position of a servo"
+    "tooltip": "Set the position of a servo\nPosition should be between 0.0 and 1.0"
   },
   {
     "type": "frc_solenoid",
@@ -1341,7 +1522,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Set the state of a solenoid"
+    "tooltip": "Set the state of a solenoid\nTrue extends, false retracts"
   },
   {
     "type": "frc_compressor",
@@ -1364,7 +1545,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Configure the compressor"
+    "tooltip": "Configure the compressor\nEnable or disable the pneumatics compressor"
   },
   {
     "type": "frc_joystick_button",
@@ -1402,7 +1583,7 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 230,
-    "tooltip": "Bind a command to a joystick button"
+    "tooltip": "Bind a command to a joystick button\nCommand will run when button condition is met"
   },
   {
     "type": "frc_joystick_axis",
@@ -1425,7 +1606,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Number",
     "colour": 230,
-    "tooltip": "Get the value of a joystick axis"
+    "tooltip": "Get the value of a joystick axis\nReturns value between -1.0 and 1.0"
   },
   {
     "type": "frc_limit_switch",
@@ -1447,7 +1628,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Boolean",
     "colour": 230,
-    "tooltip": "Get the state of a limit switch"
+    "tooltip": "Get the state of a limit switch\nReturns true when pressed (unless inverted)"
   },
   {
     "type": "frc_ultrasonic",
@@ -1461,7 +1642,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Number",
     "colour": 230,
-    "tooltip": "Get distance from ultrasonic sensor in cm"
+    "tooltip": "Get distance from ultrasonic sensor in cm\nReturns distance in centimeters"
   },
   {
     "type": "frc_gyro",
@@ -1478,7 +1659,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Number",
     "colour": 230,
-    "tooltip": "Get angle from gyro"
+    "tooltip": "Get angle from gyro\nReturns current angle in degrees"
   },
   {
     "type": "frc_accelerometer",
@@ -1496,7 +1677,7 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Number",
     "colour": 230,
-    "tooltip": "Get accelerometer value"
+    "tooltip": "Get accelerometer value\nReturns acceleration in Gs"
   },
   
   // Control blocks with proper layout
@@ -2202,6 +2383,24 @@ Blockly.defineBlocksWithJsonArray([
     "output": null,
     "colour": 290,
     "tooltip": "Call a function with a return value"
+  },
+  
+  // Comment block
+  {
+    "type": "frc_comment",
+    "message0": "comment %1",
+    "args0": [
+      {
+        "type": "field_multilinetext",
+        "name": "COMMENT",
+        "text": "Enter your comment here..."
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Add a comment to your code",
+    "helpUrl": ""
   }
 ]);
 
@@ -2325,6 +2524,217 @@ const tabPresets = {
         </block>
       </value>
     </block>
+  </xml>`,
+  
+  // Sample projects
+  tankDrive: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_drivetrain" x="50" y="50">
+      <field name="NAME">DriveTrain</field>
+      <field name="LEFT_MOTOR">0</field>
+      <field name="RIGHT_MOTOR">1</field>
+    </block>
+    <block type="frc_command" x="50" y="200">
+      <field name="NAME">TankDrive</field>
+      <statement name="EXECUTE">
+        <block type="frc_motor_set">
+          <field name="MOTOR">leftMotor</field>
+          <value name="SPEED">
+            <block type="frc_joystick_axis">
+              <field name="JOYSTICK">1</field>
+              <value name="AXIS">
+                <block type="frc_math_number">
+                  <field name="NUM">1</field>
+                </block>
+              </value>
+            </block>
+          </value>
+        </block>
+        <block type="frc_motor_set">
+          <field name="MOTOR">rightMotor</field>
+          <value name="SPEED">
+            <block type="frc_joystick_axis">
+              <field name="JOYSTICK">1</field>
+              <value name="AXIS">
+                <block type="frc_math_number">
+                  <field name="NUM">5</field>
+                </block>
+              </value>
+            </block>
+          </value>
+        </block>
+      </statement>
+      <value name="FINISHED">
+        <block type="frc_logic_boolean">
+          <field name="BOOL">FALSE</field>
+        </block>
+      </value>
+    </block>
+    <block type="frc_subsystem_default_command" x="50" y="400">
+      <value name="SUBSYSTEM">
+        <block type="variables_get">
+          <field name="VAR">driveTrain</field>
+        </block>
+      </value>
+      <value name="COMMAND">
+        <block type="variables_get">
+          <field name="VAR">tankDrive</field>
+        </block>
+      </value>
+    </block>
+  </xml>`,
+  
+  arcadeDrive: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_drivetrain" x="50" y="50">
+      <field name="NAME">DriveTrain</field>
+      <field name="LEFT_MOTOR">0</field>
+      <field name="RIGHT_MOTOR">1</field>
+    </block>
+    <block type="frc_command" x="50" y="200">
+      <field name="NAME">ArcadeDrive</field>
+      <statement name="EXECUTE">
+        <block type="frc_motor_set">
+          <field name="MOTOR">leftMotor</field>
+          <value name="SPEED">
+            <block type="frc_math_arithmetic">
+              <field name="OP">ADD</field>
+              <value name="A">
+                <block type="frc_joystick_axis">
+                  <field name="JOYSTICK">1</field>
+                  <value name="AXIS">
+                    <block type="frc_math_number">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                </block>
+              </value>
+              <value name="B">
+                <block type="frc_joystick_axis">
+                  <field name="JOYSTICK">1</field>
+                  <value name="AXIS">
+                    <block type="frc_math_number">
+                      <field name="NUM">0</field>
+                    </block>
+                  </value>
+                </block>
+              </value>
+            </block>
+          </value>
+        </block>
+        <block type="frc_motor_set">
+          <field name="MOTOR">rightMotor</field>
+          <value name="SPEED">
+            <block type="frc_math_arithmetic">
+              <field name="OP">MINUS</field>
+              <value name="A">
+                <block type="frc_joystick_axis">
+                  <field name="JOYSTICK">1</field>
+                  <value name="AXIS">
+                    <block type="frc_math_number">
+                      <field name="NUM">1</field>
+                    </block>
+                  </value>
+                </block>
+              </value>
+              <value name="B">
+                <block type="frc_joystick_axis">
+                  <field name="JOYSTICK">1</field>
+                  <value name="AXIS">
+                    <block type="frc_math_number">
+                      <field name="NUM">0</field>
+                    </block>
+                  </value>
+                </block>
+              </value>
+            </block>
+          </value>
+        </block>
+      </statement>
+      <value name="FINISHED">
+        <block type="frc_logic_boolean">
+          <field name="BOOL">FALSE</field>
+        </block>
+      </value>
+    </block>
+    <block type="frc_subsystem_default_command" x="50" y="400">
+      <value name="SUBSYSTEM">
+        <block type="variables_get">
+          <field name="VAR">driveTrain</field>
+        </block>
+      </value>
+      <value name="COMMAND">
+        <block type="variables_get">
+          <field name="VAR">arcadeDrive</field>
+        </block>
+      </value>
+    </block>
+  </xml>`,
+  
+  autoRoutine: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_sequential_command_group" x="50" y="50">
+      <statement name="COMMANDS">
+        <block type="frc_run_command">
+          <value name="COMMAND">
+            <block type="variables_get">
+              <field name="VAR">driveForward</field>
+            </block>
+          </value>
+        </block>
+        <block type="frc_wait_command">
+          <value name="SECONDS">
+            <block type="frc_math_number">
+              <field name="NUM">2</field>
+            </block>
+          </value>
+        </block>
+        <block type="frc_run_command">
+          <value name="COMMAND">
+            <block type="variables_get">
+              <field name="VAR">shoot</field>
+            </block>
+          </value>
+        </block>
+      </statement>
+    </block>
+  </xml>`,
+  
+  armControl: `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="frc_command" x="50" y="50">
+      <field name="NAME">ArmControl</field>
+      <statement name="EXECUTE">
+        <block type="frc_motor_set">
+          <field name="MOTOR">armMotor</field>
+          <value name="SPEED">
+            <block type="frc_joystick_axis">
+              <field name="JOYSTICK">2</field>
+              <value name="AXIS">
+                <block type="frc_math_number">
+                  <field name="NUM">1</field>
+                </block>
+              </value>
+            </block>
+          </value>
+        </block>
+      </statement>
+      <value name="FINISHED">
+        <block type="frc_logic_boolean">
+          <field name="BOOL">FALSE</field>
+        </block>
+      </value>
+    </block>
+    <block type="frc_joystick_button" x="50" y="200">
+      <field name="JOYSTICK">1</field>
+      <value name="BUTTON">
+        <block type="frc_math_number">
+          <field name="NUM">1</field>
+        </block>
+      </value>
+      <field name="WHEN">WHEN_PRESSED</field>
+      <value name="COMMAND">
+        <block type="variables_get">
+          <field name="VAR">armControl</field>
+        </block>
+      </value>
+    </block>
   </xml>`
 };
 
@@ -2336,8 +2746,15 @@ const addTabBtn = document.getElementById('addTabBtn');
 const downloadJavaBtn = document.getElementById('downloadJavaBtn');
 const copyCodeBtn = document.getElementById('copyCodeBtn');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
+const saveProjectBtn = document.getElementById('saveProjectBtn');
+const loadProjectBtn = document.getElementById('loadProjectBtn');
+const darkModeToggle = document.getElementById('darkModeToggle');
+const helpBtn = document.getElementById('helpBtn');
+const sampleProjects = document.getElementById('sampleProjects');
 const openCreditsBtn = document.getElementById('openCredits');
 const outputArea = document.getElementById('output');
+const helpModal = document.getElementById('helpModal');
+const closeModal = document.querySelector('.close-modal');
 
 const workspaces = {};
 const tabs = [];
@@ -2442,6 +2859,11 @@ function generateJavaCode(tabId) {
       code = Blockly.FRCJava.workspaceToCode(ws);
     }
     
+    // Apply syntax highlighting
+    setTimeout(() => {
+      hljs.highlightElement(outputArea);
+    }, 0);
+    
     return code || '// No code generated';
   } catch (e) {
     console.error('Code generation error:', e);
@@ -2450,7 +2872,8 @@ function generateJavaCode(tabId) {
 }
 
 function updateOutput() {
-  outputArea.textContent = generateJavaCode();
+  const code = generateJavaCode();
+  outputArea.textContent = code;
 }
 
 function downloadJavaFile() {
@@ -2512,6 +2935,120 @@ function copyCodeToClipboard() {
     console.error('Failed to copy text: ', err);
     outputArea.textContent = 'Failed to copy text to clipboard';
   });
+}
+
+function saveProject() {
+  const project = {
+    tabs: [],
+    activeTabId: activeTabId
+  };
+  
+  tabs.forEach(tab => {
+    const workspace = workspaces[tab.id];
+    if (workspace) {
+      const xml = Blockly.Xml.workspaceToDom(workspace);
+      const xmlText = Blockly.Xml.domToText(xml);
+      project.tabs.push({
+        id: tab.id,
+        title: tab.title,
+        type: tab.type,
+        removable: tab.removable,
+        xml: xmlText
+      });
+    }
+  });
+  
+  localStorage.setItem('frcBlocklyProject', JSON.stringify(project));
+  alert('Project saved successfully!');
+}
+
+function loadProject() {
+  const projectJson = localStorage.getItem('frcBlocklyProject');
+  if (!projectJson) {
+    alert('No saved project found');
+    return;
+  }
+  
+  const project = JSON.parse(projectJson);
+  
+  // Clear existing tabs (except core tabs)
+  tabs.forEach(tab => {
+    if (tab.removable) {
+      removeTab(tab.id);
+    }
+  });
+  
+  // Load saved tabs
+  project.tabs.forEach(savedTab => {
+    const tab = {
+      id: savedTab.id,
+      title: savedTab.title,
+      type: savedTab.type,
+      removable: savedTab.removable
+    };
+    
+    tabs.push(tab);
+    createWorkspace(tab);
+    
+    // Load workspace content
+    const workspace = workspaces[tab.id];
+    if (workspace && savedTab.xml) {
+      try {
+        const xml = Blockly.Xml.textToDom(savedTab.xml);
+        Blockly.Xml.domToWorkspace(xml, workspace);
+      } catch (e) {
+        console.error('Error loading workspace:', e);
+      }
+    }
+  });
+  
+  renderTabs();
+  if (project.activeTabId && workspaces[project.activeTabId]) {
+    switchTab(project.activeTabId);
+  } else {
+    switchTab(coreTabs[0].id);
+  }
+  
+  alert('Project loaded successfully!');
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('darkMode', isDark);
+  
+  // Update all workspaces
+  Object.values(workspaces).forEach(workspace => {
+    Blockly.svgResize(workspace);
+  });
+}
+
+function loadSampleProject() {
+  const sample = sampleProjects.value;
+  if (!sample) return;
+  
+  const xml = tabPresets[sample];
+  if (!xml) return;
+  
+  // Clear current workspace
+  const workspace = workspaces[activeTabId];
+  if (workspace) {
+    workspace.clear();
+    
+    try {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xml, 'text/xml');
+      if (xmlDoc.documentElement.nodeName === 'parsererror') {
+        throw new Error(xmlDoc.documentElement.textContent);
+      }
+      Blockly.Xml.domToWorkspace(xmlDoc.documentElement, workspace);
+    } catch (e) {
+      console.error(`Error loading sample project ${sample}`, e);
+      outputArea.textContent = `Error loading sample: ${e.message}`;
+    }
+  }
+  
+  sampleProjects.value = '';
 }
 
 function createTabElement(tab) {
@@ -2681,6 +3218,11 @@ function removeTab(tabId) {
 }
 
 function init() {
+  // Load dark mode preference
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  
   coreTabs.forEach(tab => tabs.push(tab));
   renderTabs();
   tabs.forEach(tab => createWorkspace(tab));
@@ -2692,7 +3234,20 @@ addTabBtn.addEventListener('click', addTab);
 downloadJavaBtn.addEventListener('click', downloadJavaFile);
 copyCodeBtn.addEventListener('click', copyCodeToClipboard);
 downloadAllBtn.addEventListener('click', downloadAllFiles);
+saveProjectBtn.addEventListener('click', saveProject);
+loadProjectBtn.addEventListener('click', loadProject);
+darkModeToggle.addEventListener('click', toggleDarkMode);
+helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
+closeModal.addEventListener('click', () => helpModal.style.display = 'none');
+sampleProjects.addEventListener('change', loadSampleProject);
 openCreditsBtn.addEventListener('click', () => switchTab('credits'));
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+  if (e.target === helpModal) {
+    helpModal.style.display = 'none';
+  }
+});
 
 // Initialize when Blockly is ready
 document.addEventListener('DOMContentLoaded', init);
@@ -2701,6 +3256,26 @@ document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('resize', () => {
   if (activeTabId && workspaces[activeTabId]) {
     Blockly.svgResize(workspaces[activeTabId]);
+  }
+});
+
+// Zoom controls
+document.getElementById('zoomIn').addEventListener('click', () => {
+  if (activeTabId && workspaces[activeTabId]) {
+    workspaces[activeTabId].zoomCenter(1);
+  }
+});
+
+document.getElementById('zoomOut').addEventListener('click', () => {
+  if (activeTabId && workspaces[activeTabId]) {
+    workspaces[activeTabId].zoomCenter(-1);
+  }
+});
+
+document.getElementById('zoomReset').addEventListener('click', () => {
+  if (activeTabId && workspaces[activeTabId]) {
+    workspaces[activeTabId].setScale(1.0);
+    workspaces[activeTabId].scrollCenter();
   }
 });
 </script>

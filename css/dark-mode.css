@@ -1,0 +1,42 @@
+body.dark-mode {
+  background-color: #222;
+  color: #eee;
+}
+
+body.dark-mode #tabs {
+  background: #333;
+  border-bottom-color: #444;
+}
+
+body.dark-mode #tabs button.active {
+  background: #444;
+  border-bottom-color: #0066cc;
+}
+
+body.dark-mode #tabs button .close-btn:hover {
+  color: #ff6666;
+}
+
+body.dark-mode #toolboxContainer {
+  background: #333;
+  border-right-color: #444;
+}
+
+body.dark-mode #toolboxContainer.collapsed {
+  border-right: none;
+}
+
+body.dark-mode #controls {
+  background: #444;
+}
+
+body.dark-mode #output {
+  background: #000;
+  color: #0f0;
+  border-top-color: #444;
+}
+
+body.dark-mode .modal-content {
+  background: #333;
+  color: #eee;
+}

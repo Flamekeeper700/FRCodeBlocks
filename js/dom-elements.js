@@ -1,0 +1,22 @@
+window.domElements = {
+  tabsContainer: document.getElementById('tabs'),
+  workspaceContainer: document.getElementById('workspaceContainer'),
+  outputArea: document.getElementById('output'),
+  tabTypeSelector: document.getElementById('tabTypeSelector'),
+  addTabBtn: document.getElementById('addTabBtn'),
+  downloadJavaBtn: document.getElementById('downloadJavaBtn'),
+  copyCodeBtn: document.getElementById('copyCodeBtn'),
+  saveProjectBtn: document.getElementById('saveProjectBtn'),
+  loadProjectBtn: document.getElementById('loadProjectBtn'),
+  darkModeToggle: document.getElementById('darkModeToggle'),
+  helpBtn: document.getElementById('helpBtn'),
+  sampleProjects: document.getElementById('sampleProjects'),
+  loadSampleBtn: document.getElementById('loadSampleBtn'),
+  openCreditsBtn: document.getElementById('openCreditsBtn'),
+  helpModal: document.getElementById('helpModal'),
+  closeModal: document.querySelector('.close-modal'),
+  zoomIn: document.getElementById('zoomIn'),
+  zoomOut: document.getElementById('zoomOut'),
+  zoomReset: document.getElementById('zoomReset'),
+  toggleToolboxBtn: document.getElementById('toggleToolboxBtn')
+};

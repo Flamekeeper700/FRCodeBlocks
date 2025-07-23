@@ -17,6 +17,5 @@ window.domElements = {
   closeModal: document.querySelector('.close-modal'),
   zoomIn: document.getElementById('zoomIn'),
   zoomOut: document.getElementById('zoomOut'),
-  zoomReset: document.getElementById('zoomReset'),
-  toggleToolboxBtn: document.getElementById('toggleToolboxBtn')
+  zoomReset: document.getElementById('zoomReset')
 };

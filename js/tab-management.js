@@ -29,58 +29,49 @@ window.tabManagement = {
   },
 
   createWorkspace: function(tab) {
-    let div = document.getElementById(tab.id);
-    if (!div) {
-      div = document.createElement('div');
-      div.id = tab.id;
-      div.className = 'blocklyDiv';
-      document.getElementById('workspaceContainer').appendChild(div);
+  let div = document.getElementById(tab.id);
+  if (!div) {
+    div = document.createElement('div');
+    div.id = tab.id;
+    div.className = 'blocklyDiv';
+    document.getElementById('workspaceContainer').appendChild(div);
+  }
+
+  // Clear existing workspace if it exists
+  if (this.workspaces[tab.id]) {
+    this.workspaces[tab.id].dispose();
+    delete this.workspaces[tab.id];
+  }
+
+  // Create new workspace
+  const workspace = Blockly.inject(div, {
+    toolbox: document.getElementById('toolbox'),
+    trashcan: true,
+    scrollbars: true,
+    move: { scrollbars: true, drag: true, wheel: true },
+    zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3 }
+  });
+
+  // Add workspace listeners
+  workspace.addChangeListener((event) => {
+    if (event.type === Blockly.Events.UI && event.element === 'selected') {
+      Blockly.Events.setGroup(event.group);
+      workspace.getBlockById(event.blockId)?.select();
+      Blockly.Events.setGroup(false);
     }
+  });
 
-    if (this.workspaces[tab.id]) {
-      this.workspaces[tab.id].dispose();
-      delete this.workspaces[tab.id];
-    }
+  // Initialize variables and procedures
+  workspace.getVariableMap().clear();
 
-    const workspace = Blockly.inject(div, {
-      toolbox: document.getElementById('toolbox'),
-      trashcan: true,
-      scrollbars: true,
-      move: { scrollbars: true, drag: true, wheel: true },
-      zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3 }
-    });
+  // Schedule a resize after a small delay
+  setTimeout(() => {
+    Blockly.svgResize(workspace);
+    workspace.render();
+  }, 100);
 
-    workspace.addChangeListener((event) => {
-      if (event.type === Blockly.Events.UI && event.element === 'selected') {
-        Blockly.Events.setGroup(event.group);
-        workspace.getBlockById(event.blockId)?.select();
-        Blockly.Events.setGroup(false);
-      }
-    });
-
-    workspace.getVariableMap().clear();
-
-    workspace.addChangeListener((e) => {
-      if ([
-        Blockly.Events.VAR_CREATE,
-        Blockly.Events.VAR_DELETE,
-        Blockly.Events.VAR_RENAME,
-        Blockly.Events.PROCEDURE_CREATE,
-        Blockly.Events.PROCEDURE_DELETE,
-        Blockly.Events.PROCEDURE_RENAME
-      ].includes(e.type)) {
-        Blockly.DropDownDiv.hideIfOwner();
-      }
-      this.updateOutput();
-    });
-
-    setTimeout(() => {
-      Blockly.svgResize(workspace);
-      workspace.render();
-    }, 100);
-
-    return workspace;
-  },
+  return workspace;
+},
 
   renderTabs: function() {
     const { tabsContainer } = window.domElements;
@@ -113,21 +104,29 @@ window.tabManagement = {
     });
   },
 
-  addTab: function() {
+ addTab: function() {
     const { tabTypeSelector } = window.domElements;
     const type = tabTypeSelector.value;
     this.tabCounter++;
-    const id = type + '_' + this.tabCounter;
-    let title = type.charAt(0).toUpperCase() + type.slice(1);
     
-    if (type === 'command') {
-      title = 'Command' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-    } else if (type === 'subsystem') {
-      title = 'Subsystem' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-    } else if (type === 'auto') {
-      title = 'Autonomous' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-    } else {
-      title += ' ' + this.tabCounter;
+    let id, title;
+    
+    switch(type) {
+      case 'command':
+        title = 'Command' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
+        id = 'cmd_' + this.tabCounter;
+        break;
+      case 'subsystem':
+        title = 'Subsystem' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
+        id = 'sub_' + this.tabCounter;
+        break;
+      case 'auto':
+        title = 'Autonomous' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
+        id = 'auto_' + this.tabCounter;
+        break;
+      default:
+        title = type.charAt(0).toUpperCase() + type.slice(1) + ' ' + this.tabCounter;
+        id = type + '_' + this.tabCounter;
     }
     
     const tab = { id, title, type, removable: true };

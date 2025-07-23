@@ -77,7 +77,55 @@ window.eventHandlers = {
     });
     
     // Navigation
-    openCreditsBtn.addEventListener('click', () => switchTab.call(window.tabManagement, 'credits'));
+openCreditsBtn.addEventListener('click', () => {
+  let creditsTab = window.tabManagement.tabs.find(tab => tab.id === 'credits');
+  
+  if (!creditsTab) {
+    creditsTab = {
+      id: 'credits',
+      title: 'Credits',
+      type: 'credits',
+      removable: true  // Changed to true to allow closing
+    };
+    window.tabManagement.tabs.push(creditsTab);
+    window.tabManagement.workspaces[creditsTab.id] = window.tabManagement.createWorkspace(creditsTab);
+    window.tabManagement.renderTabs();
+    
+    const workspace = window.tabManagement.workspaces[creditsTab.id];
+    
+    // Create and connect all blocks
+    const versionBlock = workspace.newBlock('comment_block');
+    versionBlock.setFieldValue('FRC Blockly IDE v1.0.0', 'TEXT');
+    
+    const creditsBlock = workspace.newBlock('comment_block');
+    creditsBlock.setFieldValue('Developed by: Your Name | Powered by Blockly', 'TEXT');
+    
+    const dateBlock = workspace.newBlock('comment_block');
+    dateBlock.setFieldValue('Created: ' + new Date().toLocaleDateString(), 'TEXT');
+    
+    // Connect blocks
+    versionBlock.nextConnection.connect(creditsBlock.previousConnection);
+    creditsBlock.nextConnection.connect(dateBlock.previousConnection);
+    
+    // Make blocks uneditable
+    versionBlock.setEditable(false);
+    creditsBlock.setEditable(false);
+    dateBlock.setEditable(false);
+    
+    // Render all blocks
+    versionBlock.initSvg();
+    versionBlock.render();
+    creditsBlock.initSvg();
+    creditsBlock.render();
+    dateBlock.initSvg();
+    dateBlock.render();
+    
+    // Position the first block
+    versionBlock.moveBy(50, 50);
+  }
+  
+  window.tabManagement.switchTab('credits');
+});
 
     // Modal close when clicking outside
     window.addEventListener('click', (e) => {
@@ -110,18 +158,6 @@ window.eventHandlers = {
       if (window.tabManagement.activeTabId && window.tabManagement.workspaces[window.tabManagement.activeTabId]) {
         window.tabManagement.workspaces[window.tabManagement.activeTabId].setScale(1.0);
         window.tabManagement.workspaces[window.tabManagement.activeTabId].scrollCenter();
-      }
-    });
-
-    // Toolbox toggle
-    toggleToolboxBtn.addEventListener('click', () => {
-      const toolboxContainer = document.getElementById('toolboxContainer');
-      toolboxContainer.classList.toggle('collapsed');
-      
-      if (window.tabManagement.activeTabId && window.tabManagement.workspaces[window.tabManagement.activeTabId]) {
-        setTimeout(() => {
-          Blockly.svgResize(window.tabManagement.workspaces[window.tabManagement.activeTabId]);
-        }, 300);
       }
     });
 

@@ -10,7 +10,7 @@
   <script src="https://unpkg.com/blockly@8.0.0/blocks_compressed.js"></script>
   <script src="https://unpkg.com/blockly@8.0.0/javascript_compressed.js"></script>
   <script src="https://unpkg.com/blockly@8.0.0/msg/en.js"></script>
-  
+
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -25,20 +25,53 @@
   <div id="workspaceArea">
     <div id="toolboxContainer">
       <xml id="toolbox">
-        <category name="Robot" colour="230">
-          <block type="frc_robot_init"></block>
-          <block type="frc_robot_periodic"></block>
-        </category>
-        <category name="Motors" colour="160">
-          <block type="frc_motorcontroller_set"></block>
-        </category>
+<category name="Robot" colour="230">
+  <block type="frc_robot_init"></block>
+  <block type="frc_robot_periodic"></block>
+  <block type="frc_simulation_init"></block>
+  <block type="frc_simulation_periodic"></block>
+  <block type="frc_disabled_init"></block>
+  <block type="frc_disabled_periodic"></block>
+  <block type="frc_autonomous_init"></block>
+  <block type="frc_autonomous_periodic"></block>
+  <block type="frc_teleop_init"></block>
+  <block type="frc_teleop_periodic"></block>
+  <block type="frc_test_init"></block>
+  <block type="frc_test_periodic"></block>
+</category>
         <category name="Drive" colour="120">
           <block type="frc_bind_tankdrive"></block>
           <block type="frc_subsystem_tankdrive"></block>
         </category>
-        <category name="Sensors" colour="210">
-          <block type="frc_encoder_getdistance"></block>
-        </category>
+        <category name="Comments" colour="160">
+  <block type="comment_block"></block>
+</category>
+<category name="Joystick" colour="210">
+  <block type="frc_joystick_getaxis"></block>
+  <block type="frc_joystick_getbutton"></block>
+</category>
+<category name="Sensors" colour="210">
+  <block type="frc_encoder_create"></block>
+  <block type="frc_encoder_getdistance"></block>
+  <block type="frc_timer"></block>
+</category>
+<category name="Motors" colour="160">
+  <block type="frc_motorcontroller_set"></block>
+  <block type="frc_motorcontroller_safety"></block>
+  <block type="frc_motorcontroller_setinverted"></block>
+</category>
+<category name="PID" colour="180">
+  <block type="frc_pidcontroller_create"></block>
+  <block type="frc_pidcontroller_calculate"></block>
+  <block type="frc_pidcontroller_settolerance"></block>
+  <block type="frc_pidcontroller_at_setpoint"></block>
+</category>
+<category name="Commands" colour="200">
+  <block type="frc_command_init"></block>
+  <block type="frc_command_execute"></block>
+  <block type="frc_command_is_finished"></block>
+  <block type="frc_command_end"></block>
+</category>
       </xml>
     </div>
     
@@ -66,16 +99,14 @@
     <button id="loadProjectBtn">Load Project</button>
     <button id="darkModeToggle">Dark Mode</button>
     <button id="helpBtn">Help</button>
-    <select id="sampleProjects">
-      <option value="">Load Sample...</option>
-      <option value="basicRobot">Basic Robot</option>
-      <option value="robotContainer">Robot Container</option>
-      <option value="driveSubsystem">Drive Subsystem</option>
-      <option value="tankDriveTemplate">Tank Drive Template</option>
-    </select>
+<select id="sampleProjects">
+  <option value="">Load Sample...</option>
+  <option value="basicRobot">Basic Robot</option>
+  <option value="pidControllerDemo">PID Controller Demo</option>
+  <option value="tankDriveTemplate">Tank Drive Template</option>
+</select>
     <button id="loadSampleBtn" disabled>Load Selected</button>
     <button id="openCreditsBtn">Credits</button>
-    <button id="toggleToolboxBtn">Toggle Toolbox</button>
   </div>
 
   <pre id="output">// Generated Java code will appear here</pre>

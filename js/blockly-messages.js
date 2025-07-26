@@ -60,5 +60,10 @@ Blockly.Msg = {
   BKY_FRC_ROBOT_INIT_TOOLTIP: "Code that runs when the robot initializes",
   BKY_FRC_ROBOT_PERIODIC_TOOLTIP: "Code that runs periodically during robot operation",
   BKY_FRC_MOTOR_SET_TOOLTIP: "Set the speed of a motor controller",
-  BKY_FRC_PID_TOOLTIP: "Configure a PID controller"
+  BKY_FRC_PID_TOOLTIP: "Configure a PID controller",
+
+  //Variable
+  BKY_FRC_VARIABLE_DECLARE_TOOLTIP: "Declare a new variable with a type and initial value",
+  BKY_FRC_VARIABLE_SET_TOOLTIP: "Set the value of an existing variable",
+  BKY_FRC_VARIABLE_GET_TOOLTIP: "Get the value of a variable"
 };

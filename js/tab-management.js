@@ -8,70 +8,73 @@ window.tabManagement = {
   workspaces: {},
   activeTabId: null,
   tabCounter: 0,
-
-  createTabElement: function(tab) {
-    const btn = document.createElement('button');
-    btn.textContent = tab.title;
-    btn.id = 'tabBtn_' + tab.id;
-    btn.dataset.tabId = tab.id;
-    if (tab.removable) {
-      const closeBtn = document.createElement('span');
-      closeBtn.textContent = '×';
-      closeBtn.className = 'close-btn';
-      closeBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        this.removeTab(tab.id);
-      });
-      btn.appendChild(closeBtn);
-    }
-    btn.addEventListener('click', () => this.switchTab(tab.id));
-    return btn;
-  },
+  updateTimeout: null,
 
   createWorkspace: function(tab) {
-  let div = document.getElementById(tab.id);
-  if (!div) {
-    div = document.createElement('div');
-    div.id = tab.id;
-    div.className = 'blocklyDiv';
-    document.getElementById('workspaceContainer').appendChild(div);
-  }
-
-  // Clear existing workspace if it exists
-  if (this.workspaces[tab.id]) {
-    this.workspaces[tab.id].dispose();
-    delete this.workspaces[tab.id];
-  }
-
-  // Create new workspace
-  const workspace = Blockly.inject(div, {
-    toolbox: document.getElementById('toolbox'),
-    trashcan: true,
-    scrollbars: true,
-    move: { scrollbars: true, drag: true, wheel: true },
-    zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3 }
-  });
-
-  // Add workspace listeners
-  workspace.addChangeListener((event) => {
-    if (event.type === Blockly.Events.UI && event.element === 'selected') {
-      Blockly.Events.setGroup(event.group);
-      workspace.getBlockById(event.blockId)?.select();
-      Blockly.Events.setGroup(false);
+    let div = document.getElementById(tab.id);
+    if (!div) {
+      div = document.createElement('div');
+      div.id = tab.id;
+      div.className = 'blocklyDiv';
+      document.getElementById('workspaceContainer').appendChild(div);
     }
-  });
 
-  // Initialize variables and procedures
-  workspace.getVariableMap().clear();
+    // Clear existing workspace if it exists
+    if (this.workspaces[tab.id]) {
+      this.workspaces[tab.id].dispose();
+      delete this.workspaces[tab.id];
+    }
 
-  // Schedule a resize after a small delay
-  setTimeout(() => {
-    Blockly.svgResize(workspace);
-    workspace.render();
-  }, 100);
+    const workspace = Blockly.inject(div, {
+      toolbox: document.getElementById('toolbox'),
+      trashcan: true,
+      scrollbars: true,
+      move: { scrollbars: true, drag: true, wheel: true },
+      zoom: {
+        controls: true,  
+        wheel: true,
+        startScale: 1.0,
+        maxScale: 3,
+        minScale: 0.3
+      }
+    });
 
-  return workspace;
-},
+    // Add workspace change listener for real-time updates
+    workspace.addChangeListener((event) => {
+      const relevantEvents = [
+        Blockly.Events.BLOCK_CHANGE,
+        Blockly.Events.BLOCK_CREATE,
+        Blockly.Events.BLOCK_DELETE,
+        Blockly.Events.BLOCK_MOVE
+      ];
+      
+      if (relevantEvents.includes(event.type)) {
+        if (this.updateTimeout) {
+          clearTimeout(this.updateTimeout);
+        }
+        
+        this.updateTimeout = setTimeout(() => {
+          this.updateOutput();
+        }, 300);
+      }
+    });
+
+    // Initialize variables and procedures
+    workspace.getVariableMap().clear();
+
+    // Schedule a resize after a small delay
+    setTimeout(() => {
+      Blockly.svgResize(workspace);
+      workspace.render();
+    }, 100);
+
+    return workspace;
+  },
+
+  toggleDarkMode: function() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+  },
 
   renderTabs: function() {
     const { tabsContainer } = window.domElements;
@@ -104,7 +107,7 @@ window.tabManagement = {
     });
   },
 
- addTab: function() {
+  addTab: function() {
     const { tabTypeSelector } = window.domElements;
     const type = tabTypeSelector.value;
     this.tabCounter++;
@@ -159,9 +162,14 @@ window.tabManagement = {
   },
 
   updateOutput: function() {
-    const { outputArea } = window.domElements;
-    const code = window.codeGeneration.generateJavaCode();
-    outputArea.textContent = code;
+    if (this.activeTabId && this.workspaces[this.activeTabId]) {
+      const code = window.codeGeneration.generateJavaCode(this.activeTabId);
+      window.domElements.outputArea.textContent = code;
+      
+      if (window.hljs) {
+        window.hljs.highlightElement(window.domElements.outputArea);
+      }
+    }
   },
 
   loadSampleProject: function(selectedSample) {
@@ -174,18 +182,14 @@ window.tabManagement = {
       throw new Error('Selected sample not found');
     }
 
-    // Clear existing custom tabs (keep core tabs)
     this.tabs = this.tabs.filter(tab => !tab.removable);
     this.renderTabs();
 
-    // Load sample content for each tab
     let firstLoadedTab = null;
     for (const [tabType, xml] of Object.entries(sample)) {
-      // Find or create the tab
       let tab = this.tabs.find(t => t.type === tabType);
       
       if (!tab && this.coreTabs.some(t => t.type === tabType)) {
-        // Create the tab if it's a core tab that doesn't exist yet
         tab = {...this.coreTabs.find(t => t.type === tabType)};
         this.tabs.push(tab);
         this.workspaces[tab.id] = this.createWorkspace(tab);
@@ -193,14 +197,10 @@ window.tabManagement = {
 
       if (tab && this.workspaces[tab.id]) {
         try {
-          // Clear existing blocks
           this.workspaces[tab.id].clear();
-          
-          // Load new blocks
           const dom = Blockly.Xml.textToDom(xml);
           Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
           
-          // Track first loaded tab for switching
           if (!firstLoadedTab) {
             firstLoadedTab = tab.id;
           }
@@ -211,14 +211,33 @@ window.tabManagement = {
       }
     }
 
-    // Switch to first loaded tab if any
     if (firstLoadedTab) {
       this.switchTab(firstLoadedTab);
     } else {
       this.switchTab(this.coreTabs[0].id);
     }
 
-    // Update code output
     this.updateOutput();
+  },
+
+  createTabElement: function(tab) {
+    const btn = document.createElement('button');
+    btn.id = `tabBtn_${tab.id}`;
+    btn.textContent = tab.title;
+    btn.className = 'tab-btn';
+    btn.onclick = () => this.switchTab(tab.id);
+
+    if (tab.removable) {
+      const closeBtn = document.createElement('span');
+      closeBtn.className = 'close-btn';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.removeTab(tab.id);
+      };
+      btn.appendChild(closeBtn);
+    }
+
+    return btn;
   }
 };

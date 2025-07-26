@@ -1,120 +1,120 @@
 // Define all blocks
 Blockly.defineBlocksWithJsonArray([
   // Motor blocks
-  {
-    "type": "frc_motorcontroller_set",
-    "message0": "Set %1 motor %2 to speed %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MOTOR_TYPE",
-        "options": [
-          ["Spark", "PWMSparkMax"],
-          ["TalonSRX", "PWMTalonSRX"],
-          ["VictorSP", "PWMVictorSP"]
-        ]
-      },
-      {"type": "field_number", "name": "CHANNEL", "value": 0},
-      {"type": "input_value", "name": "SPEED"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Set motor speed (-1 to 1)"
-  },
+{
+  "type": "frc_motorcontroller_set",
+  "message0": "Set %1 motor %2 to speed %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MOTOR_TYPE",
+      "options": [
+        ["Spark", "PWMSparkMax"],
+        ["TalonSRX", "PWMTalonSRX"],
+        ["VictorSP", "PWMVictorSP"]
+      ]
+    },
+    {"type": "field_number", "name": "CHANNEL", "value": 0},
+    {"type": "input_value", "name": "SPEED"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 160,
+  "tooltip": "Set motor speed (-1 to 1)"
+},
 
-  // Drive blocks
-  {
-    "type": "frc_bind_tankdrive",
-    "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
-    "args0": [
-      {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
-      {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
-      {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Bind tank drive controls to controller axes"
-  },
-  {
-    "type": "frc_subsystem_tankdrive",
-    "message0": "Tank Drive left %1 right %2",
-    "args0": [
-      {"type": "input_value", "name": "LEFT_SPEED"},
-      {"type": "input_value", "name": "RIGHT_SPEED"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Set tank drive speeds"
-  },
+// Drive blocks
+{
+  "type": "frc_bind_tankdrive",
+  "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
+  "args0": [
+    {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
+    {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
+    {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 120,
+  "tooltip": "Bind tank drive controls to controller axes"
+},
+{
+  "type": "frc_subsystem_tankdrive",
+  "message0": "Tank Drive left %1 right %2",
+  "args0": [
+    {"type": "input_value", "name": "LEFT_SPEED"},
+    {"type": "input_value", "name": "RIGHT_SPEED"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 120,
+  "tooltip": "Set tank drive speeds"
+},
 
-  // Sensor blocks
-  {
-    "type": "frc_encoder_getdistance",
-    "message0": "Get encoder %1 distance",
-    "args0": [
-      {"type": "field_number", "name": "CHANNEL", "value": 0}
-    ],
-    "output": "Number",
-    "colour": 210,
-    "tooltip": "Read encoder distance in meters"
-  },
+// Sensor blocks
+{
+  "type": "frc_encoder_getdistance",
+  "message0": "Get encoder %1 distance",
+  "args0": [
+    {"type": "field_number", "name": "CHANNEL", "value": 0}
+  ],
+  "output": "Number",
+  "colour": 210,
+  "tooltip": "Read encoder distance in meters"
+},
 
-  // Subsystem blocks
-  {
-    "type": "frc_subsystem_init",
-    "message0": "Subsystem %1 Initialization",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "SUBSYSTEM_TYPE",
-        "options": [
-          ["DriveSubsystem", "DriveSubsystem"],
-          ["ArmSubsystem", "ArmSubsystem"],
-          ["IntakeSubsystem", "IntakeSubsystem"]
-        ]
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Initialize a subsystem"
-  },
-  {
-    "type": "frc_subsystem_periodic",
-    "message0": "Subsystem Periodic",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Periodic code for a subsystem"
-  },
+// Subsystem blocks
+{
+  "type": "frc_subsystem_init",
+  "message0": "Subsystem %1 Initialization",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "SUBSYSTEM_TYPE",
+      "options": [
+        ["DriveSubsystem", "DriveSubsystem"],
+        ["ArmSubsystem", "ArmSubsystem"],
+        ["IntakeSubsystem", "IntakeSubsystem"]
+      ]
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 180,
+  "tooltip": "Initialize a subsystem"
+},
+{
+  "type": "frc_subsystem_periodic",
+  "message0": "Subsystem Periodic",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 180,
+  "tooltip": "Periodic code for a subsystem"
+},
 
-  // Robot Container blocks
-  {
-    "type": "frc_robotcontainer_init",
-    "message0": "Robot Container Initialization",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Initialize robot container"
-  },
-  {
-    "type": "frc_robotcontainer_configurebuttonbindings",
-    "message0": "Configure Button Bindings",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Configure button bindings"
-  },
-  {
-    "type": "frc_robotcontainer_getautonomouscommand",
-    "message0": "Get Autonomous Command",
-    "output": "Command",
-    "colour": 200,
-    "tooltip": "Get autonomous command"
-  },
+// Robot Container blocks
+{
+  "type": "frc_robotcontainer_init",
+  "message0": "Robot Container Initialization",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Initialize robot container"
+},
+{
+  "type": "frc_robotcontainer_configurebuttonbindings",
+  "message0": "Configure Button Bindings",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Configure button bindings"
+},
+{
+  "type": "frc_robotcontainer_getautonomouscommand",
+  "message0": "Get Autonomous Command",
+  "output": "Command",
+  "colour": 200,
+  "tooltip": "Get autonomous command"
+},
 {
   "type": "frc_robot_init",
   "message0": "robotInit() %1",
@@ -126,7 +126,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when the robot starts"
 },
 {
@@ -140,7 +140,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically while the robot is enabled"
 },
 {
@@ -154,7 +154,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when simulation starts"
 },
 {
@@ -168,7 +168,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically during simulation"
 },
 {
@@ -182,7 +182,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when robot enters disabled mode"
 },
 {
@@ -196,7 +196,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically while robot is disabled"
 },
 {
@@ -210,7 +210,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when autonomous mode starts"
 },
 {
@@ -224,7 +224,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically during autonomous mode"
 },
 {
@@ -238,7 +238,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when teleop mode starts"
 },
 {
@@ -252,7 +252,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically during teleop mode"
 },
 {
@@ -266,7 +266,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called once when test mode starts"
 },
 {
@@ -280,25 +280,24 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 230,
+  "colour": 200,
   "tooltip": "Called periodically during test mode"
 },
 
-
-  // Constants blocks
-  {
-    "type": "frc_constants_motorports",
-    "message0": "Motor Ports: Left %1 Right %2",
-    "args0": [
-      {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
-      {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 60,
-    "tooltip": "Define motor ports"
-  },
-  {
+// Constants blocks
+{
+  "type": "frc_constants_motorports",
+  "message0": "Motor Ports: Left %1 Right %2",
+  "args0": [
+    {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
+    {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Define motor ports"
+},
+{
   "type": "comment_block",
   "message0": "// %1",
   "args0": [
@@ -321,7 +320,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "field_number", "name": "AXIS", "value": 1}
   ],
   "output": "Number",
-  "colour": 210,
+  "colour": 30,
   "tooltip": "Get joystick axis value (-1 to 1)"
 },
 {
@@ -332,7 +331,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "field_number", "name": "BUTTON", "value": 1}
   ],
   "output": "Boolean",
-  "colour": 210,
+  "colour": 30,
   "tooltip": "Get joystick button state"
 },
 {
@@ -346,7 +345,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 180,
+  "colour": 220,
   "tooltip": "Create a PID controller"
 },
 {
@@ -358,7 +357,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "input_value", "name": "MEASUREMENT"}
   ],
   "output": "Number",
-  "colour": 180,
+  "colour": 220,
   "tooltip": "Calculate PID output"
 },
 {
@@ -392,7 +391,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "input_value", "name": "SECONDS", "check": "Number"}
   ],
   "output": ["Number", "Boolean"],
-  "colour": 230,
+  "colour": 330,
   "tooltip": "Timer operations"
 },
 {
@@ -474,7 +473,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 180,
+  "colour": 220,
   "tooltip": "Set PID controller absolute tolerance"
 },
 {
@@ -484,7 +483,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "field_input", "name": "NAME", "text": "pidController"}
   ],
   "output": "Boolean",
-  "colour": 180,
+  "colour": 220,
   "tooltip": "Check if PID controller is at setpoint"
 },
 {
@@ -495,7 +494,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 200,
+  "colour": 260,
   "tooltip": "Command initialization"
 },
 {
@@ -506,7 +505,7 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 200,
+  "colour": 260,
   "tooltip": "Command execution"
 },
 {
@@ -516,7 +515,7 @@ Blockly.defineBlocksWithJsonArray([
     {"type": "field_input", "name": "NAME", "text": "myCommand"}
   ],
   "output": "Boolean",
-  "colour": 200,
+  "colour": 260,
   "tooltip": "Check if command is finished"
 },
 {
@@ -527,8 +526,105 @@ Blockly.defineBlocksWithJsonArray([
   ],
   "previousStatement": null,
   "nextStatement": null,
-  "colour": 200,
+  "colour": 260,
   "tooltip": "Command end"
+},
+{
+  "type": "frc_variable_declaration",
+  "message0": "Declare %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": [
+        ["int", "int"],
+        ["double", "double"],
+        ["boolean", "boolean"],
+        ["String", "String"],
+        ["MotorController", "MotorController"],
+        ["Joystick", "Joystick"],
+        ["Encoder", "Encoder"],
+        ["PIDController", "PIDController"],
+        ["Timer", "Timer"]
+      ]
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Declare a variable with initialization"
+},
+{
+  "type": "frc_variable_set",
+  "message0": "Set %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": [
+        ["int", "int"],
+        ["double", "double"],
+        ["boolean", "boolean"],
+        ["String", "String"],
+        ["MotorController", "MotorController"],
+        ["Joystick", "Joystick"],
+        ["Encoder", "Encoder"],
+        ["PIDController", "PIDController"],
+        ["Timer", "Timer"]
+      ]
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Set the value of an existing variable"
+},
+{
+  "type": "frc_variable_get",
+  "message0": "Get %1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": [
+        ["int", "int"],
+        ["double", "double"],
+        ["boolean", "boolean"],
+        ["String", "String"],
+        ["MotorController", "MotorController"],
+        ["Joystick", "Joystick"],
+        ["Encoder", "Encoder"],
+        ["PIDController", "PIDController"],
+        ["Timer", "Timer"]
+      ]
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    }
+  ],
+  "output": null,
+  "colour": 330,
+  "tooltip": "Get the value of a variable"
 }
 ]);
 
@@ -859,6 +955,55 @@ Blockly.FRCJava['frc_command_end'] = function(block) {
   return `public void end(boolean interrupted) {\n` +
     Blockly.FRCJava.statementToCode(block, 'STEPS') +
     `}\n\n`;
+};
+// Add these generator functions to blockly-config.js
+Blockly.FRCJava['frc_variable_declaration'] = function(block) {
+  const type = block.getFieldValue('TYPE');
+  const name = block.getFieldValue('NABlocME');
+const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || Blockly.FRCJava.getDefaultValue(type);
+
+  // Special handling for FRC types
+  if (type === 'MotorController') {
+    return `MotorController ${name} = new PWMSparkMax(0);\n` + 
+           `${name}.set(${value});\n`;
+  } else if (type === 'Joystick') {
+    return `Joystick ${name} = new Joystick(${value || '0'});\n`;
+  } else if (type === 'Encoder') {
+    return `Encoder ${name} = new Encoder(${value || '0, 1'});\n`;
+  } else if (type === 'PIDController') {
+    return `PIDController ${name} = new PIDController(${value || '0.1, 0.0, 0.0'});\n`;
+  } else if (type === 'Timer') {
+    return `Timer ${name} = new Timer();\n`;
+  }
+  
+  return `${type} ${name} = ${value};\n`;
+};
+
+Blockly.FRCJava['frc_variable_set'] = function(block) {
+  const type = block.getFieldValue('TYPE');
+  const name = block.getFieldValue('NAME');
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || Blockly.FRCJava.getDefaultValue(type);
+  return `${name} = ${value};\n`;
+};
+
+Blockly.FRCJava['frc_variable_get'] = function(block) {
+  const name = block.getFieldValue('NAME');
+  return [name, Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+// Helper function to get default values for types
+Blockly.FRCJava.getDefaultValue = function(type) {
+  switch(type) {
+    case 'int': return '0';
+    case 'double': return '0.0';
+    case 'boolean': return 'false';
+    case 'String': return '""';
+    case 'MotorController': return '0.0';
+    case 'Joystick': return '0';
+    case 'Encoder': return '0, 1';
+    case 'PIDController': return '0.1, 0.0, 0.0';
+    default: return 'null';
+  }
 };
 
 // Helper function to generate proper indentation

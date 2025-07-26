@@ -14,8 +14,5 @@ window.domElements = {
   loadSampleBtn: document.getElementById('loadSampleBtn'),
   openCreditsBtn: document.getElementById('openCreditsBtn'),
   helpModal: document.getElementById('helpModal'),
-  closeModal: document.querySelector('.close-modal'),
-  zoomIn: document.getElementById('zoomIn'),
-  zoomOut: document.getElementById('zoomOut'),
-  zoomReset: document.getElementById('zoomReset')
+  closeModal: document.querySelector('.close-modal')
 };

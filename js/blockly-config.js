@@ -1,4 +1,11 @@
 // Define all blocks
+
+if (!window.dataTypes) {
+  window.dataTypes = {
+    getDefaultValue: () => 'null'
+  };
+}
+
 Blockly.defineBlocksWithJsonArray([
   // Motor blocks
   {
@@ -529,251 +536,226 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 260,
     "tooltip": "Command end"
   },
-  {
-    "type": "frc_variable_declaration",
-    "message0": "Declare %1 %2 = %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": [
-          ["int", "int"],
-          ["double", "double"],
-          ["boolean", "boolean"],
-          ["String", "String"],
-          ["MotorController", "MotorController"],
-          ["Joystick", "Joystick"],
-          ["Encoder", "Encoder"],
-          ["PIDController", "PIDController"],
-          ["Timer", "Timer"]
-        ]
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
-      },
-      {
-        "type": "input_value",
-        "name": "VALUE"
+{
+  "type": "frc_variable_declaration",
+  "message0": "Declare %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
+          }
+        } catch (e) {
+          console.error('Error getting data types:', e);
+        }
+        return [['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Declare a variable with initialization"
-  },
-  {
-    "type": "frc_variable_set",
-    "message0": "Set %1 %2 = %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": [
-          ["int", "int"],
-          ["double", "double"],
-          ["boolean", "boolean"],
-          ["String", "String"],
-          ["MotorController", "MotorController"],
-          ["Joystick", "Joystick"],
-          ["Encoder", "Encoder"],
-          ["PIDController", "PIDController"],
-          ["Timer", "Timer"]
-        ]
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
-      },
-      {
-        "type": "input_value",
-        "name": "VALUE"
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Declare a variable with initialization"
+},
+{
+  "type": "frc_variable_set",
+  "message0": "Set %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
+          }
+        } catch (e) {
+          console.error('Error getting data types:', e);
+        }
+        return [['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Set the value of an existing variable"
-  },
-  {
-    "type": "frc_variable_get",
-    "message0": "Get %1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": [
-          ["int", "int"],
-          ["double", "double"],
-          ["boolean", "boolean"],
-          ["String", "String"],
-          ["MotorController", "MotorController"],
-          ["Joystick", "Joystick"],
-          ["Encoder", "Encoder"],
-          ["PIDController", "PIDController"],
-          ["Timer", "Timer"]
-        ]
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Set the value of an existing variable"
+},
+{
+  "type": "frc_variable_get",
+  "message0": "Get %1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
+          }
+        } catch (e) {
+          console.error('Error getting data types:', e);
+        }
+        return [['int', 'int']];
       }
-    ],
-    "output": null,
-    "colour": 330,
-    "tooltip": "Get the value of a variable"
-  },
-  {
-    "type": "frc_custom_function_declare",
-    "message0": "%1 %2 %3 function %4 %5 %6",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "ACCESS_MODIFIER",
-        "options": [
-          ["public", "public"],
-          ["private", "private"],
-          ["protected", "protected"],
-          ["---", ""]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "STATIC_MODIFIER",
-        "options": [
-          ["static", "static"],
-          ["---", ""]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "RETURN_TYPE",
-        "options": [
-          ["void", "void"],
-          ["int", "int"],
-          ["double", "double"],
-          ["boolean", "boolean"],
-          ["String", "String"],
-          ["MotorController", "MotorController"],
-          ["Joystick", "Joystick"],
-          ["Encoder", "Encoder"],
-          ["PIDController", "PIDController"],
-          ["Timer", "Timer"]
-        ]
-      },
-      {
-        "type": "field_input",
-        "name": "FUNCTION_NAME",
-        "text": "myFunction"
-      },
-      {
-        "type": "input_dummy",
-        "name": "PARAMS_DUMMY"
-      },
-      {
-        "type": "input_statement",
-        "name": "FUNCTION_BODY"
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    }
+  ],
+  "output": null,
+  "colour": 330,
+  "tooltip": "Get the value of a variable"
+},
+{
+  "type": "frc_custom_function_declare",
+  "message0": "%1 %2 %3 function %4 ( %5 ) %6",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "ACCESS_MODIFIER",
+      "options": [
+        ["public", "public"],
+        ["private", "private"],
+        ["protected", "protected"],
+        ["---", ""]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "STATIC_MODIFIER",
+      "options": [
+        ["static", "static"],
+        ["---", ""]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "RETURN_TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            return [['void', 'void'], ...window.dataTypes.getDropdownOptions()];
+          }
+        } catch (e) {
+          console.error('Error getting data types:', e);
+        }
+        return [['void', 'void'], ['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 280,
-    "tooltip": "Declare a custom function with parameters and body",
-    "mutator": "function_parameter_mutator"
-  },
-  {
-    "type": "frc_custom_function_call",
-    "message0": "call %1 %2",
-    "args0": [
-      {
-        "type": "field_input",
-        "name": "FUNCTION_NAME",
-        "text": "myFunction"
-      },
-      {
-        "type": "input_dummy",
-        "name": "PARAMS_DUMMY"
-      }
-    ],
-    "output": null,
-    "colour": 280,
-    "tooltip": "Call a custom function",
-    "mutator": "function_argument_mutator"
-  },
-  {
-    "type": "frc_function_parameter",
-    "message0": "%1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "PARAM_TYPE",
-        "options": [
-          ["int", "int"],
-          ["double", "double"],
-          ["boolean", "boolean"],
-          ["String", "String"],
-          ["MotorController", "MotorController"],
-          ["Joystick", "Joystick"],
-          ["Encoder", "Encoder"],
-          ["PIDController", "PIDController"],
-          ["Timer", "Timer"]
-        ]
-      },
-      {
-        "type": "field_input",
-        "name": "PARAM_NAME",
-        "text": "param"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 280,
-    "tooltip": "A function parameter"
-  },
-  {
-    "type": "frc_function_argument",
-    "message0": "%1",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "ARG_VALUE"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 280,
-    "tooltip": "A function argument"
-  }
+    },
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "PARAMS"
+    },
+    {
+      "type": "input_statement",
+      "name": "FUNCTION_BODY"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 280,
+  "tooltip": "Declare a custom function"
+},
+
+// Statement Function Call (for standalone calls)
+{
+  "type": "frc_function_call_statement",
+  "message0": "call %1 ( %2 )",
+  "args0": [
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "ARGS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 280,
+  "tooltip": "Call a function as a statement"
+},
+
+// Value Function Call (for expressions)
+{
+  "type": "frc_function_call_value",
+  "message0": "call %1 ( %2 )",
+  "args0": [
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "ARGS"
+    }
+  ],
+  "output": null,
+  "colour": 280,
+  "tooltip": "Call a function as an expression"
+}
 ]);
 
 // Initialize generator
 Blockly.FRCJava = new Blockly.Generator('FRCJava');
 
 // Define order constants for operations
-Blockly.FRCJava.ORDER_ATOMIC = 0;          // Literal values, variables
-Blockly.FRCJava.ORDER_MEMBER = 1;          // . (dot) operator
-Blockly.FRCJava.ORDER_FUNCTION_CALL = 2;   // Function calls
-Blockly.FRCJava.ORDER_INCREMENT = 3;       // ++ (postfix)
-Blockly.FRCJava.ORDER_DECREMENT = 3;       // -- (postfix)
-Blockly.FRCJava.ORDER_BITWISE_NOT = 4;     // ~ (bitwise NOT)
-Blockly.FRCJava.ORDER_UNARY_PLUS = 4;      // + (unary)
-Blockly.FRCJava.ORDER_UNARY_NEGATION = 4;  // - (unary)
-Blockly.FRCJava.ORDER_LOGICAL_NOT = 4;     // ! (logical NOT)
-Blockly.FRCJava.ORDER_MULTIPLICATION = 5;  // *
-Blockly.FRCJava.ORDER_DIVISION = 5;        // /
-Blockly.FRCJava.ORDER_MODULUS = 5;         // %
-Blockly.FRCJava.ORDER_ADDITION = 6;        // +
-Blockly.FRCJava.ORDER_SUBTRACTION = 6;     // -
-Blockly.FRCJava.ORDER_RELATIONAL = 8;      // <, >, <=, >=
-Blockly.FRCJava.ORDER_EQUALITY = 9;        // ==, !=
-Blockly.FRCJava.ORDER_LOGICAL_AND = 13;    // &&
-Blockly.FRCJava.ORDER_LOGICAL_OR = 14;     // ||
-Blockly.FRCJava.ORDER_CONDITIONAL = 15;    // ?:
-Blockly.FRCJava.ORDER_ASSIGNMENT = 16;     // =, +=, -=, etc.
-Blockly.FRCJava.ORDER_NONE = 99;           // Statements
+Blockly.FRCJava.ORDER_ATOMIC = 0;
+Blockly.FRCJava.ORDER_MEMBER = 1;
+Blockly.FRCJava.ORDER_FUNCTION_CALL = 2;
+Blockly.FRCJava.ORDER_INCREMENT = 3;
+Blockly.FRCJava.ORDER_DECREMENT = 3;
+Blockly.FRCJava.ORDER_BITWISE_NOT = 4;
+Blockly.FRCJava.ORDER_UNARY_PLUS = 4;
+Blockly.FRCJava.ORDER_UNARY_NEGATION = 4;
+Blockly.FRCJava.ORDER_LOGICAL_NOT = 4;
+Blockly.FRCJava.ORDER_MULTIPLICATION = 5;
+Blockly.FRCJava.ORDER_DIVISION = 5;
+Blockly.FRCJava.ORDER_MODULUS = 5;
+Blockly.FRCJava.ORDER_ADDITION = 6;
+Blockly.FRCJava.ORDER_SUBTRACTION = 6;
+Blockly.FRCJava.ORDER_RELATIONAL = 8;
+Blockly.FRCJava.ORDER_EQUALITY = 9;
+Blockly.FRCJava.ORDER_LOGICAL_AND = 13;
+Blockly.FRCJava.ORDER_LOGICAL_OR = 14;
+Blockly.FRCJava.ORDER_CONDITIONAL = 15;
+Blockly.FRCJava.ORDER_ASSIGNMENT = 16;
+Blockly.FRCJava.ORDER_NONE = 99;
 
 // Add reserved words
 Blockly.FRCJava.RESERVED_WORDS_ = 'abstract,assert,boolean,break,byte,case,catch,char,class,const,' +
@@ -961,7 +943,6 @@ Blockly.Blocks['comment_block'].onchange = function(event) {
   if (event.type === Blockly.Events.BLOCK_CHANGE && 
       this.workspace.id === 'credits' && 
       this.isEditable()) {
-    // Revert any changes made to credit blocks
     this.setFieldValue(this.getFieldValue('TEXT'), 'TEXT');
   }
 };
@@ -1082,29 +1063,45 @@ Blockly.FRCJava['frc_command_end'] = function(block) {
 Blockly.FRCJava['frc_variable_declaration'] = function(block) {
   const type = block.getFieldValue('TYPE');
   const name = block.getFieldValue('NAME');
-  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || Blockly.FRCJava.getDefaultValue(type);
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT);
+  
+  // Use safe data type handling
+  let defaultValue = 'null';
+  try {
+    if (window.dataTypes && window.dataTypes.getDefaultValue) {
+      defaultValue = window.dataTypes.getDefaultValue(type) || 'null';
+    }
+  } catch (e) {
+    console.error('Error getting default value:', e);
+  }
+  
+  const finalValue = value || defaultValue;
 
-  // Special handling for FRC types
+  // Handle FRC-specific types
   if (type === 'MotorController') {
     return `MotorController ${name} = new PWMSparkMax(0);\n` + 
-           `${name}.set(${value});\n`;
+           `${name}.set(${finalValue});\n`;
   } else if (type === 'Joystick') {
-    return `Joystick ${name} = new Joystick(${value || '0'});\n`;
+    return `Joystick ${name} = new Joystick(${finalValue || '0'});\n`;
   } else if (type === 'Encoder') {
-    return `Encoder ${name} = new Encoder(${value || '0, 1'});\n`;
+    return `Encoder ${name} = new Encoder(${finalValue || '0, 1'});\n`;
   } else if (type === 'PIDController') {
-    return `PIDController ${name} = new PIDController(${value || '0.1, 0.0, 0.0'});\n`;
+    return `PIDController ${name} = new PIDController(${finalValue || '0.1, 0.0, 0.0'});\n`;
   } else if (type === 'Timer') {
     return `Timer ${name} = new Timer();\n`;
   }
   
-  return `${type} ${name} = ${value};\n`;
+  // Handle standard types
+  return `${type} ${name} = ${finalValue};\n`;
 };
+
 
 Blockly.FRCJava['frc_variable_set'] = function(block) {
   const type = block.getFieldValue('TYPE');
   const name = block.getFieldValue('NAME');
-  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || Blockly.FRCJava.getDefaultValue(type);
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || window.dataTypes.getDefaultValue(type);
+  
+  // Special handling for FRC types if needed
   return `${name} = ${value};\n`;
 };
 
@@ -1113,338 +1110,35 @@ Blockly.FRCJava['frc_variable_get'] = function(block) {
   return [name, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-// Helper function to get default values for types
 Blockly.FRCJava.getDefaultValue = function(type) {
-  switch(type) {
-    case 'int': return '0';
-    case 'double': return '0.0';
-    case 'boolean': return 'false';
-    case 'String': return '""';
-    case 'MotorController': return '0.0';
-    case 'Joystick': return '0';
-    case 'Encoder': return '0, 1';
-    case 'PIDController': return '0.1, 0.0, 0.0';
-    case 'Timer': return '0.0';
-    default: return 'null';
-  }
+  return window.dataTypes.getDefaultValue(type);
 };
-
-Blockly.Extensions.registerMutator('function_parameter_mutator',
-  {
-    mutationToDom: function() {
-      const container = Blockly.utils.xml.createElement('mutation');
-      const paramsInput = this.getInput('PARAMS_DUMMY');
-      
-      // Check if the input exists and has a connection
-      if (paramsInput && paramsInput.connection) {
-        const params = paramsInput.connection.targetBlock();
-        if (params) {
-          let paramCount = 0;
-          let currentParam = params;
-          while (currentParam) {
-            paramCount++;
-            const paramElement = Blockly.utils.xml.createElement('param');
-            paramElement.setAttribute('type', currentParam.getFieldValue('PARAM_TYPE'));
-            paramElement.setAttribute('name', currentParam.getFieldValue('PARAM_NAME'));
-            container.appendChild(paramElement);
-            currentParam = currentParam.nextConnection && currentParam.nextConnection.targetBlock();
-          }
-        }
-      }
-      return container;
-    },
-
-    domToMutation: function(xmlElement) {
-      let paramBlock = null;
-      for (let i = 0; i < xmlElement.childNodes.length; i++) {
-        const paramElement = xmlElement.childNodes[i];
-        if (paramElement.nodeName.toLowerCase() === 'param') {
-          const newParam = this.workspace.newBlock('frc_function_parameter');
-          newParam.setFieldValue(paramElement.getAttribute('type'), 'PARAM_TYPE');
-          newParam.setFieldValue(paramElement.getAttribute('name'), 'PARAM_NAME');
-          newParam.initSvg();
-          newParam.render();
-          
-          if (paramBlock) {
-            paramBlock.nextConnection.connect(newParam.previousConnection);
-          } else {
-            const paramsInput = this.getInput('PARAMS_DUMMY');
-            if (paramsInput && paramsInput.connection) {
-              paramsInput.connection.connect(newParam.previousConnection);
-            }
-          }
-          paramBlock = newParam;
-        }
-      }
-    },
-
-    decompose: function(workspace) {
-      const containerBlock = workspace.newBlock('frc_function_parameter_container');
-      containerBlock.initSvg();
-      
-      const paramsInput = this.getInput('PARAMS_DUMMY');
-      if (paramsInput && paramsInput.connection) {
-        const params = paramsInput.connection.targetBlock();
-        if (params) {
-          let currentParam = params;
-          while (currentParam) {
-            const newParam = workspace.newBlock('frc_function_parameter');
-            newParam.setFieldValue(currentParam.getFieldValue('PARAM_TYPE'), 'PARAM_TYPE');
-            newParam.setFieldValue(currentParam.getFieldValue('PARAM_NAME'), 'PARAM_NAME');
-            newParam.initSvg();
-            newParam.render();
-            
-            if (paramBlock) {
-              paramBlock.nextConnection.connect(newParam.previousConnection);
-            } else {
-              containerBlock.getInput('STACK').connection.connect(newParam.previousConnection);
-            }
-            paramBlock = newParam;
-            
-            currentParam = currentParam.nextConnection && currentParam.nextConnection.targetBlock();
-          }
-        }
-      }
-      return containerBlock;
-    },
-
-    compose: function(containerBlock) {
-      let paramBlock = containerBlock.getInputTargetBlock('STACK');
-      if (paramBlock) {
-        let currentParam = paramBlock;
-        let firstParam = null;
-        
-        while (currentParam) {
-          if (currentParam.type === 'frc_function_parameter') {
-            if (!firstParam) {
-              firstParam = currentParam;
-            }
-          }
-          currentParam = currentParam.nextConnection && currentParam.nextConnection.targetBlock();
-        }
-        
-        if (firstParam) {
-          const paramsInput = this.getInput('PARAMS_DUMMY');
-          if (paramsInput && paramsInput.connection) {
-            paramsInput.connection.connect(firstParam.previousConnection);
-          }
-        }
-      } else {
-        const paramsInput = this.getInput('PARAMS_DUMMY');
-        if (paramsInput && paramsInput.connection) {
-          paramsInput.connection.connect(null);
-        }
-      }
-    },
-
-    saveConnections: function(containerBlock) {
-      let paramBlock = containerBlock.getInputTargetBlock('STACK');
-      if (paramBlock) {
-        let currentParam = paramBlock;
-        let i = 0;
-        
-        while (currentParam) {
-          const input = this.getInput('PARAM' + i);
-          if (input) {
-            currentParam.valueConnection_ = input.connection.targetConnection;
-          }
-          i++;
-          currentParam = currentParam.nextConnection && currentParam.nextConnection.targetBlock();
-        }
-      }
-    }
-  }
-);
-
-Blockly.Extensions.registerMutator('function_argument_mutator',
-  {
-    mutationToDom: function() {
-      const container = Blockly.utils.xml.createElement('mutation');
-      const argsInput = this.getInput('PARAMS_DUMMY');
-      
-      // Check if the input exists and has a connection
-      if (argsInput && argsInput.connection) {
-        const args = argsInput.connection.targetBlock();
-        if (args) {
-          let argCount = 0;
-          let currentArg = args;
-          while (currentArg) {
-            argCount++;
-            container.setAttribute('arg' + argCount, 'true');
-            currentArg = currentArg.nextConnection && currentArg.nextConnection.targetBlock();
-          }
-        }
-      }
-      return container;
-    },
-
-    domToMutation: function(xmlElement) {
-      for (let i = 0; i < xmlElement.attributes.length; i++) {
-        const attr = xmlElement.attributes[i];
-        if (attr.name.startsWith('arg')) {
-          const newArg = this.workspace.newBlock('frc_function_argument');
-          newArg.initSvg();
-          newArg.render();
-          
-          if (i === 0) {
-            const argsInput = this.getInput('PARAMS_DUMMY');
-            if (argsInput && argsInput.connection) {
-              argsInput.connection.connect(newArg.previousConnection);
-            }
-          } else {
-            const prevArg = this.getInput('ARG' + (i-1)).connection.targetBlock();
-            if (prevArg) {
-              prevArg.nextConnection.connect(newArg.previousConnection);
-            }
-          }
-          
-          this.appendValueInput('ARG' + i)
-            .setCheck(null)
-            .appendField('arg' + (i+1));
-        }
-      }
-    },
-
-    decompose: function(workspace) {
-      const containerBlock = workspace.newBlock('frc_function_argument_container');
-      containerBlock.initSvg();
-      
-      const argsInput = this.getInput('PARAMS_DUMMY');
-      if (argsInput && argsInput.connection) {
-        const args = argsInput.connection.targetBlock();
-        if (args) {
-          let currentArg = args;
-          let i = 0;
-          
-          while (currentArg) {
-            const newArg = workspace.newBlock('frc_function_argument');
-            newArg.initSvg();
-            newArg.render();
-            
-            if (i === 0) {
-              containerBlock.getInput('STACK').connection.connect(newArg.previousConnection);
-            } else {
-              const prevArg = containerBlock.getInput('ARG' + (i-1)).connection.targetBlock();
-              if (prevArg) {
-                prevArg.nextConnection.connect(newArg.previousConnection);
-              }
-            }
-            
-            currentArg = currentArg.nextConnection && currentArg.nextConnection.targetBlock();
-            i++;
-          }
-        }
-      }
-      return containerBlock;
-    },
-
-    compose: function(containerBlock) {
-      let argBlock = containerBlock.getInputTargetBlock('STACK');
-      if (argBlock) {
-        let currentArg = argBlock;
-        let i = 0;
-        
-        while (currentArg) {
-          if (i > 0) {
-            this.appendValueInput('ARG' + i)
-              .setCheck(null)
-              .appendField('arg' + (i+1));
-          }
-          
-          currentArg = currentArg.nextConnection && currentArg.nextConnection.targetBlock();
-          i++;
-        }
-        
-        const argsInput = this.getInput('PARAMS_DUMMY');
-        if (argsInput && argsInput.connection) {
-          argsInput.connection.connect(argBlock.previousConnection);
-        }
-      } else {
-        const argsInput = this.getInput('PARAMS_DUMMY');
-        if (argsInput && argsInput.connection) {
-          argsInput.connection.connect(null);
-        }
-      }
-    },
-
-    saveConnections: function(containerBlock) {
-      let argBlock = containerBlock.getInputTargetBlock('STACK');
-      if (argBlock) {
-        let currentArg = argBlock;
-        let i = 0;
-        
-        while (currentArg) {
-          const input = this.getInput('ARG' + i);
-          if (input) {
-            currentArg.valueConnection_ = input.connection.targetConnection;
-          }
-          i++;
-          currentArg = currentArg.nextConnection && currentArg.nextConnection.targetBlock();
-        }
-      }
-    }
-  }
-);
 
 Blockly.FRCJava['frc_custom_function_declare'] = function(block) {
   const accessModifier = block.getFieldValue('ACCESS_MODIFIER');
   const staticModifier = block.getFieldValue('STATIC_MODIFIER');
   const returnType = block.getFieldValue('RETURN_TYPE');
   const functionName = block.getFieldValue('FUNCTION_NAME');
-  
-  // Get parameters
-  let params = '';
-  const paramsInput = block.getInput('PARAMS_DUMMY');
-  if (paramsInput && paramsInput.connection) {
-    let paramBlock = paramsInput.connection.targetBlock();
-    if (paramBlock) {
-      let currentParam = paramBlock;
-      while (currentParam) {
-        if (params) params += ', ';
-        params += currentParam.getFieldValue('PARAM_TYPE') + ' ' + 
-                 currentParam.getFieldValue('PARAM_NAME');
-        currentParam = currentParam.nextConnection && currentParam.nextConnection.targetBlock();
-      }
-    }
-  }
-  
   const body = Blockly.FRCJava.statementToCode(block, 'FUNCTION_BODY') || '';
   
   let code = '';
-  if (accessModifier) code += accessModifier + ' ';
-  if (staticModifier) code += staticModifier + ' ';
-  code += returnType + ' ' + functionName + '(' + params + ') {\n' +
+  if (accessModifier && accessModifier !== '---') code += accessModifier + ' ';
+  if (staticModifier && staticModifier !== '---') code += staticModifier + ' ';
+  code += returnType + ' ' + functionName + '() {\n' +
           body + 
+          (returnType !== 'void' ? '  return null;\n' : '') +
           '}\n\n';
   return code;
 };
 
-Blockly.FRCJava['frc_custom_function_call'] = function(block) {
+Blockly.FRCJava['frc_function_call_statement'] = function(block) {
   const functionName = block.getFieldValue('FUNCTION_NAME');
-  
-  // Get arguments
-  let args = '';
-  for (let i = 0; i < block.inputList.length; i++) {
-    const input = block.inputList[i];
-    if (input.name.startsWith('ARG')) {
-      const argCode = Blockly.FRCJava.valueToCode(block, input.name, 
-        Blockly.FRCJava.ORDER_COMMA) || '';
-      if (args) args += ', ';
-      args += argCode;
-    }
-  }
-  
-  return [functionName + '(' + args + ')', Blockly.FRCJava.ORDER_FUNCTION_CALL];
+  return functionName + '();\n';
 };
 
-Blockly.FRCJava['frc_function_parameter'] = function(block) {
-  // This block is only used in the mutator and doesn't generate code directly
-  return '';
-};
-
-Blockly.FRCJava['frc_function_argument'] = function(block) {
-  // This block is only used in the mutator and doesn't generate code directly
-  return '';
+Blockly.FRCJava['frc_function_call_value'] = function(block) {
+  const functionName = block.getFieldValue('FUNCTION_NAME');
+  return [functionName + '()', Blockly.FRCJava.ORDER_FUNCTION_CALL];
 };
 
 // Helper function to generate proper indentation

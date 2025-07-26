@@ -4,6 +4,25 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('dark-mode');
   }
 
+  // Initialize data types FIRST
+  if (window.dataTypes && window.dataTypes.init) {
+    try {
+      window.dataTypes.init();
+    } catch (e) {
+      console.error('Error initializing data types:', e);
+    }
+  }
+
+  // Create a safe tabManagement object if it doesn't exist
+  if (!window.tabManagement) {
+    window.tabManagement = {
+      workspaces: {},
+      tabs: [],
+      coreTabs: []
+    };
+    console.warn('tabManagement not found, created fallback');
+  }
+
   // Initialize core tabs
   window.tabManagement.coreTabs.forEach(tab => {
     window.tabManagement.tabs.push(tab);
@@ -19,4 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Setup event listeners
   window.eventHandlers.setupEventListeners();
+
+  // Force another update of data types after everything is loaded
+  setTimeout(() => {
+    if (window.dataTypes && window.dataTypes.updateAllBlocks) {
+      window.dataTypes.updateAllBlocks();
+    }
+  }, 500);
 });

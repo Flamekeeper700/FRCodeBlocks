@@ -14,5 +14,7 @@ window.domElements = {
   loadSampleBtn: document.getElementById('loadSampleBtn'),
   openCreditsBtn: document.getElementById('openCreditsBtn'),
   helpModal: document.getElementById('helpModal'),
+    manageDataTypesBtn: document.getElementById('manageDataTypesBtn'),
+  addDataTypeBtn: document.getElementById('addDataTypeBtn'),
   closeModal: document.querySelector('.close-modal')
 };

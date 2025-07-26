@@ -62,8 +62,11 @@ Blockly.Msg = {
   BKY_FRC_MOTOR_SET_TOOLTIP: "Set the speed of a motor controller",
   BKY_FRC_PID_TOOLTIP: "Configure a PID controller",
 
-  //Variable
+  // Variable
   BKY_FRC_VARIABLE_DECLARE_TOOLTIP: "Declare a new variable with a type and initial value",
   BKY_FRC_VARIABLE_SET_TOOLTIP: "Set the value of an existing variable",
-  BKY_FRC_VARIABLE_GET_TOOLTIP: "Get the value of a variable"
+  BKY_FRC_VARIABLE_GET_TOOLTIP: "Get the value of a variable",
+
+  // Functions
+  BKY_FRC_FUNCTION_CALL_TOOLTIP: "Call a function with arguments"
 };

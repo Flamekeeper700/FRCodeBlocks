@@ -77,8 +77,9 @@
           <block type="comment_block"></block>
         </category>
         <category name="Functions" colour="280">
-          <block type="frc_custom_function_declare"></block>
-          <block type="frc_custom_function_call"></block>
+  <block type="frc_custom_function_declare"></block>
+  <block type="frc_function_call_statement"></block>
+  <block type="frc_function_call_value"></block>
         </category>
       </xml>
     </div>
@@ -109,6 +110,7 @@
     </select>
     <button id="loadSampleBtn" disabled>Load Selected</button>
     <button id="openCreditsBtn">Credits</button>
+    <button id="manageDataTypesBtn">Manage Data Types</button>
   </div>
 
   <pre id="output">// Generated Java code will appear here</pre>
@@ -121,13 +123,24 @@
     </div>
   </div>
 
-  <script src="js/blockly-config.js"></script>
-  <script src="js/blockly-messages.js"></script>
-  <script src="js/dom-elements.js"></script>
-  <script src="js/code-generation.js"></script>
-  <script src="js/tab-management.js"></script>
-  <script src="js/event-handlers.js"></script>
-  <script src="js/sample-projects.js"></script>
-  <script src="js/main.js"></script>
+  <div id="dataTypesModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>Manage Data Types</h2>
+    <div id="dataTypesList"></div>
+    <button id="addDataTypeBtn">Add New Data Type</button>
+  </div>
+</div>
+
+<script src="js/dom-elements.js"></script>
+<script src="js/tab-management.js"></script>
+<script src="js/data-types.js"></script>
+<script src="js/blockly-config.js"></script>
+<script src="js/blockly-messages.js"></script>
+<script src="js/code-generation.js"></script>
+<script src="js/event-handlers.js"></script>
+<script src="js/sample-projects.js"></script>
+<script src="js/main.js"></script>
+
 </body>
 </html>

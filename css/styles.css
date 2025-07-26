@@ -188,3 +188,56 @@ body {
 #loadSampleBtn.loading {
   background-color: #2196F3;
 }
+
+.data-type-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.data-type-item button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.data-type-item button:hover {
+  background-color: #cc0000;
+}
+
+#addDataTypeBtn {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#addDataTypeBtn:hover {
+  background-color: #45a049;
+}
+
+#dataTypesModal .modal-content {
+  min-width: 400px;
+}
+
+#dataTypesList {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.base-type {
+  color: #666;
+  font-style: italic;
+  padding: 4px 8px;
+}

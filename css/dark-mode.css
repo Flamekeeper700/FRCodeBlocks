@@ -1,42 +1,163 @@
+/* dark-mode.css */
+:root {
+  /* Light mode defaults */
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --tab-bg: #f5f5f5;
+  --tab-border: #ccc;
+  --tab-active-bg: #fff;
+  --tab-active-border: #0066cc;
+  --toolbox-bg: #f5f5f5;
+  --toolbox-border: #ccc;
+  --controls-bg: #eee;
+  --output-bg: #111;
+  --output-text: #0f0;
+  --button-bg: #4CAF50;
+  --button-text: white;
+  --button-hover: #45a049;
+  --button-border: #4CAF50;
+  --modal-bg: white;
+  --modal-text: #333;
+  --blockly-bg: #fff;
+  --blockly-text: #333;
+  --blockly-toolbox: #f5f5f5;
+  --blockly-path: #444;
+  --blockly-scrollbar: #555;
+}
+
 body.dark-mode {
-  background-color: #222;
-  color: #eee;
+  /* Dark mode overrides */
+  --bg-color: #1a1a1a;
+  --text-color: #e0e0e0;
+  --tab-bg: #2d2d2d;
+  --tab-border: #444;
+  --tab-active-bg: #3a3a3a;
+  --tab-active-border: #4a90e2;
+  --toolbox-bg: #2d2d2d;
+  --toolbox-border: #444;
+  --controls-bg: #333;
+  --output-bg: #121212;
+  --output-text: #4af24a;
+  --button-bg: #444;
+  --button-text: #e0e0e0;
+  --button-hover: #555;
+  --button-border: #555;
+  --modal-bg: #333;
+  --modal-text: #e0e0e0;
+  --blockly-bg: #252525;
+  --blockly-text: #e0e0e0;
+  --blockly-toolbox: #2d2d2d;
+  --blockly-path: #666;
+  --blockly-scrollbar: #777;
 }
 
-body.dark-mode #tabs {
-  background: #333;
-  border-bottom-color: #444;
+/* Apply variables */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-body.dark-mode #tabs button.active {
-  background: #444;
-  border-bottom-color: #0066cc;
+#tabs {
+  background: var(--tab-bg);
+  border-bottom-color: var(--tab-border);
 }
 
-body.dark-mode #tabs button .close-btn:hover {
-  color: #ff6666;
+#tabs button.active {
+  background: var(--tab-active-bg);
+  border-bottom-color: var(--tab-active-border);
+  color: var(--text-color);
 }
 
-body.dark-mode #toolboxContainer {
-  background: #333;
-  border-right-color: #444;
+#toolboxContainer {
+  background: var(--toolbox-bg);
+  border-right-color: var(--toolbox-border);
 }
 
-body.dark-mode #toolboxContainer.collapsed {
-  border-right: none;
+#controls {
+  background: var(--controls-bg);
 }
 
-body.dark-mode #controls {
-  background: #444;
+#output {
+  background: var(--output-bg);
+  color: var(--output-text);
 }
 
-body.dark-mode #output {
-  background: #000;
-  color: #0f0;
-  border-top-color: #444;
+button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
-body.dark-mode .modal-content {
-  background: #333;
-  color: #eee;
+button:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  color: var(--modal-text);
+}
+
+/* Blockly specific styles */
+.blocklyMainBackground {
+  fill: var(--blockly-bg) !important;
+}
+
+.blocklyToolboxDiv {
+  background-color: var(--blockly-toolbox) !important;
+}
+
+.blocklyTreeRow {
+  color: var(--text-color);
+}
+
+.blocklyText {
+  fill: var(--blockly-text) !important;
+}
+
+/* Theme editor styles */
+.theme-variable-editor {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.theme-variable-editor label {
+  width: 200px;
+  margin-right: 10px;
+}
+
+.theme-variable-editor input {
+  flex-grow: 1;
+}
+
+#themeEditorModal .modal-content {
+  max-width: 600px;
+}
+
+#newThemeName {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  background-color: var(--modal-bg);
+  color: var(--modal-text);
+  border: 1px solid var(--button-border);
+}
+
+#saveCustomTheme {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  padding: 8px 16px;
+  border: 1px solid var(--button-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#saveCustomTheme:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }

@@ -1,3 +1,4 @@
+/* styles.css */
 body {
   font-family: sans-serif;
   margin: 0;
@@ -5,15 +6,15 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
 }
 
 #tabs {
   display: flex;
-  border-bottom: 1px solid #ccc;
-  background: #f5f5f5;
+  border-bottom: 1px solid var(--tab-border);
+  background: var(--tab-bg);
   overflow-x: auto;
   z-index: 50;
 }
@@ -29,11 +30,12 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
+  color: var(--text-color);
 }
 
 #tabs button.active {
-  border-bottom-color: #0066cc;
-  background: #fff;
+  border-bottom-color: var(--tab-active-border);
+  background: var(--tab-active-bg);
   font-weight: 700;
 }
 
@@ -55,8 +57,8 @@ body {
 
 #toolboxContainer {
   width: 0px;
-  background: #f5f5f5;
-  border-right: 1px solid #ccc;
+  background: var(--toolbox-bg);
+  border-right: 1px solid var(--toolbox-border);
   z-index: 100;
   overflow-y: auto;
   transition: width 0.3s ease;
@@ -82,24 +84,25 @@ body {
 
 #controls {
   padding: 8px;
-  background: #eee;
+  background: var(--controls-bg);
   display: flex;
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
   z-index: 50;
+  border-top: 1px solid var(--tab-border);
 }
 
 #output {
   flex: 1 1 100%;
-  background: #111;
-  color: #0f0;
+  background: var(--output-bg);
+  color: var(--output-text);
   padding: 12px;
   font-family: monospace;
   white-space: pre-wrap;
   overflow-y: auto;
   max-height: 200px;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid var(--tab-border);
 }
 
 .blocklyToolboxContents {
@@ -110,7 +113,6 @@ body {
   margin-bottom: 4px;
   border-radius: 4px;
 }
-
 
 .modal {
   display: none;
@@ -126,30 +128,34 @@ body {
 }
 
 .modal-content {
-  background: white;
+  background: var(--modal-bg);
   padding: 20px;
   border-radius: 5px;
   max-width: 800px;
   max-height: 80vh;
   overflow-y: auto;
   width: 90%;
+  color: var(--modal-text);
 }
 
 .modal h2 {
   margin-top: 0;
-  color: #0066cc;
+  color: var(--tab-active-border);
 }
 
 .close-modal {
   float: right;
   font-size: 1.5em;
   cursor: pointer;
+  color: var(--text-color);
 }
 
 #sampleProjects {
   padding: 6px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--button-border);
+  background-color: var(--modal-bg);
+  color: var(--modal-text);
 }
 
 .blocklyWidgetDiv {
@@ -167,26 +173,29 @@ body {
 
 #loadSampleBtn {
   padding: 6px 12px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
   border-radius: 4px;
   cursor: pointer;
   margin-left: 5px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 #loadSampleBtn:hover {
-  background-color: #45a049;
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }
 
 #loadSampleBtn:disabled {
   background-color: #cccccc;
+  border-color: #cccccc;
   cursor: not-allowed;
 }
 
 #loadSampleBtn.loading {
   background-color: #2196F3;
+  border-color: #2196F3;
 }
 
 .data-type-item {
@@ -194,13 +203,13 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--tab-border);
 }
 
 .data-type-item button {
   background-color: #ff4444;
   color: white;
-  border: none;
+  border: 1px solid #ff4444;
   padding: 4px 8px;
   border-radius: 3px;
   cursor: pointer;
@@ -208,20 +217,22 @@ body {
 
 .data-type-item button:hover {
   background-color: #cc0000;
+  border-color: #cc0000;
 }
 
 #addDataTypeBtn {
   margin-top: 15px;
   padding: 8px 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
   border-radius: 4px;
   cursor: pointer;
 }
 
 #addDataTypeBtn:hover {
-  background-color: #45a049;
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
 }
 
 #dataTypesModal .modal-content {
@@ -232,12 +243,13 @@ body {
   max-height: 300px;
   overflow-y: auto;
   margin-bottom: 15px;
-  border: 1px solid #eee;
+  border: 1px solid var(--tab-border);
   border-radius: 4px;
 }
 
 .base-type {
-  color: #666;
+  color: var(--text-color);
+  opacity: 0.7;
   font-style: italic;
   padding: 4px 8px;
 }

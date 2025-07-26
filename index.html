@@ -100,7 +100,6 @@
     <button id="copyCodeBtn">Copy Code</button>
     <button id="saveProjectBtn">Save Project</button>
     <button id="loadProjectBtn">Load Project</button>
-    <button id="darkModeToggle">Dark Mode</button>
     <button id="helpBtn">Help</button>
     <select id="sampleProjects">
       <option value="">Load Sample...</option>
@@ -111,6 +110,11 @@
     <button id="loadSampleBtn" disabled>Load Selected</button>
     <button id="openCreditsBtn">Credits</button>
     <button id="manageDataTypesBtn">Manage Data Types</button>
+    <select id="themeSelector">
+  <option value="default">Default</option>
+  <option value="dark">Dark</option>
+</select>
+<button id="editThemeBtn">Customize Theme</button>
   </div>
 
   <pre id="output">// Generated Java code will appear here</pre>
@@ -132,7 +136,18 @@
   </div>
 </div>
 
+<div id="themeEditorModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>Theme Editor</h2>
+    <div id="themeVariablesEditor"></div>
+    <input type="text" id="newThemeName" placeholder="Theme name">
+    <button id="saveCustomTheme">Save Custom Theme</button>
+  </div>
+</div>
+
 <script src="js/dom-elements.js"></script>
+<script src="js/custom-theme.js"></script> 
 <script src="js/tab-management.js"></script>
 <script src="js/data-types.js"></script>
 <script src="js/blockly-config.js"></script>

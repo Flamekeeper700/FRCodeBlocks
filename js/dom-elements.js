@@ -16,5 +16,11 @@ window.domElements = {
   helpModal: document.getElementById('helpModal'),
     manageDataTypesBtn: document.getElementById('manageDataTypesBtn'),
   addDataTypeBtn: document.getElementById('addDataTypeBtn'),
-  closeModal: document.querySelector('.close-modal')
+  closeModal: document.querySelector('.close-modal'),
+    themeSelector: document.getElementById('themeSelector'),
+  editThemeBtn: document.getElementById('editThemeBtn'),
+  themeEditorModal: document.getElementById('themeEditorModal'),
+  themeVariablesEditor: document.getElementById('themeVariablesEditor'),
+  newThemeName: document.getElementById('newThemeName'),
+  saveCustomTheme: document.getElementById('saveCustomTheme')
 };

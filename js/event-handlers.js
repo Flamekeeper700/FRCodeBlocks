@@ -28,6 +28,25 @@ window.eventHandlers = {
       loadSampleProject 
     } = window.tabManagement;
 
+
+        const { editThemeBtn, themeSelector } = window.domElements;
+    
+    if (themeSelector) {
+      themeSelector.addEventListener('change', (e) => {
+        window.themeManager.applyTheme(e.target.value);
+      });
+    }
+
+    if (editThemeBtn) {
+      editThemeBtn.addEventListener('click', () => {
+        if (window.themeManager && window.themeManager.showThemeEditor) {
+          window.themeManager.showThemeEditor();
+        } else {
+          console.error('Theme manager not properly initialized');
+        }
+      });
+    }
+
     // Core functionality event listeners
     addTabBtn.addEventListener('click', () => addTab.call(window.tabManagement));
     downloadJavaBtn.addEventListener('click', window.codeGeneration.downloadJavaFile);
@@ -233,3 +252,4 @@ window.eventHandlers = {
     }
   }
 };
+

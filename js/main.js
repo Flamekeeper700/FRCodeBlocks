@@ -4,7 +4,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('dark-mode');
   }
 
-  // Initialize data types FIRST
+  // Initialize theme manager FIRST
+  if (window.themeManager && window.themeManager.init) {
+    try {
+      window.themeManager.init();
+    } catch (e) {
+      console.error('Error initializing theme manager:', e);
+    }
+  }
+
+  // Initialize data types
   if (window.dataTypes && window.dataTypes.init) {
     try {
       window.dataTypes.init();
@@ -13,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // Rest of your existing main.js code...
   // Create a safe tabManagement object if it doesn't exist
   if (!window.tabManagement) {
     window.tabManagement = {

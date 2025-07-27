@@ -1,5 +1,10 @@
 window.eventHandlers = {
+  isSaving: false,
+  isLoading: false,
+
   setupEventListeners: function() {
+    this.removeEventListeners();
+
     const { 
       addTabBtn, 
       downloadJavaBtn, 
@@ -14,7 +19,8 @@ window.eventHandlers = {
       openCreditsBtn,
       manageDataTypesBtn,
       addDataTypeBtn,
-      
+      themeSelector,
+      editThemeBtn
     } = window.domElements;
 
     const { 
@@ -26,9 +32,6 @@ window.eventHandlers = {
       loadSampleProject 
     } = window.tabManagement;
 
-
-        const { editThemeBtn, themeSelector } = window.domElements;
-    
     // Theme selector
     if (themeSelector) {
       themeSelector.addEventListener('change', (e) => {
@@ -49,9 +52,8 @@ window.eventHandlers = {
     addTabBtn.addEventListener('click', () => addTab.call(window.tabManagement));
     downloadJavaBtn.addEventListener('click', window.codeGeneration.downloadJavaFile);
     copyCodeBtn.addEventListener('click', window.codeGeneration.copyCodeToClipboard);
-    saveProjectBtn.addEventListener('click', () => saveProject.call(window.tabManagement));
-    loadProjectBtn.addEventListener('click', () => loadProject.call(window.tabManagement));
-    
+    saveProjectBtn.addEventListener('click', this.handleSaveProject.bind(this));
+    loadProjectBtn.addEventListener('click', this.handleLoadProject.bind(this));
     
     helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
     closeModal.addEventListener('click', () => helpModal.style.display = 'none');
@@ -132,13 +134,13 @@ window.eventHandlers = {
     });
 
     // Data types management
-  if (manageDataTypesBtn) {
-    manageDataTypesBtn.addEventListener('click', this.handleManageDataTypesClick.bind(this));
-  }
+    if (manageDataTypesBtn) {
+      manageDataTypesBtn.addEventListener('click', this.handleManageDataTypesClick.bind(this));
+    }
 
-  if (addDataTypeBtn) {
-    addDataTypeBtn.addEventListener('click', this.handleAddDataTypeClick.bind(this));
-  }
+    if (addDataTypeBtn) {
+      addDataTypeBtn.addEventListener('click', this.handleAddDataTypeClick.bind(this));
+    }
 
     // Close modal when clicking outside
     window.addEventListener('click', (e) => {
@@ -161,11 +163,11 @@ window.eventHandlers = {
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        saveProject.call(window.tabManagement);
+        this.handleSaveProject();
       }
       if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
         e.preventDefault();
-        loadProject.call(window.tabManagement);
+        this.handleLoadProject();
       }
       if (e.key === 'Enter' && document.activeElement === sampleProjects) {
         loadSampleBtn.click();
@@ -178,6 +180,53 @@ window.eventHandlers = {
         this.closest('.modal').style.display = 'none';
       });
     });
+  },
+
+  removeEventListeners: function() {
+    const { saveProjectBtn, loadProjectBtn } = window.domElements;
+    
+    if (saveProjectBtn) {
+      const newSaveBtn = saveProjectBtn.cloneNode(true);
+      saveProjectBtn.parentNode.replaceChild(newSaveBtn, saveProjectBtn);
+      window.domElements.saveProjectBtn = newSaveBtn;
+    }
+    
+    if (loadProjectBtn) {
+      const newLoadBtn = loadProjectBtn.cloneNode(true);
+      loadProjectBtn.parentNode.replaceChild(newLoadBtn, loadProjectBtn);
+      window.domElements.loadProjectBtn = newLoadBtn;
+    }
+  },
+
+  handleSaveProject: function() {
+    if (this.isSaving) return;
+    this.isSaving = true;
+    
+    try {
+      window.tabManagement.saveProject();
+    } catch (error) {
+      console.error('Save error:', error);
+    } finally {
+      this.isSaving = false;
+    }
+  },
+
+  handleLoadProject: function() {
+    if (this.isLoading) return;
+    this.isLoading = true;
+    
+    window.tabManagement.loadProject()
+      .then(success => {
+        if (success && window.dataTypes && window.dataTypes.updateAllBlocks) {
+          window.dataTypes.updateAllBlocks();
+        }
+      })
+      .catch(error => {
+        console.error('Load error:', error);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   },
 
   handleManageDataTypesClick: function() {
@@ -241,4 +290,3 @@ window.eventHandlers = {
     }
   }
 };
-

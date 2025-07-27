@@ -1,4 +1,30 @@
 /* styles.css */
+:root {
+  /* Default theme (light) */
+  --bg-color: #f5f5f5;
+  --text-color: #333;
+  --tab-bg: #f5f5f5;
+  --tab-border: #ccc;
+  --tab-active-bg: #fff;
+  --tab-active-border: #0066cc;
+  --toolbox-bg: #f5f5f5;
+  --toolbox-border: #ccc;
+  --controls-bg: #eee;
+  --output-bg: #111;
+  --output-text: #0f0;
+  --button-bg: #4CAF50;
+  --button-text: white;
+  --button-hover: #45a049;
+  --button-border: #4CAF50;
+  --modal-bg: white;
+  --modal-text: #333;
+  --blockly-bg: #fff;
+  --blockly-text: #333;
+  --blockly-toolbox: #f5f5f5;
+  --blockly-path: #444;
+  --blockly-scrollbar: #555;
+}
+
 body {
   font-family: sans-serif;
   margin: 0;
@@ -326,4 +352,88 @@ body {
 .danger-button:hover {
   background-color: #cc0000 !important;
   border-color: #cc0000 !important;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+#tabs {
+  background: var(--tab-bg);
+  border-bottom-color: var(--tab-border);
+}
+
+#tabs button.active {
+  background: var(--tab-active-bg);
+  border-bottom-color: var(--tab-active-border);
+  color: var(--text-color);
+}
+
+#toolboxContainer {
+  background: var(--toolbox-bg);
+  border-right-color: var(--toolbox-border);
+}
+
+#controls {
+  background: var(--controls-bg);
+}
+
+#output {
+  background: var(--output-bg);
+  color: var(--output-text);
+}
+
+button {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+}
+
+button:hover {
+  background-color: var(--button-hover);
+  border-color: var(--button-hover);
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  color: var(--modal-text);
+}
+
+/* Blockly-specific theme styles */
+.blocklyMainBackground {
+  fill: var(--blockly-bg) !important;
+}
+
+.blocklyToolboxDiv {
+  background-color: var(--blockly-toolbox) !important;
+}
+
+.blocklyTreeRow {
+  color: var(--text-color);
+}
+
+.blocklyText {
+  fill: var(--blockly-text) !important;
+}
+
+.blocklyPath {
+  stroke: var(--blockly-path) !important;
+}
+
+.blocklyScrollbarHandle {
+  fill: var(--blockly-scrollbar) !important;
+}
+.blocklyEditableText > rect {
+  fill: var(--input-field-bg) !important;
+  fill-opacity: 1 !important;
+}
+
+.blocklyHtmlInput {
+  background-color: var(--input-field-bg) !important;
+  color: var(--blockly-text) !important;
+}
+
+.blocklyDropdownText {
+  fill: var(--blockly-text) !important;
 }

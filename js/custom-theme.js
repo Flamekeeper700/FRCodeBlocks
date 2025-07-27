@@ -22,11 +22,12 @@ VARIABLE_DESCRIPTIONS: {
   '--blockly-text': 'Block Text',
   '--blockly-toolbox': 'Block Tools',
   '--blockly-path': 'Connectors',
-  '--blockly-scrollbar': 'Scrollbar'
+  '--blockly-scrollbar': 'Scrollbar',
+  '--input-field-bg': 'Input Field BG'
 },
 
   // Built-in themes
-  themes: {
+   themes: {
     default: {
       name: "Default Light",
       variables: {
@@ -51,7 +52,8 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-text': '#333',
         '--blockly-toolbox': '#f5f5f5',
         '--blockly-path': '#444',
-        '--blockly-scrollbar': '#555'
+        '--blockly-scrollbar': '#555',
+        '--input-field-bg': '#ffffff'  // White for light text
       }
     },
     dark: {
@@ -78,13 +80,14 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-text': '#e0e0e0',
         '--blockly-toolbox': '#2d2d2d',
         '--blockly-path': '#666',
-        '--blockly-scrollbar': '#777'
+        '--blockly-scrollbar': '#777',
+        '--input-field-bg': '#333333'  // Dark gray for light text
       }
     },
     highContrast: {
       name: "High Contrast",
       variables: {
-        '--bg-color': '#121212',  // Off-black instead of pure black
+        '--bg-color': '#121212',
         '--text-color': '#ffffff',
         '--tab-bg': '#1e1e1e',
         '--tab-border': '#ffffff',
@@ -93,7 +96,7 @@ VARIABLE_DESCRIPTIONS: {
         '--toolbox-bg': '#1e1e1e',
         '--toolbox-border': '#ffffff',
         '--controls-bg': '#1e1e1e',
-        '--output-bg': '#000000',  // Pure black only for output
+        '--output-bg': '#000000',
         '--output-text': '#00ff00',
         '--button-bg': '#ffffff',
         '--button-text': '#000000',
@@ -104,8 +107,9 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-bg': '#121212',
         '--blockly-text': '#ffffff',
         '--blockly-toolbox': '#1e1e1e',
-        '--blockly-path': '#ffff00',  // Yellow for paths
-        '--blockly-scrollbar': '#ffffff'
+        '--blockly-path': '#ffff00',
+        '--blockly-scrollbar': '#ffffff',
+        '--input-field-bg': '#000000'  // Pure black for maximum contrast
       }
     },
     solarizedLight: {
@@ -132,7 +136,8 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-text': '#586e75',
         '--blockly-toolbox': '#eee8d5',
         '--blockly-path': '#586e75',
-        '--blockly-scrollbar': '#93a1a1'
+        '--blockly-scrollbar': '#93a1a1',
+        '--input-field-bg': '#fdf6e3'  // Matching background
       }
     },
     solarizedDark: {
@@ -159,7 +164,8 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-text': '#839496',
         '--blockly-toolbox': '#073642',
         '--blockly-path': '#839496',
-        '--blockly-scrollbar': '#586e75'
+        '--blockly-scrollbar': '#586e75',
+        '--input-field-bg': '#073642'  // Darker background for contrast
       }
     },
     dracula: {
@@ -170,23 +176,24 @@ VARIABLE_DESCRIPTIONS: {
         '--tab-bg': '#44475a',
         '--tab-border': '#6272a4',
         '--tab-active-bg': '#343746',
-        '--tab-active-border': '#ff79c6',  // Pink accent
+        '--tab-active-border': '#ff79c6',
         '--toolbox-bg': '#44475a',
         '--toolbox-border': '#6272a4',
         '--controls-bg': '#44475a',
         '--output-bg': '#21222c',
-        '--output-text': '#50fa7b',  // Bright green
-        '--button-bg': '#ff79c6',    // Pink buttons
+        '--output-text': '#50fa7b',
+        '--button-bg': '#ff79c6',
         '--button-text': '#282a36',
-        '--button-hover': '#bd93f9', // Purple hover
+        '--button-hover': '#bd93f9',
         '--button-border': '#ff79c6',
         '--modal-bg': '#282a36',
         '--modal-text': '#f8f8f2',
         '--blockly-bg': '#282a36',
         '--blockly-text': '#f8f8f2',
         '--blockly-toolbox': '#44475a',
-        '--blockly-path': '#ff79c6',  // Pink paths
-        '--blockly-scrollbar': '#6272a4'
+        '--blockly-path': '#ff79c6',
+        '--blockly-scrollbar': '#6272a4',
+        '--input-field-bg': '#343746'  // Slightly darker than background
       }
     },
     nord: {
@@ -197,23 +204,24 @@ VARIABLE_DESCRIPTIONS: {
         '--tab-bg': '#3b4252',
         '--tab-border': '#4c566a',
         '--tab-active-bg': '#434c5e',
-        '--tab-active-border': '#81a1c1',  // Frost blue
+        '--tab-active-border': '#81a1c1',
         '--toolbox-bg': '#3b4252',
         '--toolbox-border': '#4c566a',
         '--controls-bg': '#3b4252',
         '--output-bg': '#3b4252',
-        '--output-text': '#a3be8c',  // Green
-        '--button-bg': '#5e81ac',    // Dark blue
+        '--output-text': '#a3be8c',
+        '--button-bg': '#5e81ac',
         '--button-text': '#eceff4',
-        '--button-hover': '#81a1c1', // Light blue
+        '--button-hover': '#81a1c1',
         '--button-border': '#5e81ac',
         '--modal-bg': '#2e3440',
         '--modal-text': '#d8dee9',
         '--blockly-bg': '#2e3440',
         '--blockly-text': '#d8dee9',
         '--blockly-toolbox': '#3b4252',
-        '--blockly-path': '#81a1c1',  // Frost blue paths
-        '--blockly-scrollbar': '#4c566a'
+        '--blockly-path': '#81a1c1',
+        '--blockly-scrollbar': '#4c566a',
+        '--input-field-bg': '#3b4252'  // Matching toolbox color
       }
     },
     monokai: {
@@ -224,23 +232,24 @@ VARIABLE_DESCRIPTIONS: {
         '--tab-bg': '#3c3a3e',
         '--tab-border': '#727072',
         '--tab-active-bg': '#2d2a2e',
-        '--tab-active-border': '#ff6188',  // Vibrant pink
+        '--tab-active-border': '#ff6188',
         '--toolbox-bg': '#3c3a3e',
         '--toolbox-border': '#727072',
         '--controls-bg': '#3c3a3e',
         '--output-bg': '#3c3a3e',
-        '--output-text': '#a9dc76',  // Bright green
-        '--button-bg': '#ff6188',    // Pink buttons
+        '--output-text': '#a9dc76',
+        '--button-bg': '#ff6188',
         '--button-text': '#2d2a2e',
-        '--button-hover': '#ffd866', // Yellow hover
+        '--button-hover': '#ffd866',
         '--button-border': '#ff6188',
         '--modal-bg': '#2d2a2e',
         '--modal-text': '#fcfcfa',
         '--blockly-bg': '#2d2a2e',
         '--blockly-text': '#fcfcfa',
         '--blockly-toolbox': '#3c3a3e',
-        '--blockly-path': '#ff6188',  // Pink paths
-        '--blockly-scrollbar': '#727072'
+        '--blockly-path': '#ff6188',
+        '--blockly-scrollbar': '#727072',
+        '--input-field-bg': '#3c3a3e'  // Matching toolbox color
       }
     },
     github: {
@@ -267,7 +276,8 @@ VARIABLE_DESCRIPTIONS: {
         '--blockly-text': '#24292e',
         '--blockly-toolbox': '#f6f8fa',
         '--blockly-path': '#24292e',
-        '--blockly-scrollbar': '#e1e4e8'
+        '--blockly-scrollbar': '#e1e4e8',
+        '--input-field-bg': '#ffffff'  // Pure white background
       }
     }
   },

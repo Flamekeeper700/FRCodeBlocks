@@ -9,6 +9,8 @@ window.tabManagement = {
   activeTabId: null,
   tabCounter: 0,
   updateTimeout: null,
+  isSaving: false,
+  isLoading: false,
 
   createWorkspace: function(tab) {
     let div = document.getElementById(tab.id);
@@ -70,7 +72,6 @@ window.tabManagement = {
 
     return workspace;
   },
-
 
   renderTabs: function() {
     const { tabsContainer } = window.domElements;
@@ -235,5 +236,140 @@ window.tabManagement = {
     }
 
     return btn;
+  },
+
+  saveProject: function() {
+    if (this.isSaving) return false;
+    this.isSaving = true;
+    
+    try {
+      const projectData = {
+        version: '1.0',
+        tabs: [],
+        activeTab: this.activeTabId
+      };
+
+      // Save each tab's workspace XML
+      this.tabs.forEach(tab => {
+        if (this.workspaces[tab.id]) {
+          const xml = Blockly.Xml.workspaceToDom(this.workspaces[tab.id]);
+          const xmlText = Blockly.Xml.domToText(xml);
+          projectData.tabs.push({
+            id: tab.id,
+            title: tab.title,
+            type: tab.type,
+            removable: tab.removable,
+            xml: xmlText
+          });
+        }
+      });
+
+      // Create download
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(projectData));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute('href', dataStr);
+      downloadAnchorNode.setAttribute('download', 'frc_blockly_project.json');
+      document.body.appendChild(downloadAnchorNode);
+      downloadAnchorNode.click();
+      document.body.removeChild(downloadAnchorNode);
+
+      return true;
+    } catch (error) {
+      console.error('Error saving project:', error);
+      alert('Failed to save project: ' + error.message);
+      return false;
+    } finally {
+      this.isSaving = false;
+    }
+  },
+
+  loadProject: function() {
+    if (this.isLoading) return Promise.reject('Already loading');
+    this.isLoading = true;
+    
+    return new Promise((resolve, reject) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) {
+          this.isLoading = false;
+          reject('No file selected');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = event => {
+          try {
+            const projectData = JSON.parse(event.target.result);
+            
+            if (!projectData.tabs || !Array.isArray(projectData.tabs)) {
+              throw new Error('Invalid project file format');
+            }
+
+            // Clear existing tabs (except core tabs)
+            this.tabs = this.tabs.filter(tab => !tab.removable);
+            this.renderTabs();
+
+            // Load each tab
+            projectData.tabs.forEach(tabData => {
+              if (this.tabs.some(t => t.id === tabData.id)) return;
+
+              const tab = {
+                id: tabData.id,
+                title: tabData.title,
+                type: tabData.type,
+                removable: tabData.removable !== false
+              };
+
+              this.tabs.push(tab);
+              this.workspaces[tab.id] = this.createWorkspace(tab);
+
+              if (tabData.xml) {
+                try {
+                  const dom = Blockly.Xml.textToDom(tabData.xml);
+                  Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
+                } catch (xmlError) {
+                  console.error(`Error loading tab ${tab.id} content:`, xmlError);
+                }
+              }
+            });
+
+            const activeTab = projectData.activeTab && this.tabs.some(t => t.id === projectData.activeTab) 
+              ? projectData.activeTab 
+              : this.tabs[0]?.id;
+            
+            if (activeTab) {
+              this.switchTab(activeTab);
+            }
+
+            this.updateOutput();
+            resolve(true);
+          } catch (parseError) {
+            console.error('Error parsing project file:', parseError);
+            alert('Failed to load project: ' + parseError.message);
+            reject(parseError);
+          } finally {
+            this.isLoading = false;
+          }
+        };
+
+        reader.onerror = () => {
+          this.isLoading = false;
+          reject('Error reading file');
+        };
+
+        reader.readAsText(file);
+      };
+
+      input.oncancel = () => {
+        this.isLoading = false;
+        reject('File selection canceled');
+      };
+
+      input.click();
+    });
   }
 };

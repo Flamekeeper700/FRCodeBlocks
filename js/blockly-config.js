@@ -18,7 +18,9 @@ Blockly.defineBlocksWithJsonArray([
         "options": [
           ["Spark", "PWMSparkMax"],
           ["TalonSRX", "PWMTalonSRX"],
-          ["VictorSP", "PWMVictorSP"]
+          ["VictorSP", "PWMVictorSP"],
+          ["TalonFX", "PWMTalonFX"],
+          ["Venom", "PWMVenom"]
         ]
       },
       {"type": "field_number", "name": "CHANNEL", "value": 0},
@@ -27,379 +29,15 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 160,
-    "tooltip": "Set motor speed (-1 to 1)"
-  },
-
-  // Drive blocks
-  {
-    "type": "frc_bind_tankdrive",
-    "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
-    "args0": [
-      {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
-      {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
-      {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Bind tank drive controls to controller axes"
-  },
-  {
-    "type": "frc_subsystem_tankdrive",
-    "message0": "Tank Drive left %1 right %2",
-    "args0": [
-      {"type": "input_value", "name": "LEFT_SPEED"},
-      {"type": "input_value", "name": "RIGHT_SPEED"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Set tank drive speeds"
-  },
-
-  // Sensor blocks
-  {
-    "type": "frc_encoder_getdistance",
-    "message0": "Get encoder %1 distance",
-    "args0": [
-      {"type": "field_number", "name": "CHANNEL", "value": 0}
-    ],
-    "output": "Number",
-    "colour": 210,
-    "tooltip": "Read encoder distance in meters"
-  },
-
-  // Subsystem blocks
-  {
-    "type": "frc_subsystem_init",
-    "message0": "Subsystem %1 Initialization",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "SUBSYSTEM_TYPE",
-        "options": [
-          ["DriveSubsystem", "DriveSubsystem"],
-          ["ArmSubsystem", "ArmSubsystem"],
-          ["IntakeSubsystem", "IntakeSubsystem"]
-        ]
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Initialize a subsystem"
-  },
-  {
-    "type": "frc_subsystem_periodic",
-    "message0": "Subsystem Periodic",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Periodic code for a subsystem"
-  },
-
-  // Robot Container blocks
-  {
-    "type": "frc_robotcontainer_init",
-    "message0": "Robot Container Initialization",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Initialize robot container"
-  },
-  {
-    "type": "frc_robotcontainer_configurebuttonbindings",
-    "message0": "Configure Button Bindings",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Configure button bindings"
-  },
-  {
-    "type": "frc_robotcontainer_getautonomouscommand",
-    "message0": "Get Autonomous Command",
-    "output": "Command",
-    "colour": 200,
-    "tooltip": "Get autonomous command"
-  },
-  {
-    "type": "frc_robot_init",
-    "message0": "robotInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when the robot starts"
-  },
-  {
-    "type": "frc_robot_periodic",
-    "message0": "robotPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically while the robot is enabled"
-  },
-  {
-    "type": "frc_simulation_init",
-    "message0": "simulationInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when simulation starts"
-  },
-  {
-    "type": "frc_simulation_periodic",
-    "message0": "simulationPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during simulation"
-  },
-  {
-    "type": "frc_disabled_init",
-    "message0": "disabledInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when robot enters disabled mode"
-  },
-  {
-    "type": "frc_disabled_periodic",
-    "message0": "disabledPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically while robot is disabled"
-  },
-  {
-    "type": "frc_autonomous_init",
-    "message0": "autonomousInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when autonomous mode starts"
-  },
-  {
-    "type": "frc_autonomous_periodic",
-    "message0": "autonomousPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during autonomous mode"
-  },
-  {
-    "type": "frc_teleop_init",
-    "message0": "teleopInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when teleop mode starts"
-  },
-  {
-    "type": "frc_teleop_periodic",
-    "message0": "teleopPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during teleop mode"
-  },
-  {
-    "type": "frc_test_init",
-    "message0": "testInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when test mode starts"
-  },
-  {
-    "type": "frc_test_periodic",
-    "message0": "testPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during test mode"
-  },
-
-  // Constants blocks
-  {
-    "type": "frc_constants_motorports",
-    "message0": "Motor Ports: Left %1 Right %2",
-    "args0": [
-      {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
-      {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Define motor ports"
-  },
-  {
-    "type": "comment_block",
-    "message0": "// %1",
-    "args0": [
-      {
-        "type": "field_input",
-        "name": "TEXT",
-        "text": "Comment here"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Add a code comment"
-  },
-  {
-    "type": "frc_joystick_getaxis",
-    "message0": "Get Joystick %1 Axis %2",
-    "args0": [
-      {"type": "field_number", "name": "PORT", "value": 0},
-      {"type": "field_number", "name": "AXIS", "value": 1}
-    ],
-    "output": "Number",
-    "colour": 30,
-    "tooltip": "Get joystick axis value (-1 to 1)"
-  },
-  {
-    "type": "frc_joystick_getbutton",
-    "message0": "Get Joystick %1 Button %2",
-    "args0": [
-      {"type": "field_number", "name": "PORT", "value": 0},
-      {"type": "field_number", "name": "BUTTON", "value": 1}
-    ],
-    "output": "Boolean",
-    "colour": 30,
-    "tooltip": "Get joystick button state"
-  },
-  {
-    "type": "frc_pidcontroller_create",
-    "message0": "Create PID Controller %1 P %2 I %3 D %4",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"},
-      {"type": "input_value", "name": "P", "value": 0.1},
-      {"type": "input_value", "name": "I", "value": 0.0},
-      {"type": "input_value", "name": "D", "value": 0.0}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 220,
-    "tooltip": "Create a PID controller"
-  },
-  {
-    "type": "frc_pidcontroller_calculate",
-    "message0": "Calculate PID %1 Setpoint %2 Measurement %3",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"},
-      {"type": "input_value", "name": "SETPOINT"},
-      {"type": "input_value", "name": "MEASUREMENT"}
-    ],
-    "output": "Number",
-    "colour": 220,
-    "tooltip": "Calculate PID output"
-  },
-  {
-    "type": "frc_encoder_create",
-    "message0": "Create Encoder %1 Channel A %2 Channel B %3",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "encoder"},
-      {"type": "field_number", "name": "CHANNEL_A", "value": 0},
-      {"type": "field_number", "name": "CHANNEL_B", "value": 1}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 210,
-    "tooltip": "Create a quadrature encoder"
-  },
-  {
-    "type": "frc_timer",
-    "message0": "Timer %1",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "OPERATION",
-        "options": [
-          ["Start", "start"],
-          ["Stop", "stop"],
-          ["Reset", "reset"],
-          ["Get", "get"],
-          ["Has Elapsed", "hasElapsed"]
-        ]
-      },
-      {"type": "input_value", "name": "SECONDS", "check": "Number"}
-    ],
-    "output": ["Number", "Boolean"],
-    "colour": 330,
-    "tooltip": "Timer operations"
+    "tooltip": "Set motor speed (-1 to 1)",
+    "imports": [
+      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;",
+      "import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;",
+      "import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;",
+      "import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSP;",
+      "import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;",
+      "import edu.wpi.first.wpilibj.motorcontrol.PWMVenom;"
+    ]
   },
   {
     "type": "frc_motorcontroller_safety",
@@ -428,7 +66,10 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 160,
-    "tooltip": "Enable/disable motor safety"
+    "tooltip": "Enable/disable motor safety",
+    "imports": [
+      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
+    ]
   },
   {
     "type": "frc_motorcontroller_setinverted",
@@ -457,7 +98,73 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 160,
-    "tooltip": "Set motor inversion state"
+    "tooltip": "Set motor inversion state",
+    "imports": [
+      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
+    ]
+  },
+
+  // Drive blocks
+  {
+    "type": "frc_bind_tankdrive",
+    "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
+    "args0": [
+      {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
+      {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
+      {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Bind tank drive controls to controller axes",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Joystick;",
+      "import edu.wpi.first.wpilibj2.command.button.JoystickButton;"
+    ]
+  },
+  {
+    "type": "frc_subsystem_tankdrive",
+    "message0": "Tank Drive left %1 right %2",
+    "args0": [
+      {"type": "input_value", "name": "LEFT_SPEED"},
+      {"type": "input_value", "name": "RIGHT_SPEED"}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 120,
+    "tooltip": "Set tank drive speeds",
+    "imports": []
+  },
+
+  // Sensor blocks
+  {
+    "type": "frc_encoder_create",
+    "message0": "Create Encoder %1 Channel A %2 Channel B %3",
+    "args0": [
+      {"type": "field_input", "name": "NAME", "text": "encoder"},
+      {"type": "field_number", "name": "CHANNEL_A", "value": 0},
+      {"type": "field_number", "name": "CHANNEL_B", "value": 1}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 210,
+    "tooltip": "Create a quadrature encoder",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Encoder;"
+    ]
+  },
+  {
+    "type": "frc_encoder_getdistance",
+    "message0": "Get encoder %1 distance",
+    "args0": [
+      {"type": "field_number", "name": "CHANNEL", "value": 0}
+    ],
+    "output": "Number",
+    "colour": 210,
+    "tooltip": "Read encoder distance in meters",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Encoder;"
+    ]
   },
   {
     "type": "frc_encoder_setdistanceperpulse",
@@ -469,7 +176,334 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 210,
-    "tooltip": "Set encoder distance per pulse"
+    "tooltip": "Set encoder distance per pulse",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Encoder;"
+    ]
+  },
+
+  // Subsystem blocks
+  {
+    "type": "frc_subsystem_init",
+    "message0": "Subsystem %1 Initialization",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "SUBSYSTEM_TYPE",
+        "options": [
+          ["DriveSubsystem", "DriveSubsystem"],
+          ["ArmSubsystem", "ArmSubsystem"],
+          ["IntakeSubsystem", "IntakeSubsystem"]
+        ]
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 180,
+    "tooltip": "Initialize a subsystem",
+    "imports": [
+      "import edu.wpi.first.wpilibj2.command.SubsystemBase;"
+    ]
+  },
+  {
+    "type": "frc_subsystem_periodic",
+    "message0": "Subsystem Periodic",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 180,
+    "tooltip": "Periodic code for a subsystem",
+    "imports": []
+  },
+
+  // Robot Container blocks
+  {
+    "type": "frc_robotcontainer_init",
+    "message0": "Robot Container Initialization",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Initialize robot container",
+    "imports": []
+  },
+  {
+    "type": "frc_robotcontainer_configurebuttonbindings",
+    "message0": "Configure Button Bindings",
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Configure button bindings",
+    "imports": []
+  },
+  {
+    "type": "frc_robotcontainer_getautonomouscommand",
+    "message0": "Get Autonomous Command",
+    "output": "Command",
+    "colour": 200,
+    "tooltip": "Get autonomous command",
+    "imports": [
+      "import edu.wpi.first.wpilibj2.command.Command;"
+    ]
+  },
+
+  // Robot blocks
+  {
+    "type": "frc_robot_init",
+    "message0": "robotInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when the robot starts",
+    "imports": []
+  },
+  {
+    "type": "frc_robot_periodic",
+    "message0": "robotPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically while the robot is enabled",
+    "imports": []
+  },
+  {
+    "type": "frc_simulation_init",
+    "message0": "simulationInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when simulation starts",
+    "imports": []
+  },
+  {
+    "type": "frc_simulation_periodic",
+    "message0": "simulationPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically during simulation",
+    "imports": []
+  },
+  {
+    "type": "frc_disabled_init",
+    "message0": "disabledInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when robot enters disabled mode",
+    "imports": []
+  },
+  {
+    "type": "frc_disabled_periodic",
+    "message0": "disabledPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically while robot is disabled",
+    "imports": []
+  },
+  {
+    "type": "frc_autonomous_init",
+    "message0": "autonomousInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when autonomous mode starts",
+    "imports": []
+  },
+  {
+    "type": "frc_autonomous_periodic",
+    "message0": "autonomousPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically during autonomous mode",
+    "imports": []
+  },
+  {
+    "type": "frc_teleop_init",
+    "message0": "teleopInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when teleop mode starts",
+    "imports": []
+  },
+  {
+    "type": "frc_teleop_periodic",
+    "message0": "teleopPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically during teleop mode",
+    "imports": []
+  },
+  {
+    "type": "frc_test_init",
+    "message0": "testInit() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called once when test mode starts",
+    "imports": []
+  },
+  {
+    "type": "frc_test_periodic",
+    "message0": "testPeriodic() %1",
+    "args0": [
+      {
+        "type": "input_statement",
+        "name": "STEPS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 200,
+    "tooltip": "Called periodically during test mode",
+    "imports": []
+  },
+
+  // Constants blocks
+  {
+    "type": "frc_constants_motorports",
+    "message0": "Motor Ports: Left %1 Right %2",
+    "args0": [
+      {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
+      {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 330,
+    "tooltip": "Define motor ports",
+    "imports": []
+  },
+
+  // Joystick blocks
+  {
+    "type": "frc_joystick_getaxis",
+    "message0": "Get Joystick %1 Axis %2",
+    "args0": [
+      {"type": "field_number", "name": "PORT", "value": 0},
+      {"type": "field_number", "name": "AXIS", "value": 1}
+    ],
+    "output": "Number",
+    "colour": 30,
+    "tooltip": "Get joystick axis value (-1 to 1)",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Joystick;"
+    ]
+  },
+  {
+    "type": "frc_joystick_getbutton",
+    "message0": "Get Joystick %1 Button %2",
+    "args0": [
+      {"type": "field_number", "name": "PORT", "value": 0},
+      {"type": "field_number", "name": "BUTTON", "value": 1}
+    ],
+    "output": "Boolean",
+    "colour": 30,
+    "tooltip": "Get joystick button state",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Joystick;"
+    ]
+  },
+
+  // PID blocks
+  {
+    "type": "frc_pidcontroller_create",
+    "message0": "Create PID Controller %1 P %2 I %3 D %4",
+    "args0": [
+      {"type": "field_input", "name": "NAME", "text": "pidController"},
+      {"type": "input_value", "name": "P", "value": 0.1},
+      {"type": "input_value", "name": "I", "value": 0.0},
+      {"type": "input_value", "name": "D", "value": 0.0}
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 220,
+    "tooltip": "Create a PID controller",
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
+  },
+  {
+    "type": "frc_pidcontroller_calculate",
+    "message0": "Calculate PID %1 Setpoint %2 Measurement %3",
+    "args0": [
+      {"type": "field_input", "name": "NAME", "text": "pidController"},
+      {"type": "input_value", "name": "SETPOINT"},
+      {"type": "input_value", "name": "MEASUREMENT"}
+    ],
+    "output": "Number",
+    "colour": 220,
+    "tooltip": "Calculate PID output",
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
   },
   {
     "type": "frc_pidcontroller_settolerance",
@@ -481,7 +515,10 @@ Blockly.defineBlocksWithJsonArray([
     "previousStatement": null,
     "nextStatement": null,
     "colour": 220,
-    "tooltip": "Set PID controller absolute tolerance"
+    "tooltip": "Set PID controller absolute tolerance",
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
   },
   {
     "type": "frc_pidcontroller_at_setpoint",
@@ -491,470 +528,551 @@ Blockly.defineBlocksWithJsonArray([
     ],
     "output": "Boolean",
     "colour": 220,
-    "tooltip": "Check if PID controller is at setpoint"
+    "tooltip": "Check if PID controller is at setpoint",
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
   },
+
+  // Timer blocks
   {
-    "type": "frc_command_init",
-    "message0": "Command %1 initialize",
+    "type": "frc_timer",
+    "message0": "Timer %1",
     "args0": [
-      {"type": "field_input", "name": "NAME", "text": "myCommand"}
+      {
+        "type": "field_dropdown",
+        "name": "OPERATION",
+        "options": [
+          ["Start", "start"],
+          ["Stop", "stop"],
+          ["Reset", "reset"],
+          ["Get", "get"],
+          ["Has Elapsed", "hasElapsed"]
+        ]
+      },
+      {"type": "input_value", "name": "SECONDS", "check": "Number"}
+    ],
+    "output": ["Number", "Boolean"],
+    "colour": 330,
+    "tooltip": "Timer operations",
+    "imports": [
+      "import edu.wpi.first.wpilibj.Timer;"
+    ]
+  },
+
+  // Command blocks
+  {
+  "type": "frc_command_init",
+  "message0": "Command %1 initialize %2",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "myCommand"},
+    {"type": "input_statement", "name": "STEPS"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 260,
+  "tooltip": "Command initialization",
+  "imports": [
+    "import edu.wpi.first.wpilibj2.command.CommandBase;"
+  ]
+},
+{
+  "type": "frc_command_execute",
+  "message0": "Command %1 execute %2",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "myCommand"},
+    {"type": "input_statement", "name": "STEPS"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 260,
+  "tooltip": "Command execution",
+  "imports": []
+},
+{
+  "type": "frc_command_is_finished",
+  "message0": "Command %1 is finished %2",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "myCommand"},
+    {"type": "input_statement", "name": "STEPS"}
+  ],
+  "output": "Boolean",
+  "colour": 260,
+  "tooltip": "Check if command is finished",
+  "imports": []
+},
+{
+  "type": "frc_command_end",
+  "message0": "Command %1 end %2",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "myCommand"},
+    {"type": "input_statement", "name": "STEPS"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 260,
+  "tooltip": "Command end",
+  "imports": []
+},
+
+  // Variable blocks
+  {
+    "type": "frc_variable_declaration",
+    "message0": "Declare %1 %2 = %3",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "TYPE",
+        "options": function() {
+          try {
+            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+              const options = window.dataTypes.getDropdownOptions();
+              return options.length > 0 ? options : [['int', 'int']];
+            }
+          } catch (e) {
+            console.error('Error getting data types:', e);
+          }
+          return [['int', 'int']];
+        }
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "variableName"
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 260,
-    "tooltip": "Command initialization"
+    "colour": 330,
+    "tooltip": "Declare a variable with initialization",
+    "imports": []
   },
   {
-    "type": "frc_command_execute",
-    "message0": "Command %1 execute",
+    "type": "frc_variable_set",
+    "message0": "Set %1 %2 = %3",
     "args0": [
-      {"type": "field_input", "name": "NAME", "text": "myCommand"}
+      {
+        "type": "field_dropdown",
+        "name": "TYPE",
+        "options": function() {
+          try {
+            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+              const options = window.dataTypes.getDropdownOptions();
+              return options.length > 0 ? options : [['int', 'int']];
+            }
+          } catch (e) {
+            console.error('Error getting data types:', e);
+          }
+          return [['int', 'int']];
+        }
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "variableName"
+      },
+      {
+        "type": "input_value",
+        "name": "VALUE"
+      }
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 260,
-    "tooltip": "Command execution"
+    "colour": 330,
+    "tooltip": "Set the value of an existing variable",
+    "imports": []
   },
   {
-    "type": "frc_command_is_finished",
-    "message0": "Command %1 is finished",
+    "type": "frc_variable_get",
+    "message0": "Get %1 %2",
     "args0": [
-      {"type": "field_input", "name": "NAME", "text": "myCommand"}
+      {
+        "type": "field_dropdown",
+        "name": "TYPE",
+        "options": function() {
+          try {
+            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+              const options = window.dataTypes.getDropdownOptions();
+              return options.length > 0 ? options : [['int', 'int']];
+            }
+          } catch (e) {
+            console.error('Error getting data types:', e);
+          }
+          return [['int', 'int']];
+        }
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "variableName"
+      }
+    ],
+    "output": null,
+    "colour": 330,
+    "tooltip": "Get the value of a variable",
+    "imports": []
+  },
+
+  // Function blocks
+  {
+    "type": "frc_custom_function_declare",
+    "message0": "%1 %2 %3 function %4 ( %5 ) %6",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "ACCESS_MODIFIER",
+        "options": [
+          ["public", "public"],
+          ["private", "private"],
+          ["protected", "protected"],
+          ["---", ""]
+        ]
+      },
+      {
+        "type": "field_dropdown",
+        "name": "STATIC_MODIFIER",
+        "options": [
+          ["static", "static"],
+          ["---", ""]
+        ]
+      },
+      {
+        "type": "field_dropdown",
+        "name": "RETURN_TYPE",
+        "options": function() {
+          try {
+            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+              return [['void', 'void'], ...window.dataTypes.getDropdownOptions()];
+            }
+          } catch (e) {
+            console.error('Error getting data types:', e);
+          }
+          return [['void', 'void'], ['int', 'int']];
+        }
+      },
+      {
+        "type": "field_input",
+        "name": "FUNCTION_NAME",
+        "text": "myFunction"
+      },
+      {
+        "type": "input_dummy",
+        "name": "PARAMS"
+      },
+      {
+        "type": "input_statement",
+        "name": "FUNCTION_BODY"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 280,
+    "tooltip": "Declare a custom function",
+    "imports": []
+  },
+  {
+    "type": "frc_function_call_statement",
+    "message0": "call %1 ( %2 )",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "FUNCTION_NAME",
+        "text": "myFunction"
+      },
+      {
+        "type": "input_dummy",
+        "name": "ARGS"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 280,
+    "tooltip": "Call a function as a statement",
+    "imports": []
+  },
+  {
+    "type": "frc_function_call_value",
+    "message0": "call %1 ( %2 )",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "FUNCTION_NAME",
+        "text": "myFunction"
+      },
+      {
+        "type": "input_dummy",
+        "name": "ARGS"
+      }
+    ],
+    "output": null,
+    "colour": 280,
+    "tooltip": "Call a function as an expression",
+    "imports": []
+  },
+
+  // Logic blocks
+  {
+    "type": "frc_logic_compare",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "A"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["==", "EQ"],
+          ["!=", "NEQ"],
+          ["<", "LT"],
+          ["<=", "LTE"],
+          [">", "GT"],
+          [">=", "GTE"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B"
+      }
     ],
     "output": "Boolean",
-    "colour": 260,
-    "tooltip": "Check if command is finished"
+    "colour": 230,
+    "tooltip": "Compare two values",
+    "imports": []
   },
   {
-    "type": "frc_command_end",
-    "message0": "Command %1 end",
+    "type": "frc_logic_operation",
+    "message0": "%1 %2 %3",
     "args0": [
-      {"type": "field_input", "name": "NAME", "text": "myCommand"}
+      {
+        "type": "input_value",
+        "name": "A",
+        "check": "Boolean"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["AND", "AND"],
+          ["OR", "OR"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B",
+        "check": "Boolean"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 230,
+    "tooltip": "Logical AND/OR operation",
+    "imports": []
+  },
+  {
+    "type": "frc_logic_negate",
+    "message0": "NOT %1",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "BOOL",
+        "check": "Boolean"
+      }
+    ],
+    "output": "Boolean",
+    "colour": 230,
+    "tooltip": "Logical NOT operation",
+    "imports": []
+  },
+  {
+    "type": "frc_logic_boolean",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "BOOL",
+        "options": [
+          ["true", "TRUE"],
+          ["false", "FALSE"]
+        ]
+      }
+    ],
+    "output": "Boolean",
+    "colour": 230,
+    "tooltip": "Boolean constant",
+    "imports": []
+  },
+
+  // Math blocks
+  {
+    "type": "frc_math_arithmetic",
+    "message0": "%1 %2 %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "A",
+        "check": "Number"
+      },
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["+", "ADD"],
+          ["-", "MINUS"],
+          ["×", "MULTIPLY"],
+          ["÷", "DIVIDE"],
+          ["^", "POWER"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "B",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 240,
+    "tooltip": "Basic arithmetic operations",
+    "imports": []
+  },
+  {
+    "type": "frc_math_single",
+    "message0": "%1 %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["√", "ROOT"],
+          ["abs", "ABS"],
+          ["-", "NEG"],
+          ["ln", "LN"],
+          ["log10", "LOG10"],
+          ["e^", "EXP"],
+          ["10^", "POW10"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 240,
+    "tooltip": "Single input math operations",
+    "imports": []
+  },
+  {
+    "type": "frc_math_trig",
+    "message0": "%1 %2",
+    "args0": [
+      {
+        "type": "field_dropdown",
+        "name": "OP",
+        "options": [
+          ["sin", "SIN"],
+          ["cos", "COS"],
+          ["tan", "TAN"],
+          ["asin", "ASIN"],
+          ["acos", "ACOS"],
+          ["atan", "ATAN"]
+        ]
+      },
+      {
+        "type": "input_value",
+        "name": "NUM",
+        "check": "Number"
+      }
+    ],
+    "output": "Number",
+    "colour": 240,
+    "tooltip": "Trigonometric functions",
+    "imports": []
+  },
+  {
+    "type": "frc_math_number",
+    "message0": "%1",
+    "args0": [
+      {
+        "type": "field_number",
+        "name": "NUM",
+        "value": 0
+      }
+    ],
+    "output": "Number",
+    "colour": 240,
+    "tooltip": "Number constant",
+    "imports": []
+  },
+
+  // Control blocks
+  {
+    "type": "frc_controls_if",
+    "message0": "if %1 then %2",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONDITION",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "THEN_STATEMENT"
+      }
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 260,
-    "tooltip": "Command end"
+    "colour": 230,
+    "tooltip": "Execute blocks if condition is true",
+    "imports": []
   },
-{
-  "type": "frc_variable_declaration",
-  "message0": "Declare %1 %2 = %3",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "TYPE",
-      "options": function() {
-        try {
-          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-            const options = window.dataTypes.getDropdownOptions();
-            return options.length > 0 ? options : [['int', 'int']];
-          }
-        } catch (e) {
-          console.error('Error getting data types:', e);
-        }
-        return [['int', 'int']];
+  {
+    "type": "frc_controls_ifelse",
+    "message0": "if %1 then %2 else %3",
+    "args0": [
+      {
+        "type": "input_value",
+        "name": "CONDITION",
+        "check": "Boolean"
+      },
+      {
+        "type": "input_statement",
+        "name": "THEN_STATEMENT"
+      },
+      {
+        "type": "input_statement",
+        "name": "ELSE_STATEMENT"
       }
-    },
-    {
-      "type": "field_input",
-      "name": "NAME",
-      "text": "variableName"
-    },
-    {
-      "type": "input_value",
-      "name": "VALUE"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 330,
-  "tooltip": "Declare a variable with initialization"
-},
-{
-  "type": "frc_variable_set",
-  "message0": "Set %1 %2 = %3",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "TYPE",
-      "options": function() {
-        try {
-          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-            const options = window.dataTypes.getDropdownOptions();
-            return options.length > 0 ? options : [['int', 'int']];
-          }
-        } catch (e) {
-          console.error('Error getting data types:', e);
-        }
-        return [['int', 'int']];
-      }
-    },
-    {
-      "type": "field_input",
-      "name": "NAME",
-      "text": "variableName"
-    },
-    {
-      "type": "input_value",
-      "name": "VALUE"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 330,
-  "tooltip": "Set the value of an existing variable"
-},
-{
-  "type": "frc_variable_get",
-  "message0": "Get %1 %2",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "TYPE",
-      "options": function() {
-        try {
-          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-            const options = window.dataTypes.getDropdownOptions();
-            return options.length > 0 ? options : [['int', 'int']];
-          }
-        } catch (e) {
-          console.error('Error getting data types:', e);
-        }
-        return [['int', 'int']];
-      }
-    },
-    {
-      "type": "field_input",
-      "name": "NAME",
-      "text": "variableName"
-    }
-  ],
-  "output": null,
-  "colour": 330,
-  "tooltip": "Get the value of a variable"
-},
-{
-  "type": "frc_custom_function_declare",
-  "message0": "%1 %2 %3 function %4 ( %5 ) %6",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "ACCESS_MODIFIER",
-      "options": [
-        ["public", "public"],
-        ["private", "private"],
-        ["protected", "protected"],
-        ["---", ""]
-      ]
-    },
-    {
-      "type": "field_dropdown",
-      "name": "STATIC_MODIFIER",
-      "options": [
-        ["static", "static"],
-        ["---", ""]
-      ]
-    },
-    {
-      "type": "field_dropdown",
-      "name": "RETURN_TYPE",
-      "options": function() {
-        try {
-          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-            return [['void', 'void'], ...window.dataTypes.getDropdownOptions()];
-          }
-        } catch (e) {
-          console.error('Error getting data types:', e);
-        }
-        return [['void', 'void'], ['int', 'int']];
-      }
-    },
-    {
-      "type": "field_input",
-      "name": "FUNCTION_NAME",
-      "text": "myFunction"
-    },
-    {
-      "type": "input_dummy",
-      "name": "PARAMS"
-    },
-    {
-      "type": "input_statement",
-      "name": "FUNCTION_BODY"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 280,
-  "tooltip": "Declare a custom function"
-},
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 230,
+    "tooltip": "Execute different blocks depending on condition",
+    "imports": []
+  },
 
-// Statement Function Call (for standalone calls)
-{
-  "type": "frc_function_call_statement",
-  "message0": "call %1 ( %2 )",
-  "args0": [
-    {
-      "type": "field_input",
-      "name": "FUNCTION_NAME",
-      "text": "myFunction"
-    },
-    {
-      "type": "input_dummy",
-      "name": "ARGS"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 280,
-  "tooltip": "Call a function as a statement"
-},
-
-// Value Function Call (for expressions)
-{
-  "type": "frc_function_call_value",
-  "message0": "call %1 ( %2 )",
-  "args0": [
-    {
-      "type": "field_input",
-      "name": "FUNCTION_NAME",
-      "text": "myFunction"
-    },
-    {
-      "type": "input_dummy",
-      "name": "ARGS"
-    }
-  ],
-  "output": null,
-  "colour": 280,
-  "tooltip": "Call a function as an expression"
-},
-{
-  "type": "frc_logic_compare",
-  "message0": "%1 %2 %3",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "A"
-    },
-    {
-      "type": "field_dropdown",
-      "name": "OP",
-      "options": [
-        ["==", "EQ"],
-        ["!=", "NEQ"],
-        ["<", "LT"],
-        ["<=", "LTE"],
-        [">", "GT"],
-        [">=", "GTE"]
-      ]
-    },
-    {
-      "type": "input_value",
-      "name": "B"
-    }
-  ],
-  "output": "Boolean",
-  "colour": 230,
-  "tooltip": "Compare two values"
-},
-{
-  "type": "frc_logic_operation",
-  "message0": "%1 %2 %3",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "A",
-      "check": "Boolean"
-    },
-    {
-      "type": "field_dropdown",
-      "name": "OP",
-      "options": [
-        ["AND", "AND"],
-        ["OR", "OR"]
-      ]
-    },
-    {
-      "type": "input_value",
-      "name": "B",
-      "check": "Boolean"
-    }
-  ],
-  "output": "Boolean",
-  "colour": 230,
-  "tooltip": "Logical AND/OR operation"
-},
-{
-  "type": "frc_logic_negate",
-  "message0": "NOT %1",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "BOOL",
-      "check": "Boolean"
-    }
-  ],
-  "output": "Boolean",
-  "colour": 230,
-  "tooltip": "Logical NOT operation"
-},
-{
-  "type": "frc_logic_boolean",
-  "message0": "%1",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "BOOL",
-      "options": [
-        ["true", "TRUE"],
-        ["false", "FALSE"]
-      ]
-    }
-  ],
-  "output": "Boolean",
-  "colour": 230,
-  "tooltip": "Boolean constant"
-},
-{
-  "type": "frc_math_arithmetic",
-  "message0": "%1 %2 %3",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "A",
-      "check": "Number"
-    },
-    {
-      "type": "field_dropdown",
-      "name": "OP",
-      "options": [
-        ["+", "ADD"],
-        ["-", "MINUS"],
-        ["×", "MULTIPLY"],
-        ["÷", "DIVIDE"],
-        ["^", "POWER"]
-      ]
-    },
-    {
-      "type": "input_value",
-      "name": "B",
-      "check": "Number"
-    }
-  ],
-  "output": "Number",
-  "colour": 240,
-  "tooltip": "Basic arithmetic operations"
-},
-{
-  "type": "frc_math_single",
-  "message0": "%1 %2",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "OP",
-      "options": [
-        ["√", "ROOT"],
-        ["abs", "ABS"],
-        ["-", "NEG"],
-        ["ln", "LN"],
-        ["log10", "LOG10"],
-        ["e^", "EXP"],
-        ["10^", "POW10"]
-      ]
-    },
-    {
-      "type": "input_value",
-      "name": "NUM",
-      "check": "Number"
-    }
-  ],
-  "output": "Number",
-  "colour": 240,
-  "tooltip": "Single input math operations"
-},
-{
-  "type": "frc_math_trig",
-  "message0": "%1 %2",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "OP",
-      "options": [
-        ["sin", "SIN"],
-        ["cos", "COS"],
-        ["tan", "TAN"],
-        ["asin", "ASIN"],
-        ["acos", "ACOS"],
-        ["atan", "ATAN"]
-      ]
-    },
-    {
-      "type": "input_value",
-      "name": "NUM",
-      "check": "Number"
-    }
-  ],
-  "output": "Number",
-  "colour": 240,
-  "tooltip": "Trigonometric functions"
-},
-{
-  "type": "frc_math_number",
-  "message0": "%1",
-  "args0": [
-    {
-      "type": "field_number",
-      "name": "NUM",
-      "value": 0
-    }
-  ],
-  "output": "Number",
-  "colour": 240,
-  "tooltip": "Number constant"
-},
-{
-  "type": "frc_controls_if",
-  "message0": "if %1 then %2",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "CONDITION",
-      "check": "Boolean"
-    },
-    {
-      "type": "input_statement",
-      "name": "THEN_STATEMENT"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 210,
-  "tooltip": "Execute blocks if condition is true"
-},
-{
-  "type": "frc_controls_ifelse",
-  "message0": "if %1 then %2 else %3",
-  "args0": [
-    {
-      "type": "input_value",
-      "name": "CONDITION",
-      "check": "Boolean"
-    },
-    {
-      "type": "input_statement",
-      "name": "THEN_STATEMENT"
-    },
-    {
-      "type": "input_statement",
-      "name": "ELSE_STATEMENT"
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 210,
-  "tooltip": "Execute different blocks depending on condition"
-}
+  // Comment block
+  {
+    "type": "comment_block",
+    "message0": "// %1",
+    "args0": [
+      {
+        "type": "field_input",
+        "name": "TEXT",
+        "text": "Comment here"
+      }
+    ],
+    "previousStatement": null,
+    "nextStatement": null,
+    "colour": 160,
+    "tooltip": "Add a code comment",
+    "imports": []
+  }
 ]);
 
 // Initialize generator
@@ -1260,29 +1378,33 @@ Blockly.FRCJava['frc_pidcontroller_at_setpoint'] = function(block) {
 
 Blockly.FRCJava['frc_command_init'] = function(block) {
   const name = block.getFieldValue('NAME');
+  const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || '';
   return `public void initialize() {\n` +
-    Blockly.FRCJava.statementToCode(block, 'STEPS') +
+    steps +
     `}\n\n`;
 };
 
 Blockly.FRCJava['frc_command_execute'] = function(block) {
   const name = block.getFieldValue('NAME');
+  const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || '';
   return `public void execute() {\n` +
-    Blockly.FRCJava.statementToCode(block, 'STEPS') +
+    steps +
     `}\n\n`;
 };
 
 Blockly.FRCJava['frc_command_is_finished'] = function(block) {
   const name = block.getFieldValue('NAME');
+  const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || 'return false;';
   return [`public boolean isFinished() {\n` +
-    Blockly.FRCJava.statementToCode(block, 'STEPS') +
+    steps +
     `}\n\n`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
 Blockly.FRCJava['frc_command_end'] = function(block) {
   const name = block.getFieldValue('NAME');
+  const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || '';
   return `public void end(boolean interrupted) {\n` +
-    Blockly.FRCJava.statementToCode(block, 'STEPS') +
+    steps +
     `}\n\n`;
 };
 

@@ -4,7 +4,6 @@ window.themeManager = {
   themes: {
     default: {
       name: "Default Light",
-      isDark: false,
       variables: {
         '--bg-color': '#f5f5f5',
         '--text-color': '#333',
@@ -32,7 +31,6 @@ window.themeManager = {
     },
     dark: {
       name: "Dark Mode",
-      isDark: true,
       variables: {
         '--bg-color': '#1a1a1a',
         '--text-color': '#e0e0e0',
@@ -60,7 +58,6 @@ window.themeManager = {
     },
     highContrast: {
       name: "High Contrast",
-      isDark: false,
       variables: {
         '--bg-color': '#121212',  // Off-black instead of pure black
         '--text-color': '#ffffff',
@@ -88,7 +85,6 @@ window.themeManager = {
     },
     solarizedLight: {
       name: "Solarized Light",
-      isDark: false,
       variables: {
         '--bg-color': '#fdf6e3',
         '--text-color': '#586e75',
@@ -116,7 +112,6 @@ window.themeManager = {
     },
     solarizedDark: {
       name: "Solarized Dark",
-      isDark: false,
       variables: {
         '--bg-color': '#002b36',
         '--text-color': '#839496',
@@ -144,7 +139,6 @@ window.themeManager = {
     },
     dracula: {
       name: "Dracula",
-      isDark: false,
       variables: {
         '--bg-color': '#282a36',
         '--text-color': '#f8f8f2',
@@ -172,7 +166,6 @@ window.themeManager = {
     },
     nord: {
       name: "Nord",
-      isDark: false,
       variables: {
         '--bg-color': '#2e3440',
         '--text-color': '#d8dee9',
@@ -200,7 +193,6 @@ window.themeManager = {
     },
     monokai: {
       name: "Monokai",
-      isDark: false,
       variables: {
         '--bg-color': '#2d2a2e',
         '--text-color': '#fcfcfa',
@@ -228,7 +220,6 @@ window.themeManager = {
     },
     github: {
       name: "GitHub",
-      isDark: false,
       variables: {
         '--bg-color': '#ffffff',
         '--text-color': '#24292e',
@@ -299,13 +290,6 @@ window.themeManager = {
     if (!theme) {
       console.warn(`Theme "${themeName}" not found, using default`);
       themeName = 'default';
-    }
-    
-    // Set dark mode class
-    if (theme.isDark) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
     }
     
     // Apply all CSS variables
@@ -440,7 +424,6 @@ window.themeManager = {
     const themeId = name.toLowerCase().replace(/\s+/g, '-');
     const newTheme = {
       name: name.trim(),
-      isDark: document.body.classList.contains('dark-mode'),
       variables: {}
     };
     

@@ -1,5 +1,30 @@
 // custom-theme.js
 window.themeManager = {
+      VARIABLE_DESCRIPTIONS: {
+    '--bg-color': 'Main Background Color',
+    '--text-color': 'Primary Text Color',
+    '--tab-bg': 'Tab Bar Background',
+    '--tab-border': 'Tab Bar Border',
+    '--tab-active-bg': 'Active Tab Background',
+    '--tab-active-border': 'Active Tab Border',
+    '--toolbox-bg': 'Toolbox Background',
+    '--toolbox-border': 'Toolbox Border',
+    '--controls-bg': 'Controls Panel Background',
+    '--output-bg': 'Code Output Background',
+    '--output-text': 'Code Output Text',
+    '--button-bg': 'Button Background',
+    '--button-text': 'Button Text',
+    '--button-hover': 'Button Hover State',
+    '--button-border': 'Button Border',
+    '--modal-bg': 'Modal Background',
+    '--modal-text': 'Modal Text',
+    '--blockly-bg': 'Blockly Workspace Background',
+    '--blockly-text': 'Blockly Text',
+    '--blockly-toolbox': 'Blockly Toolbox Background',
+    '--blockly-path': 'Blockly Connection Paths',
+    '--blockly-scrollbar': 'Blockly Scrollbar'
+  },
+
   // Built-in themes
   themes: {
     default: {
@@ -248,25 +273,16 @@ window.themeManager = {
   },
   
   // Storage for custom themes
-  customThemes: {},
+   customThemes: {},
   
-  // Initialize theme manager
   init: function() {
-    // Load custom themes from localStorage
     this.loadCustomThemes();
-    
-    // Apply saved theme or default
     const savedTheme = localStorage.getItem('currentTheme');
     this.applyTheme(savedTheme || 'default');
-    
-    // Initialize theme selector
     this.updateThemeSelector();
-    
-    // Set up event listeners for theme editor
     this.setupThemeEditor();
   },
   
-  // Load custom themes from localStorage
   loadCustomThemes: function() {
     const savedThemes = localStorage.getItem('customThemes');
     if (savedThemes) {
@@ -279,12 +295,10 @@ window.themeManager = {
     }
   },
   
-  // Save custom themes to localStorage
   saveCustomThemes: function() {
     localStorage.setItem('customThemes', JSON.stringify(this.customThemes));
   },
   
-  // Apply a theme by name
   applyTheme: function(themeName) {
     const theme = this.themes[themeName] || this.customThemes[themeName];
     if (!theme) {
@@ -292,18 +306,19 @@ window.themeManager = {
       themeName = 'default';
     }
     
-    // Apply all CSS variables
+    if (theme.isDark) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+    
     for (const [varName, value] of Object.entries(theme.variables)) {
       document.documentElement.style.setProperty(varName, value);
     }
     
-    // Save current theme
     localStorage.setItem('currentTheme', themeName);
-    
-    // Update UI
     this.updateThemeSelector(themeName);
     
-    // Resize Blockly workspace if needed
     if (window.tabManagement && window.tabManagement.activeTabId) {
       setTimeout(() => {
         const workspace = window.tabManagement.workspaces[window.tabManagement.activeTabId];
@@ -314,14 +329,12 @@ window.themeManager = {
     }
   },
   
-  // Update the theme selector dropdown
   updateThemeSelector: function(selectedTheme) {
     const { themeSelector } = window.domElements;
     if (!themeSelector) return;
     
     themeSelector.innerHTML = '';
     
-    // Add built-in themes
     const builtInGroup = document.createElement('optgroup');
     builtInGroup.label = "Built-in Themes";
     Object.entries(this.themes).forEach(([id, theme]) => {
@@ -332,7 +345,6 @@ window.themeManager = {
     });
     themeSelector.appendChild(builtInGroup);
     
-    // Add custom themes if any exist
     if (Object.keys(this.customThemes).length > 0) {
       const customGroup = document.createElement('optgroup');
       customGroup.label = "Custom Themes";
@@ -345,13 +357,11 @@ window.themeManager = {
       themeSelector.appendChild(customGroup);
     }
     
-    // Set selected theme
     if (selectedTheme) {
       themeSelector.value = selectedTheme;
     }
   },
   
-  // Show the theme editor modal
   showThemeEditor: function() {
     const { themeEditorModal } = window.domElements;
     if (!themeEditorModal) return;
@@ -360,25 +370,23 @@ window.themeManager = {
     themeEditorModal.style.display = 'flex';
   },
   
-  // Populate the theme editor with current values
   populateThemeEditor: function() {
     const { themeVariablesEditor } = window.domElements;
     if (!themeVariablesEditor) return;
     
     themeVariablesEditor.innerHTML = '';
     
-    // Get current theme variables
     const currentTheme = this.getCurrentTheme();
     const variables = currentTheme?.variables || this.themes.default.variables;
     
-    // Create controls for each variable
     for (const [varName, value] of Object.entries(variables)) {
       const div = document.createElement('div');
       div.className = 'theme-variable-editor';
       
       const label = document.createElement('label');
-      label.textContent = varName;
+      label.textContent = this.VARIABLE_DESCRIPTIONS[varName] || varName;
       label.htmlFor = `var-${varName.replace(/[^a-z0-9]/gi, '-')}`;
+      label.title = varName;
       
       const input = document.createElement('input');
       input.type = 'color';
@@ -401,20 +409,17 @@ window.themeManager = {
     }
   },
   
-  // Check if a string is a valid CSS color
   isValidColor: function(str) {
     const s = new Option().style;
     s.color = str;
     return s.color !== '';
   },
   
-  // Get the currently applied theme
   getCurrentTheme: function() {
     const currentThemeName = localStorage.getItem('currentTheme') || 'default';
     return this.themes[currentThemeName] || this.customThemes[currentThemeName];
   },
   
-  // Save current theme as a custom theme
   saveCurrentThemeAsCustom: function(name) {
     if (!name || typeof name !== 'string' || name.trim() === '') {
       alert('Please enter a valid theme name');
@@ -422,12 +427,17 @@ window.themeManager = {
     }
     
     const themeId = name.toLowerCase().replace(/\s+/g, '-');
+    if (this.themes[themeId] || this.customThemes[themeId]) {
+      alert('Theme name already exists');
+      return null;
+    }
+    
     const newTheme = {
       name: name.trim(),
+      isDark: document.body.classList.contains('dark-mode'),
       variables: {}
     };
     
-    // Get updated values from editor
     document.querySelectorAll('#themeVariablesEditor input').forEach(input => {
       newTheme.variables[input.dataset.varName] = input.value;
     });
@@ -438,16 +448,18 @@ window.themeManager = {
     return themeId;
   },
   
-  // Set up event listeners for theme editor
   setupThemeEditor: function() {
     const { saveCustomTheme, themeEditorModal, newThemeName } = window.domElements;
     if (!saveCustomTheme || !themeEditorModal) return;
     
-    // Save custom theme button
     saveCustomTheme.addEventListener('click', () => {
       const name = newThemeName.value.trim();
+      if (!name) {
+        alert('Please enter a theme name');
+        return;
+      }
+
       const themeId = this.saveCurrentThemeAsCustom(name);
-      
       if (themeId) {
         this.applyTheme(themeId);
         themeEditorModal.style.display = 'none';
@@ -456,30 +468,20 @@ window.themeManager = {
       }
     });
     
-    // Close modal when clicking X
-    const closeBtn = themeEditorModal.querySelector('.close-modal');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        themeEditorModal.style.display = 'none';
+    const editThemeBtn = document.getElementById('editThemeBtn');
+    if (editThemeBtn) {
+      editThemeBtn.addEventListener('click', () => {
+        newThemeName.value = '';
       });
     }
-    
-    // Close modal when clicking outside
-    themeEditorModal.addEventListener('click', (e) => {
-      if (e.target === themeEditorModal) {
-        themeEditorModal.style.display = 'none';
-      }
-    });
   },
   
-  // Delete a custom theme
   deleteCustomTheme: function(themeId) {
     if (this.customThemes[themeId]) {
       delete this.customThemes[themeId];
       this.saveCustomThemes();
       this.updateThemeSelector();
       
-      // If the deleted theme was active, switch to default
       if (localStorage.getItem('currentTheme') === themeId) {
         this.applyTheme('default');
       }
@@ -489,8 +491,3 @@ window.themeManager = {
     return false;
   }
 };
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.themeManager.init();
-});

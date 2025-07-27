@@ -728,6 +728,232 @@ Blockly.defineBlocksWithJsonArray([
   "output": null,
   "colour": 280,
   "tooltip": "Call a function as an expression"
+},
+{
+  "type": "frc_logic_compare",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["==", "EQ"],
+        ["!=", "NEQ"],
+        ["<", "LT"],
+        ["<=", "LTE"],
+        [">", "GT"],
+        [">=", "GTE"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Compare two values"
+},
+{
+  "type": "frc_logic_operation",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A",
+      "check": "Boolean"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["AND", "AND"],
+        ["OR", "OR"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B",
+      "check": "Boolean"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Logical AND/OR operation"
+},
+{
+  "type": "frc_logic_negate",
+  "message0": "NOT %1",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "BOOL",
+      "check": "Boolean"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Logical NOT operation"
+},
+{
+  "type": "frc_logic_boolean",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BOOL",
+      "options": [
+        ["true", "TRUE"],
+        ["false", "FALSE"]
+      ]
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Boolean constant"
+},
+{
+  "type": "frc_math_arithmetic",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A",
+      "check": "Number"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["+", "ADD"],
+        ["-", "MINUS"],
+        ["×", "MULTIPLY"],
+        ["÷", "DIVIDE"],
+        ["^", "POWER"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Basic arithmetic operations"
+},
+{
+  "type": "frc_math_single",
+  "message0": "%1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["√", "ROOT"],
+        ["abs", "ABS"],
+        ["-", "NEG"],
+        ["ln", "LN"],
+        ["log10", "LOG10"],
+        ["e^", "EXP"],
+        ["10^", "POW10"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "NUM",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Single input math operations"
+},
+{
+  "type": "frc_math_trig",
+  "message0": "%1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["sin", "SIN"],
+        ["cos", "COS"],
+        ["tan", "TAN"],
+        ["asin", "ASIN"],
+        ["acos", "ACOS"],
+        ["atan", "ATAN"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "NUM",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Trigonometric functions"
+},
+{
+  "type": "frc_math_number",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_number",
+      "name": "NUM",
+      "value": 0
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Number constant"
+},
+{
+  "type": "frc_controls_if",
+  "message0": "if %1 then %2",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "CONDITION",
+      "check": "Boolean"
+    },
+    {
+      "type": "input_statement",
+      "name": "THEN_STATEMENT"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 210,
+  "tooltip": "Execute blocks if condition is true"
+},
+{
+  "type": "frc_controls_ifelse",
+  "message0": "if %1 then %2 else %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "CONDITION",
+      "check": "Boolean"
+    },
+    {
+      "type": "input_statement",
+      "name": "THEN_STATEMENT"
+    },
+    {
+      "type": "input_statement",
+      "name": "ELSE_STATEMENT"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 210,
+  "tooltip": "Execute different blocks depending on condition"
 }
 ]);
 
@@ -1146,4 +1372,134 @@ Blockly.FRCJava.scrub_ = function(block, code) {
   const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
   const nextCode = nextBlock ? Blockly.FRCJava.blockToCode(nextBlock) : '';
   return code + nextCode;
+};
+
+Blockly.FRCJava['frc_logic_compare'] = function(block) {
+  const a = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_RELATIONAL) || '0';
+  const op = block.getFieldValue('OP');
+  const b = Blockly.FRCJava.valueToCode(block, 'B', Blockly.FRCJava.ORDER_RELATIONAL) || '0';
+  
+  const operators = {
+    'EQ': '==',
+    'NEQ': '!=',
+    'LT': '<',
+    'LTE': '<=',
+    'GT': '>',
+    'GTE': '>='
+  };
+  
+  return [`${a} ${operators[op]} ${b}`, Blockly.FRCJava.ORDER_RELATIONAL];
+};
+
+Blockly.FRCJava['frc_logic_operation'] = function(block) {
+  const a = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_LOGICAL_AND) || 'false';
+  const op = block.getFieldValue('OP');
+  const b = Blockly.FRCJava.valueToCode(block, 'B', Blockly.FRCJava.ORDER_LOGICAL_AND) || 'false';
+  
+  const operator = op === 'AND' ? '&&' : '||';
+  return [`${a} ${operator} ${b}`, Blockly.FRCJava.ORDER_LOGICAL_AND];
+};
+
+Blockly.FRCJava['frc_logic_negate'] = function(block) {
+  const bool = Blockly.FRCJava.valueToCode(block, 'BOOL', Blockly.FRCJava.ORDER_LOGICAL_NOT) || 'false';
+  return [`!(${bool})`, Blockly.FRCJava.ORDER_LOGICAL_NOT];
+};
+
+Blockly.FRCJava['frc_logic_boolean'] = function(block) {
+  return [block.getFieldValue('BOOL').toLowerCase(), Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_math_arithmetic'] = function(block) {
+  const a = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_ADDITION) || '0';
+  const op = block.getFieldValue('OP');
+  const b = Blockly.FRCJava.valueToCode(block, 'B', Blockly.FRCJava.ORDER_ADDITION) || '0';
+  
+  const operators = {
+    'ADD': '+',
+    'MINUS': '-',
+    'MULTIPLY': '*',
+    'DIVIDE': '/',
+    'POWER': '**'
+  };
+  
+  const order = op === 'POWER' ? Blockly.FRCJava.ORDER_EXPONENTIATION :
+               (op === 'MULTIPLY' || op === 'DIVIDE') ? Blockly.FRCJava.ORDER_MULTIPLICATIVE :
+               Blockly.FRCJava.ORDER_ADDITIVE;
+  
+  return [`${a} ${operators[op]} ${b}`, order];
+};
+
+Blockly.FRCJava['frc_math_single'] = function(block) {
+  const op = block.getFieldValue('OP');
+  const num = Blockly.FRCJava.valueToCode(block, 'NUM', Blockly.FRCJava.ORDER_NONE) || '0';
+  
+  const functions = {
+    'ROOT': 'Math.sqrt',
+    'ABS': 'Math.abs',
+    'NEG': '-',
+    'LN': 'Math.log',
+    'LOG10': 'Math.log10',
+    'EXP': 'Math.exp',
+    'POW10': 'Math.pow(10,'
+  };
+  
+  if (op === 'POW10') {
+    return [`${functions[op]}${num})`, Blockly.FRCJava.ORDER_FUNCTION_CALL];
+  }
+  
+  if (op === 'NEG') {
+    return [`-${num}`, Blockly.FRCJava.ORDER_UNARY_NEGATION];
+  }
+  
+  return [`${functions[op]}(${num})`, Blockly.FRCJava.ORDER_FUNCTION_CALL];
+};
+
+Blockly.FRCJava['frc_math_trig'] = function(block) {
+  const op = block.getFieldValue('OP');
+  const num = Blockly.FRCJava.valueToCode(block, 'NUM', Blockly.FRCJava.ORDER_NONE) || '0';
+  
+  // Convert degrees to radians for trig functions
+  if (['SIN', 'COS', 'TAN'].includes(op)) {
+    return [`Math.${op.toLowerCase()}(${num} * Math.PI / 180)`, Blockly.FRCJava.ORDER_FUNCTION_CALL];
+  }
+  
+  // Convert result to degrees for inverse trig functions
+  if (['ASIN', 'ACOS', 'ATAN'].includes(op)) {
+    return [`Math.${op.toLowerCase()}(${num}) * 180 / Math.PI`, Blockly.FRCJava.ORDER_MULTIPLICATIVE];
+  }
+  
+  return [`Math.${op.toLowerCase()}(${num})`, Blockly.FRCJava.ORDER_FUNCTION_CALL];
+};
+
+Blockly.FRCJava['frc_math_number'] = function(block) {
+  return [block.getFieldValue('NUM'), Blockly.FRCJava.ORDER_ATOMIC];
+};
+
+Blockly.FRCJava['frc_controls_if'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'CONDITION', 
+    Blockly.FRCJava.ORDER_NONE) || 'false';
+  const thenCode = Blockly.FRCJava.statementToCode(block, 'THEN_STATEMENT') || '';
+  
+  let code = '';
+  code += 'if (' + condition + ') {\n';
+  code += thenCode;
+  code += '}\n';
+  
+  return code;
+};
+
+Blockly.FRCJava['frc_controls_ifelse'] = function(block) {
+  const condition = Blockly.FRCJava.valueToCode(block, 'CONDITION', 
+    Blockly.FRCJava.ORDER_NONE) || 'false';
+  const thenCode = Blockly.FRCJava.statementToCode(block, 'THEN_STATEMENT') || '';
+  const elseCode = Blockly.FRCJava.statementToCode(block, 'ELSE_STATEMENT') || '';
+  
+  let code = '';
+  code += 'if (' + condition + ') {\n';
+  code += thenCode;
+  code += '} else {\n';
+  code += elseCode;
+  code += '}\n';
+  
+  return code;
 };

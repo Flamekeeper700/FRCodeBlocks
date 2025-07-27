@@ -68,5 +68,16 @@ Blockly.Msg = {
   BKY_FRC_VARIABLE_GET_TOOLTIP: "Get the value of a variable",
 
   // Functions
-  BKY_FRC_FUNCTION_CALL_TOOLTIP: "Call a function with arguments"
+  BKY_FRC_FUNCTION_CALL_TOOLTIP: "Call a function with arguments",
+
+  BKY_FRC_LOGIC_COMPARE_TOOLTIP: "Compare two values",
+BKY_FRC_LOGIC_OPERATION_TOOLTIP: "Logical AND/OR operation",
+BKY_FRC_LOGIC_NEGATE_TOOLTIP: "Logical NOT operation",
+BKY_FRC_LOGIC_BOOLEAN_TOOLTIP: "Boolean constant (true/false)",
+BKY_FRC_MATH_ARITHMETIC_TOOLTIP: "Basic arithmetic operations",
+BKY_FRC_MATH_SINGLE_TOOLTIP: "Single input math operations",
+BKY_FRC_MATH_TRIG_TOOLTIP: "Trigonometric functions (degrees)",
+BKY_FRC_MATH_NUMBER_TOOLTIP: "Number constant",
+BKY_FRC_CONTROLS_IF_TOOLTIP: "Execute blocks if condition is true",
+BKY_FRC_CONTROLS_IFELSE_TOOLTIP: "Execute different blocks depending on condition"
 };

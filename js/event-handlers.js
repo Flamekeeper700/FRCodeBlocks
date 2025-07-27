@@ -29,18 +29,18 @@ window.eventHandlers = {
 
         const { editThemeBtn, themeSelector } = window.domElements;
     
+    // Theme selector
     if (themeSelector) {
       themeSelector.addEventListener('change', (e) => {
         window.themeManager.applyTheme(e.target.value);
       });
     }
 
+    // Theme editor
     if (editThemeBtn) {
       editThemeBtn.addEventListener('click', () => {
         if (window.themeManager && window.themeManager.showThemeEditor) {
           window.themeManager.showThemeEditor();
-        } else {
-          console.error('Theme manager not properly initialized');
         }
       });
     }

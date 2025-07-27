@@ -253,3 +253,61 @@ body {
   font-style: italic;
   padding: 4px 8px;
 }
+
+.theme-variable-editor {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: var(--controls-bg);
+  border-radius: 4px;
+}
+
+.theme-variable-editor label {
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.theme-variable-editor input[type="color"] {
+  width: 100%;
+  height: 30px;
+  cursor: pointer;
+}
+
+.variable-value {
+  font-family: monospace;
+  min-width: 100px;
+  padding: 4px 8px;
+  background-color: var(--modal-bg);
+  border-radius: 3px;
+  border: 1px solid var(--button-border);
+}
+
+#themeVariablesEditor {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 15px;
+  scrollbar-width: thin;
+}
+
+#newThemeName {
+  background-color: var(--modal-bg);
+  color: var(--modal-text);
+  border: 1px solid var(--button-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+#saveCustomTheme {
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+}

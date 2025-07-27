@@ -8,7 +8,6 @@ window.domElements = {
   copyCodeBtn: document.getElementById('copyCodeBtn'),
   saveProjectBtn: document.getElementById('saveProjectBtn'),
   loadProjectBtn: document.getElementById('loadProjectBtn'),
-  darkModeToggle: document.getElementById('darkModeToggle'),
   helpBtn: document.getElementById('helpBtn'),
   sampleProjects: document.getElementById('sampleProjects'),
   loadSampleBtn: document.getElementById('loadSampleBtn'),

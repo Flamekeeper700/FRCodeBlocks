@@ -71,10 +71,6 @@ window.tabManagement = {
     return workspace;
   },
 
-  toggleDarkMode: function() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-  },
 
   renderTabs: function() {
     const { tabsContainer } = window.domElements;

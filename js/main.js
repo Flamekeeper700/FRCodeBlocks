@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize dark mode from localStorage
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-  }
+
 
   // Initialize theme manager FIRST
   if (window.themeManager && window.themeManager.init) {

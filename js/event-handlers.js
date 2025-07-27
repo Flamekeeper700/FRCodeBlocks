@@ -6,7 +6,6 @@ window.eventHandlers = {
       copyCodeBtn, 
       saveProjectBtn, 
       loadProjectBtn, 
-      darkModeToggle, 
       helpBtn, 
       helpModal, 
       closeModal, 
@@ -24,7 +23,6 @@ window.eventHandlers = {
       switchTab, 
       saveProject, 
       loadProject, 
-      toggleDarkMode, 
       loadSampleProject 
     } = window.tabManagement;
 
@@ -54,11 +52,6 @@ window.eventHandlers = {
     saveProjectBtn.addEventListener('click', () => saveProject.call(window.tabManagement));
     loadProjectBtn.addEventListener('click', () => loadProject.call(window.tabManagement));
     
-    // UI event listeners
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-    });
     
     helpBtn.addEventListener('click', () => helpModal.style.display = 'flex');
     closeModal.addEventListener('click', () => helpModal.style.display = 'none');
@@ -173,10 +166,6 @@ window.eventHandlers = {
       if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
         e.preventDefault();
         loadProject.call(window.tabManagement);
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        toggleDarkMode();
       }
       if (e.key === 'Enter' && document.activeElement === sampleProjects) {
         loadSampleBtn.click();

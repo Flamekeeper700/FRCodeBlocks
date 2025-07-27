@@ -21,5 +21,7 @@ window.domElements = {
   themeEditorModal: document.getElementById('themeEditorModal'),
   themeVariablesEditor: document.getElementById('themeVariablesEditor'),
   newThemeName: document.getElementById('newThemeName'),
-  saveCustomTheme: document.getElementById('saveCustomTheme')
+  saveCustomTheme: document.getElementById('saveCustomTheme'),
+  deleteCustomTheme: document.getElementById('deleteCustomTheme')
+
 };

@@ -1,29 +1,29 @@
 // custom-theme.js
 window.themeManager = {
-      VARIABLE_DESCRIPTIONS: {
-    '--bg-color': 'Main Background Color',
-    '--text-color': 'Primary Text Color',
-    '--tab-bg': 'Tab Bar Background',
-    '--tab-border': 'Tab Bar Border',
-    '--tab-active-bg': 'Active Tab Background',
-    '--tab-active-border': 'Active Tab Border',
-    '--toolbox-bg': 'Toolbox Background',
-    '--toolbox-border': 'Toolbox Border',
-    '--controls-bg': 'Controls Panel Background',
-    '--output-bg': 'Code Output Background',
-    '--output-text': 'Code Output Text',
-    '--button-bg': 'Button Background',
-    '--button-text': 'Button Text',
-    '--button-hover': 'Button Hover State',
-    '--button-border': 'Button Border',
-    '--modal-bg': 'Modal Background',
-    '--modal-text': 'Modal Text',
-    '--blockly-bg': 'Blockly Workspace Background',
-    '--blockly-text': 'Blockly Text',
-    '--blockly-toolbox': 'Blockly Toolbox Background',
-    '--blockly-path': 'Blockly Connection Paths',
-    '--blockly-scrollbar': 'Blockly Scrollbar'
-  },
+VARIABLE_DESCRIPTIONS: {
+  '--bg-color': 'App BG',
+  '--text-color': 'Text',
+  '--tab-bg': 'Tab BG',
+  '--tab-border': 'Tab Border',
+  '--tab-active-bg': 'Active Tab',
+  '--tab-active-border': 'Active Border',
+  '--toolbox-bg': 'Toolbox BG',
+  '--toolbox-border': 'Tool Edge',
+  '--controls-bg': 'Controls',
+  '--output-bg': 'Output BG',
+  '--output-text': 'Output Text',
+  '--button-bg': 'Button',
+  '--button-text': 'Btn Text',
+  '--button-hover': 'Btn Hover',
+  '--button-border': 'Btn Edge',
+  '--modal-bg': 'Popup BG',
+  '--modal-text': 'Popup Text',
+  '--blockly-bg': 'Workspace',
+  '--blockly-text': 'Block Text',
+  '--blockly-toolbox': 'Block Tools',
+  '--blockly-path': 'Connectors',
+  '--blockly-scrollbar': 'Scrollbar'
+},
 
   // Built-in themes
   themes: {
@@ -448,46 +448,90 @@ window.themeManager = {
     return themeId;
   },
   
-  setupThemeEditor: function() {
-    const { saveCustomTheme, themeEditorModal, newThemeName } = window.domElements;
-    if (!saveCustomTheme || !themeEditorModal) return;
-    
-    saveCustomTheme.addEventListener('click', () => {
-      const name = newThemeName.value.trim();
-      if (!name) {
-        alert('Please enter a theme name');
-        return;
-      }
-
-      const themeId = this.saveCurrentThemeAsCustom(name);
-      if (themeId) {
-        this.applyTheme(themeId);
-        themeEditorModal.style.display = 'none';
-        this.updateThemeSelector();
-        newThemeName.value = '';
-      }
-    });
-    
-    const editThemeBtn = document.getElementById('editThemeBtn');
-    if (editThemeBtn) {
-      editThemeBtn.addEventListener('click', () => {
-        newThemeName.value = '';
-      });
-    }
-  },
+setupThemeEditor: function() {
+  const { saveCustomTheme, deleteCustomTheme, themeEditorModal, newThemeName } = window.domElements;
+  if (!saveCustomTheme || !themeEditorModal) return;
   
-  deleteCustomTheme: function(themeId) {
-    if (this.customThemes[themeId]) {
-      delete this.customThemes[themeId];
-      this.saveCustomThemes();
+  saveCustomTheme.addEventListener('click', () => {
+    const name = newThemeName.value.trim();
+    if (!name) {
+      alert('Please enter a theme name');
+      return;
+    }
+
+    const themeId = this.saveCurrentThemeAsCustom(name);
+    if (themeId) {
+      this.applyTheme(themeId);
       this.updateThemeSelector();
+      newThemeName.value = '';
+    }
+  });
+  
+  deleteCustomTheme.addEventListener('click', () => {
+    this.deleteCurrentTheme();
+  });
+
+  const editThemeBtn = document.getElementById('editThemeBtn');
+  if (editThemeBtn) {
+    editThemeBtn.addEventListener('click', () => {
+      newThemeName.value = '';
+    });
+  }
+},
+  
+deleteCurrentTheme: function() {
+  const currentThemeName = localStorage.getItem('currentTheme');
+  if (this.customThemes[currentThemeName]) {
+    if (confirm(`Are you sure you want to delete the "${this.customThemes[currentThemeName].name}" theme?`)) {
+      delete this.customThemes[currentThemeName];
+      this.saveCustomThemes();
       
-      if (localStorage.getItem('currentTheme') === themeId) {
+      // Switch to default theme if deleted theme was active
+      if (localStorage.getItem('currentTheme') === currentThemeName) {
         this.applyTheme('default');
       }
       
+      this.updateThemeSelector();
+      this.themeEditorModal.style.display = 'none';
       return true;
     }
-    return false;
+  } else {
+    alert("You can only delete custom themes, not built-in ones.");
   }
+  return false;
+},
+
+updateThemeSelector: function(selectedTheme) {
+  const { themeSelector } = window.domElements;
+  if (!themeSelector) return;
+  
+  themeSelector.innerHTML = '';
+  
+  const builtInGroup = document.createElement('optgroup');
+  builtInGroup.label = "Built-in Themes";
+  Object.entries(this.themes).forEach(([id, theme]) => {
+    const option = document.createElement('option');
+    option.value = id;
+    option.textContent = theme.name;
+    builtInGroup.appendChild(option);
+  });
+  themeSelector.appendChild(builtInGroup);
+  
+  if (Object.keys(this.customThemes).length > 0) {
+    const customGroup = document.createElement('optgroup');
+    customGroup.label = "Custom Themes";
+    Object.entries(this.customThemes).forEach(([id, theme]) => {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = theme.name + " (Custom)";
+      customGroup.appendChild(option);
+    });
+    themeSelector.appendChild(customGroup);
+  }
+  
+  if (selectedTheme) {
+    themeSelector.value = selectedTheme;
+  }
+}
+
 };

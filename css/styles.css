@@ -311,3 +311,19 @@ body {
   padding: 10px;
   font-weight: bold;
 }
+
+.theme-editor-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.danger-button {
+  background-color: #ff4444 !important;
+  border-color: #ff4444 !important;
+}
+
+.danger-button:hover {
+  background-color: #cc0000 !important;
+  border-color: #cc0000 !important;
+}

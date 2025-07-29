@@ -1072,7 +1072,22 @@ Blockly.defineBlocksWithJsonArray([
     "colour": 160,
     "tooltip": "Add a code comment",
     "imports": []
-  }
+  },
+  {
+  "type": "frc_function_return",
+  "message0": "return %1",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "VALUE",
+      "check": null
+    }
+  ],
+  "previousStatement": null,
+  "colour": 280,
+  "tooltip": "Return a value from a function",
+  "imports": []
+}
 ]);
 
 // Initialize generator
@@ -1462,6 +1477,7 @@ Blockly.FRCJava.getDefaultValue = function(type) {
   return window.dataTypes.getDefaultValue(type);
 };
 
+
 Blockly.FRCJava['frc_custom_function_declare'] = function(block) {
   const accessModifier = block.getFieldValue('ACCESS_MODIFIER');
   const staticModifier = block.getFieldValue('STATIC_MODIFIER');
@@ -1469,13 +1485,22 @@ Blockly.FRCJava['frc_custom_function_declare'] = function(block) {
   const functionName = block.getFieldValue('FUNCTION_NAME');
   const body = Blockly.FRCJava.statementToCode(block, 'FUNCTION_BODY') || '';
   
+  // Check if the function has a return statement if it's not void
+  const hasReturn = body.includes('return');
+  const needsReturn = returnType !== 'void' && !hasReturn;
+  
   let code = '';
   if (accessModifier && accessModifier !== '---') code += accessModifier + ' ';
   if (staticModifier && staticModifier !== '---') code += staticModifier + ' ';
   code += returnType + ' ' + functionName + '() {\n' +
-          body + 
-          (returnType !== 'void' ? '  return null;\n' : '') +
-          '}\n\n';
+          body;
+  
+  if (needsReturn) {
+    const defaultValue = window.dataTypes.getDefaultValue(returnType) || 'null';
+    code += '  return ' + defaultValue + ';\n';
+  }
+  
+  code += '}\n\n';
   return code;
 };
 
@@ -1624,4 +1649,10 @@ Blockly.FRCJava['frc_controls_ifelse'] = function(block) {
   code += '}\n';
   
   return code;
+};
+
+Blockly.FRCJava['frc_function_return'] = function(block) {
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', 
+    Blockly.FRCJava.ORDER_NONE) || 'null';
+  return 'return ' + value + ';\n';
 };

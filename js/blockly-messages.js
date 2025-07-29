@@ -1,5 +1,5 @@
 // blockly-messages.js
-Blockly.Msg = {
+Object.assign(Blockly.Msg, {
   // Math Arithmetic
   BKY_MATH_ARITHMETIC_TOOLTIP_ADD: "Return the sum of the two numbers",
   BKY_MATH_ARITHMETIC_TOOLTIP_MINUS: "Return the difference of the two numbers",
@@ -79,5 +79,7 @@ BKY_FRC_MATH_SINGLE_TOOLTIP: "Single input math operations",
 BKY_FRC_MATH_TRIG_TOOLTIP: "Trigonometric functions (degrees)",
 BKY_FRC_MATH_NUMBER_TOOLTIP: "Number constant",
 BKY_FRC_CONTROLS_IF_TOOLTIP: "Execute blocks if condition is true",
-BKY_FRC_CONTROLS_IFELSE_TOOLTIP: "Execute different blocks depending on condition"
-};
+BKY_FRC_CONTROLS_IFELSE_TOOLTIP: "Execute different blocks depending on condition",
+BKY_FRC_FUNCTION_RETURN_TOOLTIP: "Return a value from a function",
+
+});

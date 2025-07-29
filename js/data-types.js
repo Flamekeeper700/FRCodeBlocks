@@ -3,10 +3,10 @@
 window.dataTypes = {
   // Base data types that will be used across the application
   baseTypes: [
-    { value: 'int', label: 'int', default: '0' },
-    { value: 'double', label: 'double', default: '0.0' },
-    { value: 'boolean', label: 'boolean', default: 'false' },
-    { value: 'String', label: 'String', default: '""' }
+    { value: 'int', label: 'Integer (int)', default: '0' },
+    { value: 'double', label: 'Decimal (double)', default: '0.0' },
+    { value: 'boolean', label: 'True/False (boolean)', default: 'false' },
+    { value: 'String', label: 'Text (String)', default: '""' }
   ],
 
   // FRC-specific data types

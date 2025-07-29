@@ -1,35 +1,68 @@
-// Define all blocks
-
-if (!window.dataTypes) {
-  window.dataTypes = {
-    getDefaultValue: () => 'null'
+// Helper function to define FRC blocks with proper property handling
+function defineFRCBlock(type, jsonDef) {
+  Blockly.Blocks[type] = {
+    init: function() {
+      this.jsonInit(jsonDef);
+      // Copy all custom properties to the instance
+      for (const prop in jsonDef) {
+        if (prop !== 'type' && prop !== 'message0' && prop !== 'args0') {
+          this[prop] = jsonDef[prop];
+        }
+      }
+    }
   };
 }
 
-Blockly.defineBlocksWithJsonArray([
-  // Motor blocks
-  {
-    "type": "frc_motorcontroller_set",
-    "message0": "Set %1 motor %2 to speed %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MOTOR_TYPE",
-        "options": [
-          ["Spark", "PWMSparkMax"],
-          ["TalonSRX", "PWMTalonSRX"],
-          ["VictorSP", "PWMVictorSP"],
-          ["TalonFX", "PWMTalonFX"],
-          ["Venom", "PWMVenom"]
-        ]
-      },
-      {"type": "field_number", "name": "CHANNEL", "value": 0},
-      {"type": "input_value", "name": "SPEED"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Set motor speed (-1 to 1)",
+// Initialize dataTypes if not exists
+if (!window.dataTypes) {
+  window.dataTypes = {
+    getDefaultValue: (type) => {
+      switch(type) {
+        case 'int': return '0';
+        case 'double': return '0.0';
+        case 'boolean': return 'false';
+        case 'String': return '""';
+        default: return 'null';
+      }
+    },
+    getDropdownOptions: () => [
+      ['int', 'int'],
+      ['double', 'double'],
+      ['boolean', 'boolean'],
+      ['String', 'String'],
+      ['MotorController', 'MotorController'],
+      ['Joystick', 'Joystick'],
+      ['Encoder', 'Encoder'],
+      ['PIDController', 'PIDController'],
+      ['Timer', 'Timer']
+    ]
+  };
+}
+
+// ==================== Motor Control Blocks ====================
+defineFRCBlock('frc_motorcontroller_set', {
+  "type": "frc_motorcontroller_set",
+  "message0": "Set %1 motor %2 to speed %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MOTOR_TYPE",
+      "options": [
+        ["Spark", "PWMSparkMax"],
+        ["TalonSRX", "PWMTalonSRX"],
+        ["VictorSP", "PWMVictorSP"],
+        ["TalonFX", "PWMTalonFX"],
+        ["Venom", "PWMVenom"]
+      ]
+    },
+    {"type": "field_number", "name": "CHANNEL", "value": 0},
+    {"type": "input_value", "name": "SPEED"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 160,
+  "tooltip": "Set motor speed (-1 to 1)",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.motorcontrol.MotorController;",
       "import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;",
@@ -38,530 +71,618 @@ Blockly.defineBlocksWithJsonArray([
       "import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;",
       "import edu.wpi.first.wpilibj.motorcontrol.PWMVenom;"
     ]
-  },
-  {
-    "type": "frc_motorcontroller_safety",
-    "message0": "Set motor %1 safety %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MOTOR_TYPE",
-        "options": [
-          ["Spark", "PWMSparkMax"],
-          ["TalonSRX", "PWMTalonSRX"],
-          ["VictorSP", "PWMVictorSP"],
-          ["TalonFX", "PWMTalonFX"],
-          ["Venom", "PWMVenom"]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "STATE",
-        "options": [
-          ["Enabled", "true"],
-          ["Disabled", "false"]
-        ]
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Enable/disable motor safety",
-    "imports": [
-      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
-    ]
-  },
-  {
-    "type": "frc_motorcontroller_setinverted",
-    "message0": "Set motor %1 inverted %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "MOTOR_TYPE",
-        "options": [
-          ["Spark", "PWMSparkMax"],
-          ["TalonSRX", "PWMTalonSRX"],
-          ["VictorSP", "PWMVictorSP"],
-          ["TalonFX", "PWMTalonFX"],
-          ["Venom", "PWMVenom"]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "STATE",
-        "options": [
-          ["True", "true"],
-          ["False", "false"]
-        ]
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Set motor inversion state",
-    "imports": [
-      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
-    ]
-  },
+  }
+});
 
-  // Drive blocks
-  {
-    "type": "frc_bind_tankdrive",
-    "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
-    "args0": [
-      {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
-      {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
-      {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Bind tank drive controls to controller axes",
+defineFRCBlock('frc_motorcontroller_safety', {
+  "type": "frc_motorcontroller_safety",
+  "message0": "Set motor %1 safety %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MOTOR_TYPE",
+      "options": [
+        ["Spark", "PWMSparkMax"],
+        ["TalonSRX", "PWMTalonSRX"],
+        ["VictorSP", "PWMVictorSP"],
+        ["TalonFX", "PWMTalonFX"],
+        ["Venom", "PWMVenom"]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "STATE",
+      "options": [
+        ["Enabled", "true"],
+        ["Disabled", "false"]
+      ]
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 160,
+  "tooltip": "Enable/disable motor safety",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
+    ]
+  }
+});
+
+defineFRCBlock('frc_motorcontroller_setinverted', {
+  "type": "frc_motorcontroller_setinverted",
+  "message0": "Set motor %1 inverted %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "MOTOR_TYPE",
+      "options": [
+        ["Spark", "PWMSparkMax"],
+        ["TalonSRX", "PWMTalonSRX"],
+        ["VictorSP", "PWMVictorSP"],
+        ["TalonFX", "PWMTalonFX"],
+        ["Venom", "PWMVenom"]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "STATE",
+      "options": [
+        ["True", "true"],
+        ["False", "false"]
+      ]
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 160,
+  "tooltip": "Set motor inversion state",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
+    ]
+  }
+});
+
+// ==================== Drive System Blocks ====================
+defineFRCBlock('frc_bind_tankdrive', {
+  "type": "frc_bind_tankdrive",
+  "message0": "Bind Tank Drive to controller %1 left axis %2 right axis %3",
+  "args0": [
+    {"type": "field_number", "name": "CONTROLLER_PORT", "value": 0},
+    {"type": "field_number", "name": "LEFT_AXIS", "value": 1},
+    {"type": "field_number", "name": "RIGHT_AXIS", "value": 3}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 120,
+  "tooltip": "Bind tank drive controls to controller axes",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Joystick;",
       "import edu.wpi.first.wpilibj2.command.button.JoystickButton;"
     ]
-  },
-  {
-    "type": "frc_subsystem_tankdrive",
-    "message0": "Tank Drive left %1 right %2",
-    "args0": [
-      {"type": "input_value", "name": "LEFT_SPEED"},
-      {"type": "input_value", "name": "RIGHT_SPEED"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 120,
-    "tooltip": "Set tank drive speeds",
+  }
+});
+
+defineFRCBlock('frc_subsystem_tankdrive', {
+  "type": "frc_subsystem_tankdrive",
+  "message0": "Tank Drive left %1 right %2",
+  "args0": [
+    {"type": "input_value", "name": "LEFT_SPEED"},
+    {"type": "input_value", "name": "RIGHT_SPEED"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 120,
+  "tooltip": "Set tank drive speeds",
+  "data": {
     "imports": []
-  },
+  }
+});
 
-  // Sensor blocks
-  {
-    "type": "frc_encoder_create",
-    "message0": "Create Encoder %1 Channel A %2 Channel B %3",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "encoder"},
-      {"type": "field_number", "name": "CHANNEL_A", "value": 0},
-      {"type": "field_number", "name": "CHANNEL_B", "value": 1}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 210,
-    "tooltip": "Create a quadrature encoder",
+// ==================== Sensor Blocks ====================
+defineFRCBlock('frc_encoder_create', {
+  "type": "frc_encoder_create",
+  "message0": "Create Encoder %1 Channel A %2 Channel B %3",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "encoder"},
+    {"type": "field_number", "name": "CHANNEL_A", "value": 0},
+    {"type": "field_number", "name": "CHANNEL_B", "value": 1}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 210,
+  "tooltip": "Create a quadrature encoder",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Encoder;"
     ]
-  },
-  {
-    "type": "frc_encoder_getdistance",
-    "message0": "Get encoder %1 distance",
-    "args0": [
-      {"type": "field_number", "name": "CHANNEL", "value": 0}
-    ],
-    "output": "Number",
-    "colour": 210,
-    "tooltip": "Read encoder distance in meters",
-    "imports": [
-      "import edu.wpi.first.wpilibj.Encoder;"
-    ]
-  },
-  {
-    "type": "frc_encoder_setdistanceperpulse",
-    "message0": "Set encoder %1 distance per pulse %2 meters",
-    "args0": [
-      {"type": "field_number", "name": "CHANNEL", "value": 0},
-      {"type": "input_value", "name": "DISTANCE"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 210,
-    "tooltip": "Set encoder distance per pulse",
-    "imports": [
-      "import edu.wpi.first.wpilibj.Encoder;"
-    ]
-  },
+  }
+});
 
-  // Subsystem blocks
-  {
-    "type": "frc_subsystem_init",
-    "message0": "Subsystem %1 Initialization",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "SUBSYSTEM_TYPE",
-        "options": [
-          ["DriveSubsystem", "DriveSubsystem"],
-          ["ArmSubsystem", "ArmSubsystem"],
-          ["IntakeSubsystem", "IntakeSubsystem"]
-        ]
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Initialize a subsystem",
+defineFRCBlock('frc_encoder_getdistance', {
+  "type": "frc_encoder_getdistance",
+  "message0": "Get encoder %1 distance",
+  "args0": [
+    {"type": "field_number", "name": "CHANNEL", "value": 0}
+  ],
+  "output": "Number",
+  "colour": 210,
+  "tooltip": "Read encoder distance in meters",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.Encoder;"
+    ]
+  }
+});
+
+defineFRCBlock('frc_encoder_setdistanceperpulse', {
+  "type": "frc_encoder_setdistanceperpulse",
+  "message0": "Set encoder %1 distance per pulse %2 meters",
+  "args0": [
+    {"type": "field_number", "name": "CHANNEL", "value": 0},
+    {"type": "input_value", "name": "DISTANCE"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 210,
+  "tooltip": "Set encoder distance per pulse",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.Encoder;"
+    ]
+  }
+});
+
+// ==================== Subsystem Blocks ====================
+defineFRCBlock('frc_subsystem_init', {
+  "type": "frc_subsystem_init",
+  "message0": "Subsystem %1 Initialization",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "SUBSYSTEM_TYPE",
+      "options": [
+        ["DriveSubsystem", "DriveSubsystem"],
+        ["ArmSubsystem", "ArmSubsystem"],
+        ["IntakeSubsystem", "IntakeSubsystem"]
+      ]
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 180,
+  "tooltip": "Initialize a subsystem",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj2.command.SubsystemBase;"
     ]
-  },
-  {
-    "type": "frc_subsystem_periodic",
-    "message0": "Subsystem Periodic",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 180,
-    "tooltip": "Periodic code for a subsystem",
-    "imports": []
-  },
+  }
+});
 
-  // Robot Container blocks
-  {
-    "type": "frc_robotcontainer_init",
-    "message0": "Robot Container Initialization",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Initialize robot container",
+defineFRCBlock('frc_subsystem_periodic', {
+  "type": "frc_subsystem_periodic",
+  "message0": "Subsystem Periodic",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 180,
+  "tooltip": "Periodic code for a subsystem",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_robotcontainer_configurebuttonbindings",
-    "message0": "Configure Button Bindings",
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Configure button bindings",
+  }
+});
+
+// ==================== Robot Container Blocks ====================
+defineFRCBlock('frc_robotcontainer_init', {
+  "type": "frc_robotcontainer_init",
+  "message0": "Robot Container Initialization",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Initialize robot container",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_robotcontainer_getautonomouscommand",
-    "message0": "Get Autonomous Command",
-    "output": "Command",
-    "colour": 200,
-    "tooltip": "Get autonomous command",
+  }
+});
+
+defineFRCBlock('frc_robotcontainer_configurebuttonbindings', {
+  "type": "frc_robotcontainer_configurebuttonbindings",
+  "message0": "Configure Button Bindings",
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Configure button bindings",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_robotcontainer_getautonomouscommand', {
+  "type": "frc_robotcontainer_getautonomouscommand",
+  "message0": "Get Autonomous Command",
+  "output": "Command",
+  "colour": 200,
+  "tooltip": "Get autonomous command",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj2.command.Command;"
     ]
-  },
+  }
+});
 
-  // Robot blocks
-  {
-    "type": "frc_robot_init",
-    "message0": "robotInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when the robot starts",
+// ==================== Robot Lifecycle Blocks ====================
+defineFRCBlock('frc_robot_init', {
+  "type": "frc_robot_init",
+  "message0": "robotInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when the robot starts",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_robot_periodic",
-    "message0": "robotPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically while the robot is enabled",
-    "imports": []
-  },
-  {
-    "type": "frc_simulation_init",
-    "message0": "simulationInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when simulation starts",
-    "imports": []
-  },
-  {
-    "type": "frc_simulation_periodic",
-    "message0": "simulationPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during simulation",
-    "imports": []
-  },
-  {
-    "type": "frc_disabled_init",
-    "message0": "disabledInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when robot enters disabled mode",
-    "imports": []
-  },
-  {
-    "type": "frc_disabled_periodic",
-    "message0": "disabledPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically while robot is disabled",
-    "imports": []
-  },
-  {
-    "type": "frc_autonomous_init",
-    "message0": "autonomousInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when autonomous mode starts",
-    "imports": []
-  },
-  {
-    "type": "frc_autonomous_periodic",
-    "message0": "autonomousPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during autonomous mode",
-    "imports": []
-  },
-  {
-    "type": "frc_teleop_init",
-    "message0": "teleopInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when teleop mode starts",
-    "imports": []
-  },
-  {
-    "type": "frc_teleop_periodic",
-    "message0": "teleopPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during teleop mode",
-    "imports": []
-  },
-  {
-    "type": "frc_test_init",
-    "message0": "testInit() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called once when test mode starts",
-    "imports": []
-  },
-  {
-    "type": "frc_test_periodic",
-    "message0": "testPeriodic() %1",
-    "args0": [
-      {
-        "type": "input_statement",
-        "name": "STEPS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 200,
-    "tooltip": "Called periodically during test mode",
-    "imports": []
-  },
+  }
+});
 
-  // Constants blocks
-  {
-    "type": "frc_constants_motorports",
-    "message0": "Motor Ports: Left %1 Right %2",
-    "args0": [
-      {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
-      {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Define motor ports",
+defineFRCBlock('frc_robot_periodic', {
+  "type": "frc_robot_periodic",
+  "message0": "robotPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically while the robot is enabled",
+  "data": {
     "imports": []
-  },
+  }
+});
 
-  // Joystick blocks
-  {
-    "type": "frc_joystick_getaxis",
-    "message0": "Get Joystick %1 Axis %2",
-    "args0": [
-      {"type": "field_number", "name": "PORT", "value": 0},
-      {"type": "field_number", "name": "AXIS", "value": 1}
-    ],
-    "output": "Number",
-    "colour": 30,
-    "tooltip": "Get joystick axis value (-1 to 1)",
+defineFRCBlock('frc_simulation_init', {
+  "type": "frc_simulation_init",
+  "message0": "simulationInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when simulation starts",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_simulation_periodic', {
+  "type": "frc_simulation_periodic",
+  "message0": "simulationPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically during simulation",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_disabled_init', {
+  "type": "frc_disabled_init",
+  "message0": "disabledInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when robot enters disabled mode",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_disabled_periodic', {
+  "type": "frc_disabled_periodic",
+  "message0": "disabledPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically while robot is disabled",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_autonomous_init', {
+  "type": "frc_autonomous_init",
+  "message0": "autonomousInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when autonomous mode starts",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_autonomous_periodic', {
+  "type": "frc_autonomous_periodic",
+  "message0": "autonomousPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically during autonomous mode",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_teleop_init', {
+  "type": "frc_teleop_init",
+  "message0": "teleopInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when teleop mode starts",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_teleop_periodic', {
+  "type": "frc_teleop_periodic",
+  "message0": "teleopPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically during teleop mode",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_test_init', {
+  "type": "frc_test_init",
+  "message0": "testInit() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called once when test mode starts",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_test_periodic', {
+  "type": "frc_test_periodic",
+  "message0": "testPeriodic() %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 200,
+  "tooltip": "Called periodically during test mode",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Constants Blocks ====================
+defineFRCBlock('frc_constants_motorports', {
+  "type": "frc_constants_motorports",
+  "message0": "Motor Ports: Left %1 Right %2",
+  "args0": [
+    {"type": "field_number", "name": "LEFT_MOTOR_PORT", "value": 0},
+    {"type": "field_number", "name": "RIGHT_MOTOR_PORT", "value": 1}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Define motor ports",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Joystick Blocks ====================
+defineFRCBlock('frc_joystick_getaxis', {
+  "type": "frc_joystick_getaxis",
+  "message0": "Get Joystick %1 Axis %2",
+  "args0": [
+    {"type": "field_number", "name": "PORT", "value": 0},
+    {"type": "field_number", "name": "AXIS", "value": 1}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get joystick axis value (-1 to 1)",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Joystick;"
     ]
-  },
-  {
-    "type": "frc_joystick_getbutton",
-    "message0": "Get Joystick %1 Button %2",
-    "args0": [
-      {"type": "field_number", "name": "PORT", "value": 0},
-      {"type": "field_number", "name": "BUTTON", "value": 1}
-    ],
-    "output": "Boolean",
-    "colour": 30,
-    "tooltip": "Get joystick button state",
+  }
+});
+
+defineFRCBlock('frc_joystick_getbutton', {
+  "type": "frc_joystick_getbutton",
+  "message0": "Get Joystick %1 Button %2",
+  "args0": [
+    {"type": "field_number", "name": "PORT", "value": 0},
+    {"type": "field_number", "name": "BUTTON", "value": 1}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Get joystick button state",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Joystick;"
     ]
-  },
+  }
+});
 
-  // PID blocks
-  {
-    "type": "frc_pidcontroller_create",
-    "message0": "Create PID Controller %1 P %2 I %3 D %4",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"},
-      {"type": "input_value", "name": "P", "value": 0.1},
-      {"type": "input_value", "name": "I", "value": 0.0},
-      {"type": "input_value", "name": "D", "value": 0.0}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 220,
-    "tooltip": "Create a PID controller",
+// ==================== PID Control Blocks ====================
+defineFRCBlock('frc_pidcontroller_create', {
+  "type": "frc_pidcontroller_create",
+  "message0": "Create PID Controller %1 P %2 I %3 D %4",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "pidController"},
+    {"type": "input_value", "name": "P", "value": 0.1},
+    {"type": "input_value", "name": "I", "value": 0.0},
+    {"type": "input_value", "name": "D", "value": 0.0}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 220,
+  "tooltip": "Create a PID controller",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.controller.PIDController;"
     ]
-  },
-  {
-    "type": "frc_pidcontroller_calculate",
-    "message0": "Calculate PID %1 Setpoint %2 Measurement %3",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"},
-      {"type": "input_value", "name": "SETPOINT"},
-      {"type": "input_value", "name": "MEASUREMENT"}
-    ],
-    "output": "Number",
-    "colour": 220,
-    "tooltip": "Calculate PID output",
-    "imports": [
-      "import edu.wpi.first.wpilibj.controller.PIDController;"
-    ]
-  },
-  {
-    "type": "frc_pidcontroller_settolerance",
-    "message0": "Set PID %1 tolerance absolute %2 meters",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"},
-      {"type": "input_value", "name": "TOLERANCE"}
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 220,
-    "tooltip": "Set PID controller absolute tolerance",
-    "imports": [
-      "import edu.wpi.first.wpilibj.controller.PIDController;"
-    ]
-  },
-  {
-    "type": "frc_pidcontroller_at_setpoint",
-    "message0": "PID %1 at setpoint",
-    "args0": [
-      {"type": "field_input", "name": "NAME", "text": "pidController"}
-    ],
-    "output": "Boolean",
-    "colour": 220,
-    "tooltip": "Check if PID controller is at setpoint",
-    "imports": [
-      "import edu.wpi.first.wpilibj.controller.PIDController;"
-    ]
-  },
+  }
+});
 
-  // Timer blocks
-  {
-    "type": "frc_timer",
-    "message0": "Timer %1",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "OPERATION",
-        "options": [
-          ["Start", "start"],
-          ["Stop", "stop"],
-          ["Reset", "reset"],
-          ["Get", "get"],
-          ["Has Elapsed", "hasElapsed"]
-        ]
-      },
-      {"type": "input_value", "name": "SECONDS", "check": "Number"}
-    ],
-    "output": ["Number", "Boolean"],
-    "colour": 330,
-    "tooltip": "Timer operations",
+defineFRCBlock('frc_pidcontroller_calculate', {
+  "type": "frc_pidcontroller_calculate",
+  "message0": "Calculate PID %1 Setpoint %2 Measurement %3",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "pidController"},
+    {"type": "input_value", "name": "SETPOINT"},
+    {"type": "input_value", "name": "MEASUREMENT"}
+  ],
+  "output": "Number",
+  "colour": 220,
+  "tooltip": "Calculate PID output",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
+  }
+});
+
+defineFRCBlock('frc_pidcontroller_settolerance', {
+  "type": "frc_pidcontroller_settolerance",
+  "message0": "Set PID %1 tolerance absolute %2 meters",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "pidController"},
+    {"type": "input_value", "name": "TOLERANCE"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 220,
+  "tooltip": "Set PID controller absolute tolerance",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
+  }
+});
+
+defineFRCBlock('frc_pidcontroller_at_setpoint', {
+  "type": "frc_pidcontroller_at_setpoint",
+  "message0": "PID %1 at setpoint",
+  "args0": [
+    {"type": "field_input", "name": "NAME", "text": "pidController"}
+  ],
+  "output": "Boolean",
+  "colour": 220,
+  "tooltip": "Check if PID controller is at setpoint",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.controller.PIDController;"
+    ]
+  }
+});
+
+// ==================== Timer Blocks ====================
+defineFRCBlock('frc_timer', {
+  "type": "frc_timer",
+  "message0": "Timer %1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "OPERATION",
+      "options": [
+        ["Start", "start"],
+        ["Stop", "stop"],
+        ["Reset", "reset"],
+        ["Get", "get"],
+        ["Has Elapsed", "hasElapsed"]
+      ]
+    },
+    {"type": "input_value", "name": "SECONDS", "check": "Number"}
+  ],
+  "output": ["Number", "Boolean"],
+  "colour": 330,
+  "tooltip": "Timer operations",
+  "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Timer;"
     ]
-  },
+  }
+});
 
-  // Command blocks
-  {
+// ==================== Command Blocks ====================
+defineFRCBlock('frc_command_init', {
   "type": "frc_command_init",
   "message0": "Command %1 initialize %2",
   "args0": [
@@ -572,11 +693,14 @@ Blockly.defineBlocksWithJsonArray([
   "nextStatement": null,
   "colour": 260,
   "tooltip": "Command initialization",
-  "imports": [
-    "import edu.wpi.first.wpilibj2.command.CommandBase;"
-  ]
-},
-{
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj2.command.CommandBase;"
+    ]
+  }
+});
+
+defineFRCBlock('frc_command_execute', {
   "type": "frc_command_execute",
   "message0": "Command %1 execute %2",
   "args0": [
@@ -587,9 +711,12 @@ Blockly.defineBlocksWithJsonArray([
   "nextStatement": null,
   "colour": 260,
   "tooltip": "Command execution",
-  "imports": []
-},
-{
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_command_is_finished', {
   "type": "frc_command_is_finished",
   "message0": "Command %1 is finished %2",
   "args0": [
@@ -599,9 +726,12 @@ Blockly.defineBlocksWithJsonArray([
   "output": "Boolean",
   "colour": 260,
   "tooltip": "Check if command is finished",
-  "imports": []
-},
-{
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_command_end', {
   "type": "frc_command_end",
   "message0": "Command %1 end %2",
   "args0": [
@@ -612,468 +742,227 @@ Blockly.defineBlocksWithJsonArray([
   "nextStatement": null,
   "colour": 260,
   "tooltip": "Command end",
-  "imports": []
-},
+  "data": {
+    "imports": []
+  }
+});
 
-  // Variable blocks
-  {
-    "type": "frc_variable_declaration",
-    "message0": "Declare %1 %2 = %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": function() {
-          try {
-            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-              const options = window.dataTypes.getDropdownOptions();
-              return options.length > 0 ? options : [['int', 'int']];
-            }
-          } catch (e) {
-            console.error('Error getting data types:', e);
+// ==================== Variable Blocks ====================
+defineFRCBlock('frc_variable_declaration', {
+  "type": "frc_variable_declaration",
+  "message0": "Declare %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
           }
-          return [['int', 'int']];
+        } catch (e) {
+          console.error('Error getting data types:', e);
         }
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
-      },
-      {
-        "type": "input_value",
-        "name": "VALUE"
+        return [['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Declare a variable with initialization",
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Declare a variable with initialization",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_variable_set",
-    "message0": "Set %1 %2 = %3",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": function() {
-          try {
-            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-              const options = window.dataTypes.getDropdownOptions();
-              return options.length > 0 ? options : [['int', 'int']];
-            }
-          } catch (e) {
-            console.error('Error getting data types:', e);
+  }
+});
+
+defineFRCBlock('frc_variable_set', {
+  "type": "frc_variable_set",
+  "message0": "Set %1 %2 = %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
           }
-          return [['int', 'int']];
+        } catch (e) {
+          console.error('Error getting data types:', e);
         }
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
-      },
-      {
-        "type": "input_value",
-        "name": "VALUE"
+        return [['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 330,
-    "tooltip": "Set the value of an existing variable",
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    },
+    {
+      "type": "input_value",
+      "name": "VALUE"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 330,
+  "tooltip": "Set the value of an existing variable",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_variable_get",
-    "message0": "Get %1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "TYPE",
-        "options": function() {
-          try {
-            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-              const options = window.dataTypes.getDropdownOptions();
-              return options.length > 0 ? options : [['int', 'int']];
-            }
-          } catch (e) {
-            console.error('Error getting data types:', e);
+  }
+});
+
+defineFRCBlock('frc_variable_get', {
+  "type": "frc_variable_get",
+  "message0": "Get %1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            const options = window.dataTypes.getDropdownOptions();
+            return options.length > 0 ? options : [['int', 'int']];
           }
-          return [['int', 'int']];
+        } catch (e) {
+          console.error('Error getting data types:', e);
         }
-      },
-      {
-        "type": "field_input",
-        "name": "NAME",
-        "text": "variableName"
+        return [['int', 'int']];
       }
-    ],
-    "output": null,
-    "colour": 330,
-    "tooltip": "Get the value of a variable",
+    },
+    {
+      "type": "field_input",
+      "name": "NAME",
+      "text": "variableName"
+    }
+  ],
+  "output": null,
+  "colour": 330,
+  "tooltip": "Get the value of a variable",
+  "data": {
     "imports": []
-  },
+  }
+});
 
-  // Function blocks
-  {
-    "type": "frc_custom_function_declare",
-    "message0": "%1 %2 %3 function %4 ( %5 ) %6",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "ACCESS_MODIFIER",
-        "options": [
-          ["public", "public"],
-          ["private", "private"],
-          ["protected", "protected"],
-          ["---", ""]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "STATIC_MODIFIER",
-        "options": [
-          ["static", "static"],
-          ["---", ""]
-        ]
-      },
-      {
-        "type": "field_dropdown",
-        "name": "RETURN_TYPE",
-        "options": function() {
-          try {
-            if (window.dataTypes && window.dataTypes.getDropdownOptions) {
-              return [['void', 'void'], ...window.dataTypes.getDropdownOptions()];
-            }
-          } catch (e) {
-            console.error('Error getting data types:', e);
+// ==================== Function Blocks ====================
+defineFRCBlock('frc_custom_function_declare', {
+  "type": "frc_custom_function_declare",
+  "message0": "%1 %2 %3 function %4 ( %5 ) %6",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "ACCESS_MODIFIER",
+      "options": [
+        ["public", "public"],
+        ["private", "private"],
+        ["protected", "protected"],
+        ["---", ""]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "STATIC_MODIFIER",
+      "options": [
+        ["static", "static"],
+        ["---", ""]
+      ]
+    },
+    {
+      "type": "field_dropdown",
+      "name": "RETURN_TYPE",
+      "options": function() {
+        try {
+          if (window.dataTypes && window.dataTypes.getDropdownOptions) {
+            return [['void', 'void'], ...window.dataTypes.getDropdownOptions()];
           }
-          return [['void', 'void'], ['int', 'int']];
+        } catch (e) {
+          console.error('Error getting data types:', e);
         }
-      },
-      {
-        "type": "field_input",
-        "name": "FUNCTION_NAME",
-        "text": "myFunction"
-      },
-      {
-        "type": "input_dummy",
-        "name": "PARAMS"
-      },
-      {
-        "type": "input_statement",
-        "name": "FUNCTION_BODY"
+        return [['void', 'void'], ['int', 'int']];
       }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 280,
-    "tooltip": "Declare a custom function",
+    },
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "PARAMS"
+    },
+    {
+      "type": "input_statement",
+      "name": "FUNCTION_BODY"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 280,
+  "tooltip": "Declare a custom function",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_function_call_statement",
-    "message0": "call %1 ( %2 )",
-    "args0": [
-      {
-        "type": "field_input",
-        "name": "FUNCTION_NAME",
-        "text": "myFunction"
-      },
-      {
-        "type": "input_dummy",
-        "name": "ARGS"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 280,
-    "tooltip": "Call a function as a statement",
-    "imports": []
-  },
-  {
-    "type": "frc_function_call_value",
-    "message0": "call %1 ( %2 )",
-    "args0": [
-      {
-        "type": "field_input",
-        "name": "FUNCTION_NAME",
-        "text": "myFunction"
-      },
-      {
-        "type": "input_dummy",
-        "name": "ARGS"
-      }
-    ],
-    "output": null,
-    "colour": 280,
-    "tooltip": "Call a function as an expression",
-    "imports": []
-  },
+  }
+});
 
-  // Logic blocks
-  {
-    "type": "frc_logic_compare",
-    "message0": "%1 %2 %3",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "A"
-      },
-      {
-        "type": "field_dropdown",
-        "name": "OP",
-        "options": [
-          ["==", "EQ"],
-          ["!=", "NEQ"],
-          ["<", "LT"],
-          ["<=", "LTE"],
-          [">", "GT"],
-          [">=", "GTE"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "B"
-      }
-    ],
-    "output": "Boolean",
-    "colour": 230,
-    "tooltip": "Compare two values",
+defineFRCBlock('frc_function_call_statement', {
+  "type": "frc_function_call_statement",
+  "message0": "call %1 ( %2 )",
+  "args0": [
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "ARGS"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 280,
+  "tooltip": "Call a function as a statement",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_logic_operation",
-    "message0": "%1 %2 %3",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "A",
-        "check": "Boolean"
-      },
-      {
-        "type": "field_dropdown",
-        "name": "OP",
-        "options": [
-          ["AND", "AND"],
-          ["OR", "OR"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "B",
-        "check": "Boolean"
-      }
-    ],
-    "output": "Boolean",
-    "colour": 230,
-    "tooltip": "Logical AND/OR operation",
-    "imports": []
-  },
-  {
-    "type": "frc_logic_negate",
-    "message0": "NOT %1",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "BOOL",
-        "check": "Boolean"
-      }
-    ],
-    "output": "Boolean",
-    "colour": 230,
-    "tooltip": "Logical NOT operation",
-    "imports": []
-  },
-  {
-    "type": "frc_logic_boolean",
-    "message0": "%1",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "BOOL",
-        "options": [
-          ["true", "TRUE"],
-          ["false", "FALSE"]
-        ]
-      }
-    ],
-    "output": "Boolean",
-    "colour": 230,
-    "tooltip": "Boolean constant",
-    "imports": []
-  },
+  }
+});
 
-  // Math blocks
-  {
-    "type": "frc_math_arithmetic",
-    "message0": "%1 %2 %3",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "A",
-        "check": "Number"
-      },
-      {
-        "type": "field_dropdown",
-        "name": "OP",
-        "options": [
-          ["+", "ADD"],
-          ["-", "MINUS"],
-          ["×", "MULTIPLY"],
-          ["÷", "DIVIDE"],
-          ["^", "POWER"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "B",
-        "check": "Number"
-      }
-    ],
-    "output": "Number",
-    "colour": 240,
-    "tooltip": "Basic arithmetic operations",
+defineFRCBlock('frc_function_call_value', {
+  "type": "frc_function_call_value",
+  "message0": "call %1 ( %2 )",
+  "args0": [
+    {
+      "type": "field_input",
+      "name": "FUNCTION_NAME",
+      "text": "myFunction"
+    },
+    {
+      "type": "input_dummy",
+      "name": "ARGS"
+    }
+  ],
+  "output": null,
+  "colour": 280,
+  "tooltip": "Call a function as an expression",
+  "data": {
     "imports": []
-  },
-  {
-    "type": "frc_math_single",
-    "message0": "%1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "OP",
-        "options": [
-          ["√", "ROOT"],
-          ["abs", "ABS"],
-          ["-", "NEG"],
-          ["ln", "LN"],
-          ["log10", "LOG10"],
-          ["e^", "EXP"],
-          ["10^", "POW10"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "NUM",
-        "check": "Number"
-      }
-    ],
-    "output": "Number",
-    "colour": 240,
-    "tooltip": "Single input math operations",
-    "imports": []
-  },
-  {
-    "type": "frc_math_trig",
-    "message0": "%1 %2",
-    "args0": [
-      {
-        "type": "field_dropdown",
-        "name": "OP",
-        "options": [
-          ["sin", "SIN"],
-          ["cos", "COS"],
-          ["tan", "TAN"],
-          ["asin", "ASIN"],
-          ["acos", "ACOS"],
-          ["atan", "ATAN"]
-        ]
-      },
-      {
-        "type": "input_value",
-        "name": "NUM",
-        "check": "Number"
-      }
-    ],
-    "output": "Number",
-    "colour": 240,
-    "tooltip": "Trigonometric functions",
-    "imports": []
-  },
-  {
-    "type": "frc_math_number",
-    "message0": "%1",
-    "args0": [
-      {
-        "type": "field_number",
-        "name": "NUM",
-        "value": 0
-      }
-    ],
-    "output": "Number",
-    "colour": 240,
-    "tooltip": "Number constant",
-    "imports": []
-  },
+  }
+});
 
-  // Control blocks
-  {
-    "type": "frc_controls_if",
-    "message0": "if %1 then %2",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "CONDITION",
-        "check": "Boolean"
-      },
-      {
-        "type": "input_statement",
-        "name": "THEN_STATEMENT"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 230,
-    "tooltip": "Execute blocks if condition is true",
-    "imports": []
-  },
-  {
-    "type": "frc_controls_ifelse",
-    "message0": "if %1 then %2 else %3",
-    "args0": [
-      {
-        "type": "input_value",
-        "name": "CONDITION",
-        "check": "Boolean"
-      },
-      {
-        "type": "input_statement",
-        "name": "THEN_STATEMENT"
-      },
-      {
-        "type": "input_statement",
-        "name": "ELSE_STATEMENT"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 230,
-    "tooltip": "Execute different blocks depending on condition",
-    "imports": []
-  },
-
-  // Comment block
-  {
-    "type": "comment_block",
-    "message0": "// %1",
-    "args0": [
-      {
-        "type": "field_input",
-        "name": "TEXT",
-        "text": "Comment here"
-      }
-    ],
-    "previousStatement": null,
-    "nextStatement": null,
-    "colour": 160,
-    "tooltip": "Add a code comment",
-    "imports": []
-  },
-  {
+defineFRCBlock('frc_function_return', {
   "type": "frc_function_return",
   "message0": "return %1",
   "args0": [
@@ -1086,11 +975,301 @@ Blockly.defineBlocksWithJsonArray([
   "previousStatement": null,
   "colour": 280,
   "tooltip": "Return a value from a function",
-  "imports": []
-}
-]);
+  "data": {
+    "imports": []
+  }
+});
 
-// Initialize generator
+// ==================== Logic Blocks ====================
+defineFRCBlock('frc_logic_compare', {
+  "type": "frc_logic_compare",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["==", "EQ"],
+        ["!=", "NEQ"],
+        ["<", "LT"],
+        ["<=", "LTE"],
+        [">", "GT"],
+        [">=", "GTE"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Compare two values",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_logic_operation', {
+  "type": "frc_logic_operation",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A",
+      "check": "Boolean"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["AND", "AND"],
+        ["OR", "OR"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B",
+      "check": "Boolean"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Logical AND/OR operation",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_logic_negate', {
+  "type": "frc_logic_negate",
+  "message0": "NOT %1",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "BOOL",
+      "check": "Boolean"
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Logical NOT operation",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_logic_boolean', {
+  "type": "frc_logic_boolean",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BOOL",
+      "options": [
+        ["true", "TRUE"],
+        ["false", "FALSE"]
+      ]
+    }
+  ],
+  "output": "Boolean",
+  "colour": 230,
+  "tooltip": "Boolean constant",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Math Blocks ====================
+defineFRCBlock('frc_math_arithmetic', {
+  "type": "frc_math_arithmetic",
+  "message0": "%1 %2 %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "A",
+      "check": "Number"
+    },
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["+", "ADD"],
+        ["-", "MINUS"],
+        ["×", "MULTIPLY"],
+        ["÷", "DIVIDE"],
+        ["^", "POWER"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "B",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Basic arithmetic operations",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_math_single', {
+  "type": "frc_math_single",
+  "message0": "%1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["√", "ROOT"],
+        ["abs", "ABS"],
+        ["-", "NEG"],
+        ["ln", "LN"],
+        ["log10", "LOG10"],
+        ["e^", "EXP"],
+        ["10^", "POW10"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "NUM",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Single input math operations",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_math_trig', {
+  "type": "frc_math_trig",
+  "message0": "%1 %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "OP",
+      "options": [
+        ["sin", "SIN"],
+        ["cos", "COS"],
+        ["tan", "TAN"],
+        ["asin", "ASIN"],
+        ["acos", "ACOS"],
+        ["atan", "ATAN"]
+      ]
+    },
+    {
+      "type": "input_value",
+      "name": "NUM",
+      "check": "Number"
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Trigonometric functions",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_math_number', {
+  "type": "frc_math_number",
+  "message0": "%1",
+  "args0": [
+    {
+      "type": "field_number",
+      "name": "NUM",
+      "value": 0
+    }
+  ],
+  "output": "Number",
+  "colour": 240,
+  "tooltip": "Number constant",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Control Blocks ====================
+defineFRCBlock('frc_controls_if', {
+  "type": "frc_controls_if",
+  "message0": "if %1 then %2",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "CONDITION",
+      "check": "Boolean"
+    },
+    {
+      "type": "input_statement",
+      "name": "THEN_STATEMENT"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 230,
+  "tooltip": "Execute blocks if condition is true",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_controls_ifelse', {
+  "type": "frc_controls_ifelse",
+  "message0": "if %1 then %2 else %3",
+  "args0": [
+    {
+      "type": "input_value",
+      "name": "CONDITION",
+      "check": "Boolean"
+    },
+    {
+      "type": "input_statement",
+      "name": "THEN_STATEMENT"
+    },
+    {
+      "type": "input_statement",
+      "name": "ELSE_STATEMENT"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 230,
+  "tooltip": "Execute different blocks depending on condition",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Comment Block ====================
+defineFRCBlock('comment_block', {
+  "type": "comment_block",
+  "message0": "// %1",
+  "args0": [
+    {
+      "type": "field_input",
+      "name": "TEXT",
+      "text": "Comment here"
+    }
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 160,
+  "tooltip": "Add a code comment",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Initialize Generator ====================
 Blockly.FRCJava = new Blockly.Generator('FRCJava');
 
 // Define order constants for operations
@@ -1123,8 +1302,9 @@ Blockly.FRCJava.RESERVED_WORDS_ = 'abstract,assert,boolean,break,byte,case,catch
   'protected,public,return,short,static,strictfp,super,switch,synchronized,' +
   'this,throw,throws,transient,try,void,volatile,while';
 
-// Generator mappings for all blocks
+// ==================== Generator Functions ====================
 
+// Motor Control Generators
 Blockly.FRCJava['frc_motorcontroller_set'] = function(block) {
   const motorType = block.getFieldValue('MOTOR_TYPE');
   const channel = block.getFieldValue('CHANNEL');
@@ -1133,6 +1313,21 @@ Blockly.FRCJava['frc_motorcontroller_set'] = function(block) {
     `motor${channel}.set(${speed});\n`;
 };
 
+Blockly.FRCJava['frc_motorcontroller_safety'] = function(block) {
+  const motorType = block.getFieldValue('MOTOR_TYPE');
+  const channel = block.getFieldValue('CHANNEL');
+  const state = block.getFieldValue('STATE');
+  return `motor${channel}.setSafetyEnabled(${state});\n`;
+};
+
+Blockly.FRCJava['frc_motorcontroller_setinverted'] = function(block) {
+  const motorType = block.getFieldValue('MOTOR_TYPE');
+  const channel = block.getFieldValue('CHANNEL');
+  const state = block.getFieldValue('STATE');
+  return `motor${channel}.setInverted(${state});\n`;
+};
+
+// Drive System Generators
 Blockly.FRCJava['frc_bind_tankdrive'] = function(block) {
   const controllerPort = block.getFieldValue('CONTROLLER_PORT');
   const leftAxis = block.getFieldValue('LEFT_AXIS');
@@ -1155,11 +1350,26 @@ Blockly.FRCJava['frc_subsystem_tankdrive'] = function(block) {
     `}\n\n`;
 };
 
+// Sensor Generators
+Blockly.FRCJava['frc_encoder_create'] = function(block) {
+  const name = block.getFieldValue('NAME');
+  const channelA = block.getFieldValue('CHANNEL_A');
+  const channelB = block.getFieldValue('CHANNEL_B');
+  return `Encoder ${name} = new Encoder(${channelA}, ${channelB});\n`;
+};
+
 Blockly.FRCJava['frc_encoder_getdistance'] = function(block) {
   const channel = block.getFieldValue('CHANNEL');
   return [`encoder${channel}.getDistance()`, Blockly.FRCJava.ORDER_MEMBER];
 };
 
+Blockly.FRCJava['frc_encoder_setdistanceperpulse'] = function(block) {
+  const channel = block.getFieldValue('CHANNEL');
+  const distance = Blockly.FRCJava.valueToCode(block, 'DISTANCE', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
+  return `encoder${channel}.setDistancePerPulse(${distance});\n`;
+};
+
+// Subsystem Generators
 Blockly.FRCJava['frc_subsystem_init'] = function(block) {
   const subsystemType = block.getFieldValue('SUBSYSTEM_TYPE');
   return `public class ${subsystemType} {\n` +
@@ -1174,6 +1384,7 @@ Blockly.FRCJava['frc_subsystem_periodic'] = function(block) {
     `}\n\n`;
 };
 
+// Robot Container Generators
 Blockly.FRCJava['frc_robotcontainer_init'] = function(block) {
   return `public class RobotContainer {\n` +
     `  public RobotContainer() {\n` +
@@ -1192,35 +1403,7 @@ Blockly.FRCJava['frc_robotcontainer_getautonomouscommand'] = function(block) {
   return [`new AutonomousCommand()`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava['frc_constants_motorports'] = function(block) {
-  const leftPort = block.getFieldValue('LEFT_MOTOR_PORT');
-  const rightPort = block.getFieldValue('RIGHT_MOTOR_PORT');
-  return `public static final class Constants {\n` +
-    `  public static final int LEFT_MOTOR_PORT = ${leftPort};\n` +
-    `  public static final int RIGHT_MOTOR_PORT = ${rightPort};\n` +
-    `}\n\n`;
-};
-
-// Basic blocks support
-Blockly.FRCJava['math_number'] = function(block) {
-  const code = block.getFieldValue('NUM');
-  return [code, Blockly.FRCJava.ORDER_ATOMIC];
-};
-
-Blockly.FRCJava['variables_get'] = function(block) {
-  const code = Blockly.FRCJava.variableDB_.getName(block.getFieldValue('VAR'), 
-    Blockly.Variables.NAME_TYPE);
-  return [code, Blockly.FRCJava.ORDER_ATOMIC];
-};
-
-Blockly.FRCJava['variables_set'] = function(block) {
-  const argument0 = Blockly.FRCJava.valueToCode(block, 'VALUE',
-      Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
-  const varName = Blockly.FRCJava.variableDB_.getName(
-      block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
-  return varName + ' = ' + argument0 + ';\n';
-};
-
+// Robot Lifecycle Generators
 Blockly.FRCJava['frc_robot_init'] = function(block) {
   return 'public void robotInit() {\n' +
     Blockly.FRCJava.statementToCode(block, 'STEPS') +
@@ -1293,19 +1476,17 @@ Blockly.FRCJava['frc_test_periodic'] = function(block) {
     '}\n\n';
 };
 
-Blockly.FRCJava['comment_block'] = function(block) {
-  const text = block.getFieldValue('TEXT');
-  return `// ${text}\n`;
+// Constants Generators
+Blockly.FRCJava['frc_constants_motorports'] = function(block) {
+  const leftPort = block.getFieldValue('LEFT_MOTOR_PORT');
+  const rightPort = block.getFieldValue('RIGHT_MOTOR_PORT');
+  return `public static final class Constants {\n` +
+    `  public static final int LEFT_MOTOR_PORT = ${leftPort};\n` +
+    `  public static final int RIGHT_MOTOR_PORT = ${rightPort};\n` +
+    `}\n\n`;
 };
 
-Blockly.Blocks['comment_block'].onchange = function(event) {
-  if (event.type === Blockly.Events.BLOCK_CHANGE && 
-      this.workspace.id === 'credits' && 
-      this.isEditable()) {
-    this.setFieldValue(this.getFieldValue('TEXT'), 'TEXT');
-  }
-};
-
+// Joystick Generators
 Blockly.FRCJava['frc_joystick_getaxis'] = function(block) {
   const port = block.getFieldValue('PORT');
   const axis = block.getFieldValue('AXIS');
@@ -1318,6 +1499,7 @@ Blockly.FRCJava['frc_joystick_getbutton'] = function(block) {
   return [`joystick${port}.getRawButton(${button})`, Blockly.FRCJava.ORDER_MEMBER];
 };
 
+// PID Control Generators
 Blockly.FRCJava['frc_pidcontroller_create'] = function(block) {
   const name = block.getFieldValue('NAME');
   const p = Blockly.FRCJava.valueToCode(block, 'P', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0.1';
@@ -1333,13 +1515,18 @@ Blockly.FRCJava['frc_pidcontroller_calculate'] = function(block) {
   return [`${name}.calculate(${measurement}, ${setpoint})`, Blockly.FRCJava.ORDER_MEMBER];
 };
 
-Blockly.FRCJava['frc_encoder_create'] = function(block) {
+Blockly.FRCJava['frc_pidcontroller_settolerance'] = function(block) {
   const name = block.getFieldValue('NAME');
-  const channelA = block.getFieldValue('CHANNEL_A');
-  const channelB = block.getFieldValue('CHANNEL_B');
-  return `Encoder ${name} = new Encoder(${channelA}, ${channelB});\n`;
+  const tolerance = Blockly.FRCJava.valueToCode(block, 'TOLERANCE', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
+  return `${name}.setTolerance(${tolerance});\n`;
 };
 
+Blockly.FRCJava['frc_pidcontroller_at_setpoint'] = function(block) {
+  const name = block.getFieldValue('NAME');
+  return [`${name}.atSetpoint()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+// Timer Generators
 Blockly.FRCJava['frc_timer'] = function(block) {
   const operation = block.getFieldValue('OPERATION');
   const seconds = Blockly.FRCJava.valueToCode(block, 'SECONDS', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
@@ -1360,37 +1547,7 @@ Blockly.FRCJava['frc_timer'] = function(block) {
   }
 };
 
-Blockly.FRCJava['frc_motorcontroller_safety'] = function(block) {
-  const motorType = block.getFieldValue('MOTOR_TYPE');
-  const channel = block.getFieldValue('CHANNEL');
-  const state = block.getFieldValue('STATE');
-  return `motor${channel}.setSafetyEnabled(${state});\n`;
-};
-
-Blockly.FRCJava['frc_motorcontroller_setinverted'] = function(block) {
-  const motorType = block.getFieldValue('MOTOR_TYPE');
-  const channel = block.getFieldValue('CHANNEL');
-  const state = block.getFieldValue('STATE');
-  return `motor${channel}.setInverted(${state});\n`;
-};
-
-Blockly.FRCJava['frc_encoder_setdistanceperpulse'] = function(block) {
-  const channel = block.getFieldValue('CHANNEL');
-  const distance = Blockly.FRCJava.valueToCode(block, 'DISTANCE', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
-  return `encoder${channel}.setDistancePerPulse(${distance});\n`;
-};
-
-Blockly.FRCJava['frc_pidcontroller_settolerance'] = function(block) {
-  const name = block.getFieldValue('NAME');
-  const tolerance = Blockly.FRCJava.valueToCode(block, 'TOLERANCE', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
-  return `${name}.setTolerance(${tolerance});\n`;
-};
-
-Blockly.FRCJava['frc_pidcontroller_at_setpoint'] = function(block) {
-  const name = block.getFieldValue('NAME');
-  return [`${name}.atSetpoint()`, Blockly.FRCJava.ORDER_MEMBER];
-};
-
+// Command Generators
 Blockly.FRCJava['frc_command_init'] = function(block) {
   const name = block.getFieldValue('NAME');
   const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || '';
@@ -1423,21 +1580,13 @@ Blockly.FRCJava['frc_command_end'] = function(block) {
     `}\n\n`;
 };
 
+// Variable Generators
 Blockly.FRCJava['frc_variable_declaration'] = function(block) {
   const type = block.getFieldValue('TYPE');
   const name = block.getFieldValue('NAME');
   const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT);
   
-  // Use safe data type handling
-  let defaultValue = 'null';
-  try {
-    if (window.dataTypes && window.dataTypes.getDefaultValue) {
-      defaultValue = window.dataTypes.getDefaultValue(type) || 'null';
-    }
-  } catch (e) {
-    console.error('Error getting default value:', e);
-  }
-  
+  let defaultValue = window.dataTypes.getDefaultValue(type) || 'null';
   const finalValue = value || defaultValue;
 
   // Handle FRC-specific types
@@ -1458,13 +1607,10 @@ Blockly.FRCJava['frc_variable_declaration'] = function(block) {
   return `${type} ${name} = ${finalValue};\n`;
 };
 
-
 Blockly.FRCJava['frc_variable_set'] = function(block) {
   const type = block.getFieldValue('TYPE');
   const name = block.getFieldValue('NAME');
   const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_ASSIGNMENT) || window.dataTypes.getDefaultValue(type);
-  
-  // Special handling for FRC types if needed
   return `${name} = ${value};\n`;
 };
 
@@ -1473,11 +1619,7 @@ Blockly.FRCJava['frc_variable_get'] = function(block) {
   return [name, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
-Blockly.FRCJava.getDefaultValue = function(type) {
-  return window.dataTypes.getDefaultValue(type);
-};
-
-
+// Function Generators
 Blockly.FRCJava['frc_custom_function_declare'] = function(block) {
   const accessModifier = block.getFieldValue('ACCESS_MODIFIER');
   const staticModifier = block.getFieldValue('STATIC_MODIFIER');
@@ -1485,7 +1627,6 @@ Blockly.FRCJava['frc_custom_function_declare'] = function(block) {
   const functionName = block.getFieldValue('FUNCTION_NAME');
   const body = Blockly.FRCJava.statementToCode(block, 'FUNCTION_BODY') || '';
   
-  // Check if the function has a return statement if it's not void
   const hasReturn = body.includes('return');
   const needsReturn = returnType !== 'void' && !hasReturn;
   
@@ -1514,13 +1655,12 @@ Blockly.FRCJava['frc_function_call_value'] = function(block) {
   return [functionName + '()', Blockly.FRCJava.ORDER_FUNCTION_CALL];
 };
 
-// Helper function to generate proper indentation
-Blockly.FRCJava.scrub_ = function(block, code) {
-  const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
-  const nextCode = nextBlock ? Blockly.FRCJava.blockToCode(nextBlock) : '';
-  return code + nextCode;
+Blockly.FRCJava['frc_function_return'] = function(block) {
+  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', Blockly.FRCJava.ORDER_NONE) || 'null';
+  return 'return ' + value + ';\n';
 };
 
+// Logic Generators
 Blockly.FRCJava['frc_logic_compare'] = function(block) {
   const a = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_RELATIONAL) || '0';
   const op = block.getFieldValue('OP');
@@ -1556,6 +1696,7 @@ Blockly.FRCJava['frc_logic_boolean'] = function(block) {
   return [block.getFieldValue('BOOL').toLowerCase(), Blockly.FRCJava.ORDER_ATOMIC];
 };
 
+// Math Generators
 Blockly.FRCJava['frc_math_arithmetic'] = function(block) {
   const a = Blockly.FRCJava.valueToCode(block, 'A', Blockly.FRCJava.ORDER_ADDITION) || '0';
   const op = block.getFieldValue('OP');
@@ -1622,6 +1763,7 @@ Blockly.FRCJava['frc_math_number'] = function(block) {
   return [block.getFieldValue('NUM'), Blockly.FRCJava.ORDER_ATOMIC];
 };
 
+// Control Generators
 Blockly.FRCJava['frc_controls_if'] = function(block) {
   const condition = Blockly.FRCJava.valueToCode(block, 'CONDITION', 
     Blockly.FRCJava.ORDER_NONE) || 'false';
@@ -1651,8 +1793,15 @@ Blockly.FRCJava['frc_controls_ifelse'] = function(block) {
   return code;
 };
 
-Blockly.FRCJava['frc_function_return'] = function(block) {
-  const value = Blockly.FRCJava.valueToCode(block, 'VALUE', 
-    Blockly.FRCJava.ORDER_NONE) || 'null';
-  return 'return ' + value + ';\n';
+// Comment Generator
+Blockly.FRCJava['comment_block'] = function(block) {
+  const text = block.getFieldValue('TEXT');
+  return `// ${text}\n`;
+};
+
+// Helper function to generate proper indentation
+Blockly.FRCJava.scrub_ = function(block, code) {
+  const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
+  const nextCode = nextBlock ? Blockly.FRCJava.blockToCode(nextBlock) : '';
+  return code + nextCode;
 };

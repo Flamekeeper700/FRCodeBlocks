@@ -4,20 +4,34 @@ window.codeGeneration = {
     const ws = window.tabManagement.workspaces[tabId];
     if (!ws) return '';
 
+    /**
+     * Safely gets imports from a block's data property
+     * @param {Blockly.Block} block 
+     * @returns {string[]} Array of import statements
+     */
+    function getBlockImports(block) {
+      try {
+        // Check for imports in the data property
+        if (block.data && block.data.imports && Array.isArray(block.data.imports)) {
+          return block.data.imports.map(imp => 
+            imp.trim().endsWith(';') ? imp.trim() : imp.trim() + ';'
+          );
+        }
+        return [];
+      } catch (e) {
+        console.error('Error getting block imports:', e);
+        return [];
+      }
+    }
+
     // Collect all imports from used blocks
     const usedImports = new Set();
-    const allBlocks = ws.getAllBlocks(true); // Include all blocks (nested ones too)
+    const allBlocks = ws.getAllBlocks(true);
     
     allBlocks.forEach(block => {
-      if (block.imports && Array.isArray(block.imports)) {
-        block.imports.forEach(imp => {
-          if (imp && typeof imp === 'string') {
-            // Ensure import ends with semicolon
-            const cleanImport = imp.trim().endsWith(';') ? imp.trim() : imp.trim() + ';';
-            usedImports.add(cleanImport);
-          }
-        });
-      }
+      getBlockImports(block).forEach(imp => {
+        if (imp) usedImports.add(imp);
+      });
     });
 
     // Generate base code
@@ -32,8 +46,8 @@ window.codeGeneration = {
     }
 
     const tab = window.tabManagement.tabs.find(t => t.id === tabId);
-    if (!tab) return importsSection + code;  // Return at least imports if no tab type
-    
+    if (!tab) return importsSection + code;
+
     // Add appropriate wrapper based on tab type
     switch(tab.type) {
       case 'robot':
@@ -72,7 +86,6 @@ window.codeGeneration = {
         break;
         
       default:
-        // For all other cases, ensure imports are included
         code = importsSection + code;
     }
     

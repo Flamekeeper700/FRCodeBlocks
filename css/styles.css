@@ -437,3 +437,16 @@ button:hover {
 .blocklyDropdownText {
   fill: var(--blockly-text) !important;
 }
+
+.rename-btn {
+  margin-left: 5px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+.rename-btn:hover {
+  opacity: 1;
+}
+.tab-btn:hover .rename-btn {
+  opacity: 0.8;
+}

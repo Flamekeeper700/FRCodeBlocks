@@ -8,7 +8,7 @@ window.sampleProjects = {
               <field name="MOTOR_TYPE">PWMSparkMax</field>
               <field name="CHANNEL">0</field>
               <value name="SPEED">
-                <block type="math_number">
+                <block type="frc_math_number">
                   <field name="NUM">0.5</field>
                 </block>
               </value>
@@ -34,17 +34,17 @@ window.sampleProjects = {
             <block type="frc_pidcontroller_create">
               <field name="NAME">armPID</field>
               <value name="P">
-                <block type="math_number">
+                <block type="frc_math_number">
                   <field name="NUM">0.1</field>
                 </block>
               </value>
               <value name="I">
-                <block type="math_number">
+                <block type="frc_math_number">
                   <field name="NUM">0.0</field>
                 </block>
               </value>
               <value name="D">
-                <block type="math_number">
+                <block type="frc_math_number">
                   <field name="NUM">0.0</field>
                 </block>
               </value>
@@ -65,7 +65,7 @@ window.sampleProjects = {
                     <block type="frc_pidcontroller_calculate">
                       <field name="NAME">armPID</field>
                       <value name="SETPOINT">
-                        <block type="math_number">
+                        <block type="frc_math_number">
                           <field name="NUM">10</field>
                         </block>
                       </value>
@@ -123,7 +123,7 @@ window.sampleProjects = {
               <field name="MOTOR_TYPE">PWMSparkMax</field>
               <field name="CHANNEL">0</field>
               <value name="SPEED">
-                <block type="math_number">
+                <block type="frc_math_number">
                   <field name="NUM">0</field>
                 </block>
               </value>
@@ -133,12 +133,12 @@ window.sampleProjects = {
               <next>
                 <block type="frc_subsystem_tankdrive">
                   <value name="LEFT_SPEED">
-                    <block type="math_number">
+                    <block type="frc_math_number">
                       <field name="NUM">0</field>
                     </block>
                   </value>
                   <value name="RIGHT_SPEED">
-                    <block type="math_number">
+                    <block type="frc_math_number">
                       <field name="NUM">0</field>
                     </block>
                   </value>

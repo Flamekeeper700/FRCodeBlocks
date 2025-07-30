@@ -157,6 +157,18 @@ window.tabManagement = {
     }
     this.renderTabs();
   },
+  
+  renameTab: function(tabId) {
+  const tab = this.tabs.find(t => t.id === tabId);
+  if (!tab) return;
+
+  const newName = prompt('Enter new tab name:', tab.title);
+  if (newName && newName.trim() !== '') {
+    tab.title = newName.trim();
+    this.renderTabs();
+    this.switchTab(tabId); // Refresh active tab
+  }
+},
 
   updateOutput: function() {
     if (this.activeTabId && this.workspaces[this.activeTabId]) {
@@ -217,11 +229,21 @@ window.tabManagement = {
     this.updateOutput();
   },
 
-  createTabElement: function(tab) {
-    const btn = document.createElement('button');
-    btn.id = `tabBtn_${tab.id}`;
-    btn.textContent = tab.title;
-    btn.className = 'tab-btn';
+createTabElement: function(tab) {
+  const btn = document.createElement('button');
+  btn.id = `tabBtn_${tab.id}`;
+  btn.className = 'tab-btn';
+  btn.innerHTML = `
+    <span class="tab-title">${tab.title}</span>
+    <span class="rename-btn" title="Rename">✏️</span>
+    ${tab.removable ? '<span class="close-btn">&times;</span>' : ''}
+  `;
+    // Add rename event listener
+  btn.querySelector('.rename-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    this.renameTab(tab.id);
+  });
+
     btn.onclick = () => this.switchTab(tab.id);
 
     if (tab.removable) {

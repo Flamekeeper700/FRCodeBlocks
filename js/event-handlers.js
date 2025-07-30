@@ -59,29 +59,32 @@ window.eventHandlers = {
     closeModal.addEventListener('click', () => helpModal.style.display = 'none');
     
     // Sample projects handling
-    loadSampleBtn.addEventListener('click', () => {
-      const selectedSample = sampleProjects.value;
-      if (!selectedSample) {
-        alert('Please select a sample project first');
-        return;
-      }
-      
-      loadSampleBtn.disabled = true;
-      loadSampleBtn.textContent = 'Loading...';
-      loadSampleBtn.classList.add('loading');
-      
-      try {
-        window.tabManagement.loadSampleProject(selectedSample);
-      } catch (error) {
-        console.error('Error loading sample:', error);
-        alert('Failed to load sample project');
-      } finally {
-        loadSampleBtn.disabled = false;
-        loadSampleBtn.textContent = 'Load Selected';
-        loadSampleBtn.classList.remove('loading');
-        sampleProjects.value = '';
-      }
-    });
+loadSampleBtn.addEventListener('click', () => {
+  const selectedSample = sampleProjects.value;
+  if (!selectedSample) {
+    alert('Please select a sample project first');
+    return;
+  }
+  
+  if (!window.sampleProjects?.tabPresets?.[selectedSample]) {
+    alert('Selected sample project not found');
+    return;
+  }
+
+  loadSampleBtn.disabled = true;
+  loadSampleBtn.textContent = 'Loading...';
+  
+  try {
+    window.tabManagement.loadSampleProject(selectedSample);
+    sampleProjects.value = '';
+  } catch (error) {
+    console.error('Error loading sample:', error);
+    alert(`Failed to load sample: ${error.message}`);
+  } finally {
+    loadSampleBtn.disabled = false;
+    loadSampleBtn.textContent = 'Load Selected';
+  }
+});
 
     sampleProjects.addEventListener('change', (e) => {
       loadSampleBtn.disabled = !e.target.value;

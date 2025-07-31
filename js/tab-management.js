@@ -1,18 +1,26 @@
+// tab-management.js
+// Handles tab creation, switching, saving/loading, and workspace management for Blockly
+
 window.tabManagement = {
+  // Default/core tabs that cannot be removed
   coreTabs: [
     { id: 'robot', title: 'Robot.java', type: 'robot', removable: false },
     { id: 'robotContainer', title: 'RobotContainer.java', type: 'robotContainer', removable: false },
     { id: 'constants', title: 'Constants.java', type: 'constants', removable: false }
   ],
-  tabs: [],
-  workspaces: {},
-  activeTabId: null,
-  tabCounter: 0,
-  updateTimeout: null,
+
+  tabs: [],                  // List of all current tabs
+  workspaces: {},            // Blockly workspaces by tab ID
+  activeTabId: null,         // ID of the currently active tab
+  tabCounter: 0,             // Counter to ensure unique tab IDs
+  updateTimeout: null,       // Throttle timer for code regeneration
   isSaving: false,
   isLoading: false,
 
-  createWorkspace: function(tab) {
+  /**
+   * Creates and injects a Blockly workspace for the given tab.
+   */
+  createWorkspace(tab) {
     let div = document.getElementById(tab.id);
     if (!div) {
       div = document.createElement('div');
@@ -21,7 +29,6 @@ window.tabManagement = {
       document.getElementById('workspaceContainer').appendChild(div);
     }
 
-    // Clear existing workspace if it exists
     if (this.workspaces[tab.id]) {
       this.workspaces[tab.id].dispose();
       delete this.workspaces[tab.id];
@@ -33,7 +40,7 @@ window.tabManagement = {
       scrollbars: true,
       move: { scrollbars: true, drag: true, wheel: true },
       zoom: {
-        controls: true,  
+        controls: true,
         wheel: true,
         startScale: 1.0,
         maxScale: 3,
@@ -41,30 +48,22 @@ window.tabManagement = {
       }
     });
 
-    // Add workspace change listener for real-time updates
-    workspace.addChangeListener((event) => {
-      const relevantEvents = [
+    // Listen for block changes to regenerate code
+    workspace.addChangeListener(event => {
+      const relevant = [
         Blockly.Events.BLOCK_CHANGE,
         Blockly.Events.BLOCK_CREATE,
         Blockly.Events.BLOCK_DELETE,
         Blockly.Events.BLOCK_MOVE
       ];
-      
-      if (relevantEvents.includes(event.type)) {
-        if (this.updateTimeout) {
-          clearTimeout(this.updateTimeout);
-        }
-        
-        this.updateTimeout = setTimeout(() => {
-          this.updateOutput();
-        }, 300);
+      if (relevant.includes(event.type)) {
+        clearTimeout(this.updateTimeout);
+        this.updateTimeout = setTimeout(() => this.updateOutput(), 300);
       }
     });
 
-    // Initialize variables and procedures
     workspace.getVariableMap().clear();
 
-    // Schedule a resize after a small delay
     setTimeout(() => {
       Blockly.svgResize(workspace);
       workspace.render();
@@ -73,7 +72,10 @@ window.tabManagement = {
     return workspace;
   },
 
-  renderTabs: function() {
+  /**
+   * Renders tab buttons in the top tab bar.
+   */
+  renderTabs() {
     const { tabsContainer } = window.domElements;
     tabsContainer.innerHTML = '';
     this.tabs.forEach(tab => {
@@ -82,7 +84,10 @@ window.tabManagement = {
     });
   },
 
-  switchTab: function(tabId) {
+  /**
+   * Switches view to the selected tab and refreshes output.
+   */
+  switchTab(tabId) {
     this.activeTabId = tabId;
     const { tabsContainer } = window.domElements;
 
@@ -104,31 +109,33 @@ window.tabManagement = {
     });
   },
 
-  addTab: function() {
+  /**
+   * Adds a new tab of the selected type.
+   */
+  addTab() {
     const { tabTypeSelector } = window.domElements;
     const type = tabTypeSelector.value;
     this.tabCounter++;
-    
+
     let id, title;
-    
-    switch(type) {
+    switch (type) {
       case 'command':
-        title = 'Command' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-        id = 'cmd_' + this.tabCounter;
+        title = `Command ${this.tabCounter}`;
+        id = `cmd_${this.tabCounter}`;
         break;
       case 'subsystem':
-        title = 'Subsystem' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-        id = 'sub_' + this.tabCounter;
+        title = `Subsystem ${this.tabCounter}`;
+        id = `sub_${this.tabCounter}`;
         break;
       case 'auto':
-        title = 'Autonomous' + (this.tabCounter > 1 ? ' ' + this.tabCounter : '');
-        id = 'auto_' + this.tabCounter;
+        title = `Autonomous ${this.tabCounter}`;
+        id = `auto_${this.tabCounter}`;
         break;
       default:
-        title = type.charAt(0).toUpperCase() + type.slice(1) + ' ' + this.tabCounter;
-        id = type + '_' + this.tabCounter;
+        title = `${type.charAt(0).toUpperCase() + type.slice(1)} ${this.tabCounter}`;
+        id = `${type}_${this.tabCounter}`;
     }
-    
+
     const tab = { id, title, type, removable: true };
     this.tabs.push(tab);
     this.renderTabs();
@@ -136,70 +143,80 @@ window.tabManagement = {
     this.switchTab(id);
   },
 
-  removeTab: function(tabId) {
+  /**
+   * Removes a tab and its associated workspace.
+   */
+  removeTab(tabId) {
     if (this.coreTabs.find(t => t.id === tabId)) {
       alert("Core tabs cannot be removed.");
       return;
     }
-    const tabIndex = this.tabs.findIndex(t => t.id === tabId);
-    if (tabIndex === -1) return;
+
+    const index = this.tabs.findIndex(t => t.id === tabId);
+    if (index === -1) return;
 
     if (this.workspaces[tabId]) {
       this.workspaces[tabId].dispose();
       delete this.workspaces[tabId];
     }
+
     const div = document.getElementById(tabId);
     if (div) div.remove();
-    this.tabs.splice(tabIndex, 1);
 
+    this.tabs.splice(index, 1);
     if (this.activeTabId === tabId) {
       this.switchTab(this.coreTabs[0].id);
     }
     this.renderTabs();
   },
-  
-  renameTab: function(tabId) {
-  const tab = this.tabs.find(t => t.id === tabId);
-  if (!tab) return;
 
-  const newName = prompt('Enter new tab name:', tab.title);
-  if (newName && newName.trim() !== '') {
-    tab.title = newName.trim();
-    this.renderTabs();
-    this.switchTab(tabId); // Refresh active tab
-  }
-},
+  /**
+   * Allows user to rename a tab.
+   */
+  renameTab(tabId) {
+    const tab = this.tabs.find(t => t.id === tabId);
+    if (!tab) return;
 
-  updateOutput: function() {
+    const newName = prompt('Enter new tab name:', tab.title);
+    if (newName && newName.trim()) {
+      tab.title = newName.trim();
+      this.renderTabs();
+      this.switchTab(tabId);
+    }
+  },
+
+  /**
+   * Generates Java code for the active tab.
+   */
+  updateOutput() {
     if (this.activeTabId && this.workspaces[this.activeTabId]) {
       const code = window.codeGeneration.generateJavaCode(this.activeTabId);
       window.domElements.outputArea.textContent = code;
-      
+
       if (window.hljs) {
         window.hljs.highlightElement(window.domElements.outputArea);
       }
     }
   },
 
-  loadSampleProject: function(selectedSample) {
-    if (!selectedSample) {
-      throw new Error('No sample project selected');
-    }
+  /**
+   * Loads a sample project by preset name.
+   */
+  loadSampleProject(selectedSample) {
+    if (!selectedSample) throw new Error('No sample selected');
 
     const sample = window.sampleProjects.tabPresets[selectedSample];
-    if (!sample) {
-      throw new Error('Selected sample not found');
-    }
+    if (!sample) throw new Error('Sample not found');
 
     this.tabs = this.tabs.filter(tab => !tab.removable);
     this.renderTabs();
 
-    let firstLoadedTab = null;
+    let firstTab = null;
+
     for (const [tabType, xml] of Object.entries(sample)) {
       let tab = this.tabs.find(t => t.type === tabType);
-      
       if (!tab && this.coreTabs.some(t => t.type === tabType)) {
-        tab = {...this.coreTabs.find(t => t.type === tabType)};
+        tab = { ...this.coreTabs.find(t => t.type === tabType) };
         this.tabs.push(tab);
         this.workspaces[tab.id] = this.createWorkspace(tab);
       }
@@ -209,48 +226,42 @@ window.tabManagement = {
           this.workspaces[tab.id].clear();
           const dom = Blockly.Xml.textToDom(xml);
           Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
-          
-          if (!firstLoadedTab) {
-            firstLoadedTab = tab.id;
-          }
-        } catch (error) {
-          console.error(`Error loading ${tabType} content:`, error);
-          throw new Error(`Failed to load ${tabType} content`);
+
+          if (!firstTab) firstTab = tab.id;
+        } catch (err) {
+          console.error(`Failed to load ${tabType}:`, err);
         }
       }
     }
 
-    if (firstLoadedTab) {
-      this.switchTab(firstLoadedTab);
-    } else {
-      this.switchTab(this.coreTabs[0].id);
-    }
-
+    this.switchTab(firstTab || this.coreTabs[0].id);
     this.updateOutput();
   },
 
-createTabElement: function(tab) {
-  const btn = document.createElement('button');
-  btn.id = `tabBtn_${tab.id}`;
-  btn.className = 'tab-btn';
-  btn.innerHTML = `
-    <span class="tab-title">${tab.title}</span>
-    <span class="rename-btn" title="Rename">✏️</span>
-    ${tab.removable ? '<span class="close-btn">&times;</span>' : ''}
-  `;
-    // Add rename event listener
-  btn.querySelector('.rename-btn').addEventListener('click', (e) => {
-    e.stopPropagation();
-    this.renameTab(tab.id);
-  });
+  /**
+   * Creates a DOM button element for a tab.
+   */
+  createTabElement(tab) {
+    const btn = document.createElement('button');
+    btn.id = `tabBtn_${tab.id}`;
+    btn.className = 'tab-btn';
+    btn.innerHTML = `
+      <span class="tab-title">${tab.title}</span>
+      <span class="rename-btn" title="Rename">Rename</span>
+    `;
+
+    btn.querySelector('.rename-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      this.renameTab(tab.id);
+    });
 
     btn.onclick = () => this.switchTab(tab.id);
 
     if (tab.removable) {
       const closeBtn = document.createElement('span');
       closeBtn.className = 'close-btn';
-      closeBtn.innerHTML = '&times;';
-      closeBtn.onclick = (e) => {
+      closeBtn.textContent = '×';
+      closeBtn.onclick = e => {
         e.stopPropagation();
         this.removeTab(tab.id);
       };
@@ -260,55 +271,53 @@ createTabElement: function(tab) {
     return btn;
   },
 
-  saveProject: function() {
+  /**
+   * Serializes the current project and triggers a download.
+   */
+  saveProject() {
     if (this.isSaving) return false;
     this.isSaving = true;
-    
+
     try {
-      const projectData = {
+      const project = {
         version: '1.0',
         tabs: [],
         activeTab: this.activeTabId
       };
 
-      // Save each tab's workspace XML
       this.tabs.forEach(tab => {
-        if (this.workspaces[tab.id]) {
-          const xml = Blockly.Xml.workspaceToDom(this.workspaces[tab.id]);
-          const xmlText = Blockly.Xml.domToText(xml);
-          projectData.tabs.push({
-            id: tab.id,
-            title: tab.title,
-            type: tab.type,
-            removable: tab.removable,
-            xml: xmlText
-          });
+        const workspace = this.workspaces[tab.id];
+        if (workspace) {
+          const xml = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace));
+          project.tabs.push({ ...tab, xml });
         }
       });
 
-      // Create download
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(projectData));
-      const downloadAnchorNode = document.createElement('a');
-      downloadAnchorNode.setAttribute('href', dataStr);
-      downloadAnchorNode.setAttribute('download', 'frc_blockly_project.json');
-      document.body.appendChild(downloadAnchorNode);
-      downloadAnchorNode.click();
-      document.body.removeChild(downloadAnchorNode);
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(project));
+      const anchor = document.createElement('a');
+      anchor.setAttribute('href', dataStr);
+      anchor.setAttribute('download', 'frc_blockly_project.json');
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
 
       return true;
-    } catch (error) {
-      console.error('Error saving project:', error);
-      alert('Failed to save project: ' + error.message);
+    } catch (err) {
+      console.error('Save failed:', err);
+      alert('Could not save project: ' + err.message);
       return false;
     } finally {
       this.isSaving = false;
     }
   },
 
-  loadProject: function() {
+  /**
+   * Prompts user to load a saved project from file.
+   */
+  loadProject() {
     if (this.isLoading) return Promise.reject('Already loading');
     this.isLoading = true;
-    
+
     return new Promise((resolve, reject) => {
       const input = document.createElement('input');
       input.type = 'file';
@@ -316,63 +325,43 @@ createTabElement: function(tab) {
 
       input.onchange = e => {
         const file = e.target.files[0];
-        if (!file) {
-          this.isLoading = false;
-          reject('No file selected');
-          return;
-        }
+        if (!file) return reject('No file selected');
 
         const reader = new FileReader();
         reader.onload = event => {
           try {
-            const projectData = JSON.parse(event.target.result);
-            
-            if (!projectData.tabs || !Array.isArray(projectData.tabs)) {
-              throw new Error('Invalid project file format');
-            }
+            const project = JSON.parse(event.target.result);
+            if (!Array.isArray(project.tabs)) throw new Error('Invalid file format');
 
-            // Clear existing tabs (except core tabs)
-            this.tabs = this.tabs.filter(tab => !tab.removable);
+            this.tabs = this.tabs.filter(t => !t.removable);
             this.renderTabs();
 
-            // Load each tab
-            projectData.tabs.forEach(tabData => {
-              if (this.tabs.some(t => t.id === tabData.id)) return;
-
+            project.tabs.forEach(t => {
+              if (this.tabs.some(x => x.id === t.id)) return;
               const tab = {
-                id: tabData.id,
-                title: tabData.title,
-                type: tabData.type,
-                removable: tabData.removable !== false
+                id: t.id,
+                title: t.title,
+                type: t.type,
+                removable: t.removable !== false
               };
-
               this.tabs.push(tab);
               this.workspaces[tab.id] = this.createWorkspace(tab);
 
-              if (tabData.xml) {
+              if (t.xml) {
                 try {
-                  const dom = Blockly.Xml.textToDom(tabData.xml);
-                  Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
-                } catch (xmlError) {
-                  console.error(`Error loading tab ${tab.id} content:`, xmlError);
+                  Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(t.xml), this.workspaces[tab.id]);
+                } catch (e) {
+                  console.error(`Error loading tab ${t.id}`, e);
                 }
               }
             });
 
-            const activeTab = projectData.activeTab && this.tabs.some(t => t.id === projectData.activeTab) 
-              ? projectData.activeTab 
-              : this.tabs[0]?.id;
-            
-            if (activeTab) {
-              this.switchTab(activeTab);
-            }
-
+            this.switchTab(project.activeTab || this.tabs[0]?.id);
             this.updateOutput();
             resolve(true);
-          } catch (parseError) {
-            console.error('Error parsing project file:', parseError);
-            alert('Failed to load project: ' + parseError.message);
-            reject(parseError);
+          } catch (err) {
+            alert('Failed to load project: ' + err.message);
+            reject(err);
           } finally {
             this.isLoading = false;
           }
@@ -380,7 +369,7 @@ createTabElement: function(tab) {
 
         reader.onerror = () => {
           this.isLoading = false;
-          reject('Error reading file');
+          reject('Read error');
         };
 
         reader.readAsText(file);
@@ -388,7 +377,7 @@ createTabElement: function(tab) {
 
       input.oncancel = () => {
         this.isLoading = false;
-        reject('File selection canceled');
+        reject('File selection cancelled');
       };
 
       input.click();

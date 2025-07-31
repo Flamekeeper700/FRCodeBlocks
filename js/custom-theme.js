@@ -1,33 +1,33 @@
 // custom-theme.js
 window.themeManager = {
-VARIABLE_DESCRIPTIONS: {
-  '--bg-color': 'App BG',
-  '--text-color': 'Text',
-  '--tab-bg': 'Tab BG',
-  '--tab-border': 'Tab Border',
-  '--tab-active-bg': 'Active Tab',
-  '--tab-active-border': 'Active Border',
-  '--toolbox-bg': 'Toolbox BG',
-  '--toolbox-border': 'Tool Edge',
-  '--controls-bg': 'Controls',
-  '--output-bg': 'Output BG',
-  '--output-text': 'Output Text',
-  '--button-bg': 'Button',
-  '--button-text': 'Btn Text',
-  '--button-hover': 'Btn Hover',
-  '--button-border': 'Btn Edge',
-  '--modal-bg': 'Popup BG',
-  '--modal-text': 'Popup Text',
-  '--blockly-bg': 'Workspace',
-  '--blockly-text': 'Block Text',
-  '--blockly-toolbox': 'Block Tools',
-  '--blockly-path': 'Connectors',
-  '--blockly-scrollbar': 'Scrollbar',
-  '--input-field-bg': 'Input Field BG'
-},
+  VARIABLE_DESCRIPTIONS: {
+    '--bg-color': 'App BG',
+    '--text-color': 'Text',
+    '--tab-bg': 'Tab BG',
+    '--tab-border': 'Tab Border',
+    '--tab-active-bg': 'Active Tab',
+    '--tab-active-border': 'Active Border',
+    '--toolbox-bg': 'Toolbox BG',
+    '--toolbox-border': 'Tool Edge',
+    '--controls-bg': 'Controls',
+    '--output-bg': 'Output BG',
+    '--output-text': 'Output Text',
+    '--button-bg': 'Button',
+    '--button-text': 'Btn Text',
+    '--button-hover': 'Btn Hover',
+    '--button-border': 'Btn Edge',
+    '--modal-bg': 'Popup BG',
+    '--modal-text': 'Popup Text',
+    '--blockly-bg': 'Workspace',
+    '--blockly-text': 'Block Text',
+    '--blockly-toolbox': 'Block Tools',
+    '--blockly-path': 'Connectors',
+    '--blockly-scrollbar': 'Scrollbar',
+    '--input-field-bg': 'Input Field BG'
+  },
 
   // Built-in themes
-   themes: {
+  themes: {
     default: {
       name: "Default Light",
       variables: {
@@ -281,10 +281,10 @@ VARIABLE_DESCRIPTIONS: {
       }
     }
   },
-  
+
   // Storage for custom themes
-   customThemes: {},
-  
+  customThemes: {},
+
   init: function() {
     this.loadCustomThemes();
     const savedTheme = localStorage.getItem('currentTheme');
@@ -292,7 +292,7 @@ VARIABLE_DESCRIPTIONS: {
     this.updateThemeSelector();
     this.setupThemeEditor();
   },
-  
+
   loadCustomThemes: function() {
     const savedThemes = localStorage.getItem('customThemes');
     if (savedThemes) {
@@ -304,31 +304,26 @@ VARIABLE_DESCRIPTIONS: {
       }
     }
   },
-  
+
   saveCustomThemes: function() {
     localStorage.setItem('customThemes', JSON.stringify(this.customThemes));
   },
-  
+
   applyTheme: function(themeName) {
-    const theme = this.themes[themeName] || this.customThemes[themeName];
+    let theme = this.themes[themeName] || this.customThemes[themeName];
     if (!theme) {
       console.warn(`Theme "${themeName}" not found, using default`);
       themeName = 'default';
+      theme = this.themes[themeName];
     }
-    
-    if (theme.isDark) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-    
+
     for (const [varName, value] of Object.entries(theme.variables)) {
       document.documentElement.style.setProperty(varName, value);
     }
-    
+
     localStorage.setItem('currentTheme', themeName);
     this.updateThemeSelector(themeName);
-    
+
     if (window.tabManagement && window.tabManagement.activeTabId) {
       setTimeout(() => {
         const workspace = window.tabManagement.workspaces[window.tabManagement.activeTabId];
@@ -338,13 +333,13 @@ VARIABLE_DESCRIPTIONS: {
       }, 100);
     }
   },
-  
+
   updateThemeSelector: function(selectedTheme) {
     const { themeSelector } = window.domElements;
     if (!themeSelector) return;
-    
+
     themeSelector.innerHTML = '';
-    
+
     const builtInGroup = document.createElement('optgroup');
     builtInGroup.label = "Built-in Themes";
     Object.entries(this.themes).forEach(([id, theme]) => {
@@ -354,194 +349,160 @@ VARIABLE_DESCRIPTIONS: {
       builtInGroup.appendChild(option);
     });
     themeSelector.appendChild(builtInGroup);
-    
+
     if (Object.keys(this.customThemes).length > 0) {
       const customGroup = document.createElement('optgroup');
       customGroup.label = "Custom Themes";
       Object.entries(this.customThemes).forEach(([id, theme]) => {
         const option = document.createElement('option');
         option.value = id;
-        option.textContent = theme.name;
+        option.textContent = theme.name + " (Custom)";
         customGroup.appendChild(option);
       });
       themeSelector.appendChild(customGroup);
     }
-    
+
     if (selectedTheme) {
       themeSelector.value = selectedTheme;
     }
   },
-  
+
   showThemeEditor: function() {
     const { themeEditorModal } = window.domElements;
     if (!themeEditorModal) return;
-    
+
     this.populateThemeEditor();
     themeEditorModal.style.display = 'flex';
   },
-  
+
   populateThemeEditor: function() {
     const { themeVariablesEditor } = window.domElements;
     if (!themeVariablesEditor) return;
-    
+
     themeVariablesEditor.innerHTML = '';
-    
+
     const currentTheme = this.getCurrentTheme();
     const variables = currentTheme?.variables || this.themes.default.variables;
-    
+
     for (const [varName, value] of Object.entries(variables)) {
       const div = document.createElement('div');
       div.className = 'theme-variable-editor';
-      
+
       const label = document.createElement('label');
       label.textContent = this.VARIABLE_DESCRIPTIONS[varName] || varName;
       label.htmlFor = `var-${varName.replace(/[^a-z0-9]/gi, '-')}`;
       label.title = varName;
-      
+
       const input = document.createElement('input');
       input.type = 'color';
       input.id = `var-${varName.replace(/[^a-z0-9]/gi, '-')}`;
       input.value = this.isValidColor(value) ? value : '#ffffff';
       input.dataset.varName = varName;
-      
+
       const valueDisplay = document.createElement('span');
       valueDisplay.className = 'variable-value';
       valueDisplay.textContent = value;
-      
+
       input.addEventListener('input', (e) => {
         valueDisplay.textContent = e.target.value;
       });
-      
+
       div.appendChild(label);
       div.appendChild(input);
       div.appendChild(valueDisplay);
       themeVariablesEditor.appendChild(div);
     }
   },
-  
+
   isValidColor: function(str) {
     const s = new Option().style;
     s.color = str;
     return s.color !== '';
   },
-  
+
   getCurrentTheme: function() {
     const currentThemeName = localStorage.getItem('currentTheme') || 'default';
     return this.themes[currentThemeName] || this.customThemes[currentThemeName];
   },
-  
+
   saveCurrentThemeAsCustom: function(name) {
     if (!name || typeof name !== 'string' || name.trim() === '') {
       alert('Please enter a valid theme name');
       return null;
     }
-    
+
     const themeId = name.toLowerCase().replace(/\s+/g, '-');
     if (this.themes[themeId] || this.customThemes[themeId]) {
       alert('Theme name already exists');
       return null;
     }
-    
+
     const newTheme = {
       name: name.trim(),
-      isDark: document.body.classList.contains('dark-mode'),
       variables: {}
     };
-    
+
     document.querySelectorAll('#themeVariablesEditor input').forEach(input => {
       newTheme.variables[input.dataset.varName] = input.value;
     });
-    
+
     this.customThemes[themeId] = newTheme;
     this.saveCustomThemes();
-    
+
     return themeId;
   },
-  
-setupThemeEditor: function() {
-  const { saveCustomTheme, deleteCustomTheme, themeEditorModal, newThemeName } = window.domElements;
-  if (!saveCustomTheme || !themeEditorModal) return;
-  
-  saveCustomTheme.addEventListener('click', () => {
-    const name = newThemeName.value.trim();
-    if (!name) {
-      alert('Please enter a theme name');
-      return;
-    }
 
-    const themeId = this.saveCurrentThemeAsCustom(name);
-    if (themeId) {
-      this.applyTheme(themeId);
-      this.updateThemeSelector();
-      newThemeName.value = '';
-    }
-  });
-  
-  deleteCustomTheme.addEventListener('click', () => {
-    this.deleteCurrentTheme();
-  });
+  setupThemeEditor: function() {
+    const { saveCustomTheme, deleteCustomTheme, themeEditorModal, newThemeName } = window.domElements;
+    if (!saveCustomTheme || !themeEditorModal) return;
 
-  const editThemeBtn = document.getElementById('editThemeBtn');
-  if (editThemeBtn) {
-    editThemeBtn.addEventListener('click', () => {
-      newThemeName.value = '';
-    });
-  }
-},
-  
-deleteCurrentTheme: function() {
-  const currentThemeName = localStorage.getItem('currentTheme');
-  if (this.customThemes[currentThemeName]) {
-    if (confirm(`Are you sure you want to delete the "${this.customThemes[currentThemeName].name}" theme?`)) {
-      delete this.customThemes[currentThemeName];
-      this.saveCustomThemes();
-      
-      // Switch to default theme if deleted theme was active
-      if (localStorage.getItem('currentTheme') === currentThemeName) {
-        this.applyTheme('default');
+    saveCustomTheme.addEventListener('click', () => {
+      const name = newThemeName.value.trim();
+      if (!name) {
+        alert('Please enter a theme name');
+        return;
       }
-      
-      this.updateThemeSelector();
-      this.themeEditorModal.style.display = 'none';
-      return true;
-    }
-  } else {
-    alert("You can only delete custom themes, not built-in ones.");
-  }
-  return false;
-},
 
-updateThemeSelector: function(selectedTheme) {
-  const { themeSelector } = window.domElements;
-  if (!themeSelector) return;
-  
-  themeSelector.innerHTML = '';
-  
-  const builtInGroup = document.createElement('optgroup');
-  builtInGroup.label = "Built-in Themes";
-  Object.entries(this.themes).forEach(([id, theme]) => {
-    const option = document.createElement('option');
-    option.value = id;
-    option.textContent = theme.name;
-    builtInGroup.appendChild(option);
-  });
-  themeSelector.appendChild(builtInGroup);
-  
-  if (Object.keys(this.customThemes).length > 0) {
-    const customGroup = document.createElement('optgroup');
-    customGroup.label = "Custom Themes";
-    Object.entries(this.customThemes).forEach(([id, theme]) => {
-      const option = document.createElement('option');
-      option.value = id;
-      option.textContent = theme.name + " (Custom)";
-      customGroup.appendChild(option);
+      const themeId = this.saveCurrentThemeAsCustom(name);
+      if (themeId) {
+        this.applyTheme(themeId);
+        this.updateThemeSelector();
+        newThemeName.value = '';
+      }
     });
-    themeSelector.appendChild(customGroup);
+
+    deleteCustomTheme.addEventListener('click', () => {
+      this.deleteCurrentTheme();
+    });
+
+    const editThemeBtn = document.getElementById('editThemeBtn');
+    if (editThemeBtn) {
+      editThemeBtn.addEventListener('click', () => {
+        newThemeName.value = '';
+      });
+    }
+  },
+
+  deleteCurrentTheme: function() {
+    const currentThemeName = localStorage.getItem('currentTheme');
+    if (this.customThemes[currentThemeName]) {
+      if (confirm(`Are you sure you want to delete the "${this.customThemes[currentThemeName].name}" theme?`)) {
+        delete this.customThemes[currentThemeName];
+        this.saveCustomThemes();
+
+        // Switch to default theme if deleted theme was active
+        if (localStorage.getItem('currentTheme') === currentThemeName) {
+          this.applyTheme('default');
+        }
+
+        this.updateThemeSelector();
+        this.themeEditorModal.style.display = 'none';
+        return true;
+      }
+    } else {
+      alert("You can only delete custom themes, not built-in ones.");
+    }
+    return false;
   }
-  
-  if (selectedTheme) {
-    themeSelector.value = selectedTheme;
-  }
-}
 
 };

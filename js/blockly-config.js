@@ -13,6 +13,8 @@ function defineFRCBlock(type, jsonDef) {
   };
 }
 
+
+
 // Initialize dataTypes if not exists
 if (!window.dataTypes) {
   window.dataTypes = {
@@ -30,119 +32,11 @@ if (!window.dataTypes) {
       ['double', 'double'],
       ['boolean', 'boolean'],
       ['String', 'String'],
-      ['MotorController', 'MotorController'],
       ['Joystick', 'Joystick'],
-      ['Encoder', 'Encoder'],
-      ['PIDController', 'PIDController'],
       ['Timer', 'Timer']
     ]
   };
 }
-
-// ==================== Motor Control Blocks ====================
-defineFRCBlock('frc_motorcontroller_set', {
-  "type": "frc_motorcontroller_set",
-  "message0": "Set %1 motor %2 to speed %3",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "MOTOR_TYPE",
-      "options": [
-        ["Spark", "PWMSparkMax"],
-        ["TalonSRX", "PWMTalonSRX"],
-        ["VictorSP", "PWMVictorSP"],
-        ["TalonFX", "PWMTalonFX"],
-        ["Venom", "PWMVenom"]
-      ]
-    },
-    {"type": "field_number", "name": "CHANNEL", "value": 0},
-    {"type": "input_value", "name": "SPEED"}
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 160,
-  "tooltip": "Set motor speed (-1 to 1)",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;",
-      "import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;",
-      "import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;",
-      "import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSP;",
-      "import edu.wpi.first.wpilibj.motorcontrol.PWMTalonFX;",
-      "import edu.wpi.first.wpilibj.motorcontrol.PWMVenom;"
-    ]
-  }
-});
-
-defineFRCBlock('frc_motorcontroller_safety', {
-  "type": "frc_motorcontroller_safety",
-  "message0": "Set motor %1 safety %2",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "MOTOR_TYPE",
-      "options": [
-        ["Spark", "PWMSparkMax"],
-        ["TalonSRX", "PWMTalonSRX"],
-        ["VictorSP", "PWMVictorSP"],
-        ["TalonFX", "PWMTalonFX"],
-        ["Venom", "PWMVenom"]
-      ]
-    },
-    {
-      "type": "field_dropdown",
-      "name": "STATE",
-      "options": [
-        ["Enabled", "true"],
-        ["Disabled", "false"]
-      ]
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 160,
-  "tooltip": "Enable/disable motor safety",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
-    ]
-  }
-});
-
-defineFRCBlock('frc_motorcontroller_setinverted', {
-  "type": "frc_motorcontroller_setinverted",
-  "message0": "Set motor %1 inverted %2",
-  "args0": [
-    {
-      "type": "field_dropdown",
-      "name": "MOTOR_TYPE",
-      "options": [
-        ["Spark", "PWMSparkMax"],
-        ["TalonSRX", "PWMTalonSRX"],
-        ["VictorSP", "PWMVictorSP"],
-        ["TalonFX", "PWMTalonFX"],
-        ["Venom", "PWMVenom"]
-      ]
-    },
-    {
-      "type": "field_dropdown",
-      "name": "STATE",
-      "options": [
-        ["True", "true"],
-        ["False", "false"]
-      ]
-    }
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 160,
-  "tooltip": "Set motor inversion state",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.motorcontrol.MotorController;"
-    ]
-  }
-});
 
 // ==================== Drive System Blocks ====================
 defineFRCBlock('frc_bind_tankdrive', {
@@ -178,60 +72,6 @@ defineFRCBlock('frc_subsystem_tankdrive', {
   "tooltip": "Set tank drive speeds",
   "data": {
     "imports": []
-  }
-});
-
-// ==================== Sensor Blocks ====================
-defineFRCBlock('frc_encoder_create', {
-  "type": "frc_encoder_create",
-  "message0": "Create Encoder %1 Channel A %2 Channel B %3",
-  "args0": [
-    {"type": "field_input", "name": "NAME", "text": "encoder"},
-    {"type": "field_number", "name": "CHANNEL_A", "value": 0},
-    {"type": "field_number", "name": "CHANNEL_B", "value": 1}
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 210,
-  "tooltip": "Create a quadrature encoder",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.Encoder;"
-    ]
-  }
-});
-
-defineFRCBlock('frc_encoder_getdistance', {
-  "type": "frc_encoder_getdistance",
-  "message0": "Get encoder %1 distance",
-  "args0": [
-    {"type": "field_number", "name": "CHANNEL", "value": 0}
-  ],
-  "output": "Number",
-  "colour": 210,
-  "tooltip": "Read encoder distance in meters",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.Encoder;"
-    ]
-  }
-});
-
-defineFRCBlock('frc_encoder_setdistanceperpulse', {
-  "type": "frc_encoder_setdistanceperpulse",
-  "message0": "Set encoder %1 distance per pulse %2 meters",
-  "args0": [
-    {"type": "field_number", "name": "CHANNEL", "value": 0},
-    {"type": "input_value", "name": "DISTANCE"}
-  ],
-  "previousStatement": null,
-  "nextStatement": null,
-  "colour": 210,
-  "tooltip": "Set encoder distance per pulse",
-  "data": {
-    "imports": [
-      "import edu.wpi.first.wpilibj.Encoder;"
-    ]
   }
 });
 
@@ -276,7 +116,13 @@ defineFRCBlock('frc_subsystem_periodic', {
 // ==================== Robot Container Blocks ====================
 defineFRCBlock('frc_robotcontainer_init', {
   "type": "frc_robotcontainer_init",
-  "message0": "Robot Container Initialization",
+  "message0": "Robot Container Initialization %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
   "previousStatement": null,
   "nextStatement": null,
   "colour": 200,
@@ -285,10 +131,15 @@ defineFRCBlock('frc_robotcontainer_init', {
     "imports": []
   }
 });
-
 defineFRCBlock('frc_robotcontainer_configurebuttonbindings', {
   "type": "frc_robotcontainer_configurebuttonbindings",
-  "message0": "Configure Button Bindings",
+  "message0": "Configure Button Bindings %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
   "previousStatement": null,
   "nextStatement": null,
   "colour": 200,
@@ -297,10 +148,15 @@ defineFRCBlock('frc_robotcontainer_configurebuttonbindings', {
     "imports": []
   }
 });
-
 defineFRCBlock('frc_robotcontainer_getautonomouscommand', {
   "type": "frc_robotcontainer_getautonomouscommand",
-  "message0": "Get Autonomous Command",
+  "message0": "Get Autonomous Command %1",
+  "args0": [
+    {
+      "type": "input_statement",
+      "name": "STEPS"
+    }
+  ],
   "output": "Command",
   "colour": 200,
   "tooltip": "Get autonomous command",
@@ -310,7 +166,6 @@ defineFRCBlock('frc_robotcontainer_getautonomouscommand', {
     ]
   }
 });
-
 // ==================== Robot Lifecycle Blocks ====================
 defineFRCBlock('frc_robot_init', {
   "type": "frc_robot_init",
@@ -546,16 +401,18 @@ defineFRCBlock('frc_constants_motorports', {
 });
 
 // ==================== Joystick Blocks ====================
-defineFRCBlock('frc_joystick_getaxis', {
-  "type": "frc_joystick_getaxis",
-  "message0": "Get Joystick %1 Axis %2",
+
+// Joystick constructor block
+defineFRCBlock('frc_joystick_create', {
+  "type": "frc_joystick_create",
+  "message0": "Create Joystick port %1",
   "args0": [
-    {"type": "field_number", "name": "PORT", "value": 0},
-    {"type": "field_number", "name": "AXIS", "value": 1}
+    {"type": "field_number", "name": "PORT", "value": 0}
   ],
-  "output": "Number",
+  "previousStatement": null,
+  "nextStatement": null,
   "colour": 30,
-  "tooltip": "Get joystick axis value (-1 to 1)",
+  "tooltip": "Create a new joystick instance",
   "data": {
     "imports": [
       "import edu.wpi.first.wpilibj.Joystick;"
@@ -563,19 +420,369 @@ defineFRCBlock('frc_joystick_getaxis', {
   }
 });
 
-defineFRCBlock('frc_joystick_getbutton', {
-  "type": "frc_joystick_getbutton",
-  "message0": "Get Joystick %1 Button %2",
+// Joystick axis channel configuration blocks
+defineFRCBlock('frc_joystick_set_axis_channel', {
+  "type": "frc_joystick_set_axis_channel",
+  "message0": "Set %1 axis channel %2 for joystick %3",
   "args0": [
-    {"type": "field_number", "name": "PORT", "value": 0},
-    {"type": "field_number", "name": "BUTTON", "value": 1}
+    {
+      "type": "field_dropdown",
+      "name": "AXIS_TYPE",
+      "options": [
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Z", "Z"],
+        ["Twist", "TWIST"],
+        ["Throttle", "THROTTLE"]
+      ]
+    },
+    {"type": "field_number", "name": "CHANNEL", "value": 0},
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 30,
+  "tooltip": "Set the channel for a specific joystick axis",
+  "data": {
+    "imports": []
+  }
+});
+
+// Joystick axis value getters
+defineFRCBlock('frc_joystick_get_axis', {
+  "type": "frc_joystick_get_axis",
+  "message0": "Get %1 axis value from joystick %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "AXIS_TYPE",
+      "options": [
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Z", "Z"],
+        ["Twist", "TWIST"],
+        ["Throttle", "THROTTLE"]
+      ]
+    },
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get the value of a joystick axis",
+  "data": {
+    "imports": []
+  }
+});
+
+// Joystick button blocks
+defineFRCBlock('frc_joystick_get_button', {
+  "type": "frc_joystick_get_button",
+  "message0": "Get button %1 state from joystick %2",
+  "args0": [
+    {"type": "field_number", "name": "BUTTON", "value": 1},
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
   ],
   "output": "Boolean",
   "colour": 30,
-  "tooltip": "Get joystick button state",
+  "tooltip": "Get the state of a joystick button",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_joystick_get_button_pressed', {
+  "type": "frc_joystick_get_button_pressed",
+  "message0": "Check if button %1 was pressed since last check on joystick %2",
+  "args0": [
+    {"type": "field_number", "name": "BUTTON", "value": 1},
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Check if button was pressed since last check",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_joystick_get_button_released', {
+  "type": "frc_joystick_get_button_released",
+  "message0": "Check if button %1 was released since last check on joystick %2",
+  "args0": [
+    {"type": "field_number", "name": "BUTTON", "value": 1},
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Check if button was released since last check",
+  "data": {
+    "imports": []
+  }
+});
+
+// Special button blocks (trigger and top)
+defineFRCBlock('frc_joystick_get_trigger', {
+  "type": "frc_joystick_get_trigger",
+  "message0": "Get trigger state from joystick %1",
+  "args0": [
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Get the state of the trigger button",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_joystick_get_top', {
+  "type": "frc_joystick_get_top",
+  "message0": "Get top button state from joystick %1",
+  "args0": [
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Get the state of the top button",
+  "data": {
+    "imports": []
+  }
+});
+
+// Direction and magnitude blocks
+defineFRCBlock('frc_joystick_get_magnitude', {
+  "type": "frc_joystick_get_magnitude",
+  "message0": "Get joystick %1 magnitude",
+  "args0": [
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get the magnitude of the joystick vector",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_joystick_get_direction_degrees', {
+  "type": "frc_joystick_get_direction_degrees",
+  "message0": "Get joystick %1 direction (degrees)",
+  "args0": [
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get the direction of the joystick in degrees (0 is forward, 90 is right)",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_joystick_get_direction_radians', {
+  "type": "frc_joystick_get_direction_radians",
+  "message0": "Get joystick %1 direction (radians)",
+  "args0": [
+    {"type": "field_input", "name": "JOYSTICK_NAME", "text": "joystick"}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get the direction of the joystick in radians (0 is forward, π/2 is right)",
+  "data": {
+    "imports": []
+  }
+});
+
+// ==================== Xbox Controller Blocks ====================
+defineFRCBlock('frc_xboxcontroller_create', {
+  "type": "frc_xboxcontroller_create",
+  "message0": "Create Xbox Controller port %1",
+  "args0": [
+    {"type": "field_number", "name": "PORT", "value": 0}
+  ],
+  "previousStatement": null,
+  "nextStatement": null,
+  "colour": 30,
+  "tooltip": "Create a new Xbox controller instance",
   "data": {
     "imports": [
-      "import edu.wpi.first.wpilibj.Joystick;"
+      "import edu.wpi.first.wpilibj.XboxController;"
+    ]
+  }
+});
+
+// Axis value getters
+defineFRCBlock('frc_xboxcontroller_get_axis', {
+  "type": "frc_xboxcontroller_get_axis",
+  "message0": "Get %1 axis from controller %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "AXIS",
+      "options": [
+        ["Left X", "LEFT_X"],
+        ["Left Y", "LEFT_Y"],
+        ["Right X", "RIGHT_X"],
+        ["Right Y", "RIGHT_Y"],
+        ["Left Trigger", "LEFT_TRIGGER"],
+        ["Right Trigger", "RIGHT_TRIGGER"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"}
+  ],
+  "output": "Number",
+  "colour": 30,
+  "tooltip": "Get axis value from Xbox controller",
+  "data": {
+    "imports": []
+  }
+});
+
+// Button blocks with dropdown
+defineFRCBlock('frc_xboxcontroller_get_button', {
+  "type": "frc_xboxcontroller_get_button",
+  "message0": "Get %1 button state from controller %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BUTTON",
+      "options": [
+        ["A", "A"],
+        ["B", "B"],
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Left Bumper", "LEFT_BUMPER"],
+        ["Right Bumper", "RIGHT_BUMPER"],
+        ["Back", "BACK"],
+        ["Start", "START"],
+        ["Left Stick", "LEFT_STICK"],
+        ["Right Stick", "RIGHT_STICK"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Get button state from Xbox controller",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_xboxcontroller_get_button_pressed', {
+  "type": "frc_xboxcontroller_get_button_pressed",
+  "message0": "Check if %1 button was pressed since last check on controller %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BUTTON",
+      "options": [
+        ["A", "A"],
+        ["B", "B"],
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Left Bumper", "LEFT_BUMPER"],
+        ["Right Bumper", "RIGHT_BUMPER"],
+        ["Back", "BACK"],
+        ["Start", "START"],
+        ["Left Stick", "LEFT_STICK"],
+        ["Right Stick", "RIGHT_STICK"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Check if button was pressed since last check",
+  "data": {
+    "imports": []
+  }
+});
+
+defineFRCBlock('frc_xboxcontroller_get_button_released', {
+  "type": "frc_xboxcontroller_get_button_released",
+  "message0": "Check if %1 button was released since last check on controller %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BUTTON",
+      "options": [
+        ["A", "A"],
+        ["B", "B"],
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Left Bumper", "LEFT_BUMPER"],
+        ["Right Bumper", "RIGHT_BUMPER"],
+        ["Back", "BACK"],
+        ["Start", "START"],
+        ["Left Stick", "LEFT_STICK"],
+        ["Right Stick", "RIGHT_STICK"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Check if button was released since last check",
+  "data": {
+    "imports": []
+  }
+});
+
+// Trigger event blocks
+defineFRCBlock('frc_xboxcontroller_trigger_event', {
+  "type": "frc_xboxcontroller_trigger_event",
+  "message0": "%1 trigger event on controller %2 threshold %3",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "TRIGGER",
+      "options": [
+        ["Left", "LEFT"],
+        ["Right", "RIGHT"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"},
+    {"type": "input_value", "name": "THRESHOLD", "check": "Number"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Trigger event when trigger exceeds threshold",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.event.EventLoop;"
+    ]
+  }
+});
+
+// Button event block
+defineFRCBlock('frc_xboxcontroller_button_event', {
+  "type": "frc_xboxcontroller_button_event",
+  "message0": "%1 button event on controller %2",
+  "args0": [
+    {
+      "type": "field_dropdown",
+      "name": "BUTTON",
+      "options": [
+        ["A", "A"],
+        ["B", "B"],
+        ["X", "X"],
+        ["Y", "Y"],
+        ["Left Bumper", "LEFT_BUMPER"],
+        ["Right Bumper", "RIGHT_BUMPER"],
+        ["Back", "BACK"],
+        ["Start", "START"],
+        ["Left Stick", "LEFT_STICK"],
+        ["Right Stick", "RIGHT_STICK"]
+      ]
+    },
+    {"type": "field_input", "name": "CONTROLLER_NAME", "text": "controller"}
+  ],
+  "output": "Boolean",
+  "colour": 30,
+  "tooltip": "Button event",
+  "data": {
+    "imports": [
+      "import edu.wpi.first.wpilibj.event.EventLoop;"
     ]
   }
 });
@@ -1304,29 +1511,6 @@ Blockly.FRCJava.RESERVED_WORDS_ = 'abstract,assert,boolean,break,byte,case,catch
 
 // ==================== Generator Functions ====================
 
-// Motor Control Generators
-Blockly.FRCJava['frc_motorcontroller_set'] = function(block) {
-  const motorType = block.getFieldValue('MOTOR_TYPE');
-  const channel = block.getFieldValue('CHANNEL');
-  const speed = Blockly.FRCJava.valueToCode(block, 'SPEED', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
-  return `${motorType} motor${channel} = new ${motorType}(${channel});\n` +
-    `motor${channel}.set(${speed});\n`;
-};
-
-Blockly.FRCJava['frc_motorcontroller_safety'] = function(block) {
-  const motorType = block.getFieldValue('MOTOR_TYPE');
-  const channel = block.getFieldValue('CHANNEL');
-  const state = block.getFieldValue('STATE');
-  return `motor${channel}.setSafetyEnabled(${state});\n`;
-};
-
-Blockly.FRCJava['frc_motorcontroller_setinverted'] = function(block) {
-  const motorType = block.getFieldValue('MOTOR_TYPE');
-  const channel = block.getFieldValue('CHANNEL');
-  const state = block.getFieldValue('STATE');
-  return `motor${channel}.setInverted(${state});\n`;
-};
-
 // Drive System Generators
 Blockly.FRCJava['frc_bind_tankdrive'] = function(block) {
   const controllerPort = block.getFieldValue('CONTROLLER_PORT');
@@ -1350,24 +1534,6 @@ Blockly.FRCJava['frc_subsystem_tankdrive'] = function(block) {
     `}\n\n`;
 };
 
-// Sensor Generators
-Blockly.FRCJava['frc_encoder_create'] = function(block) {
-  const name = block.getFieldValue('NAME');
-  const channelA = block.getFieldValue('CHANNEL_A');
-  const channelB = block.getFieldValue('CHANNEL_B');
-  return `Encoder ${name} = new Encoder(${channelA}, ${channelB});\n`;
-};
-
-Blockly.FRCJava['frc_encoder_getdistance'] = function(block) {
-  const channel = block.getFieldValue('CHANNEL');
-  return [`encoder${channel}.getDistance()`, Blockly.FRCJava.ORDER_MEMBER];
-};
-
-Blockly.FRCJava['frc_encoder_setdistanceperpulse'] = function(block) {
-  const channel = block.getFieldValue('CHANNEL');
-  const distance = Blockly.FRCJava.valueToCode(block, 'DISTANCE', Blockly.FRCJava.ORDER_ASSIGNMENT) || '0';
-  return `encoder${channel}.setDistancePerPulse(${distance});\n`;
-};
 
 // Subsystem Generators
 Blockly.FRCJava['frc_subsystem_init'] = function(block) {
@@ -1388,19 +1554,26 @@ Blockly.FRCJava['frc_subsystem_periodic'] = function(block) {
 Blockly.FRCJava['frc_robotcontainer_init'] = function(block) {
   return `public class RobotContainer {\n` +
     `  public RobotContainer() {\n` +
-    `    configureButtonBindings();\n` +
     Blockly.FRCJava.statementToCode(block, 'STEPS') +
     `  }\n\n`;
 };
-
 Blockly.FRCJava['frc_robotcontainer_configurebuttonbindings'] = function(block) {
   return `private void configureButtonBindings() {\n` +
-    Blockly.FRCJava.statementToCode(block, 'BUTTON_BINDINGS') +
+    Blockly.FRCJava.statementToCode(block, 'STEPS') +
     `}\n\n`;
 };
-
 Blockly.FRCJava['frc_robotcontainer_getautonomouscommand'] = function(block) {
-  return [`new AutonomousCommand()`, Blockly.FRCJava.ORDER_ATOMIC];
+  const steps = Blockly.FRCJava.statementToCode(block, 'STEPS') || '';
+  return [`new CommandBase() {\n` +
+    `  @Override\n` +
+    `  public void initialize() {\n` +
+    steps +
+    `  }\n` +
+    `  @Override\n` +
+    `  public boolean isFinished() {\n` +
+    `    return true;\n` +
+    `  }\n` +
+    `}`, Blockly.FRCJava.ORDER_ATOMIC];
 };
 
 // Robot Lifecycle Generators
@@ -1486,18 +1659,141 @@ Blockly.FRCJava['frc_constants_motorports'] = function(block) {
     `}\n\n`;
 };
 
-// Joystick Generators
-Blockly.FRCJava['frc_joystick_getaxis'] = function(block) {
+//  Joystick Generators 
+
+Blockly.FRCJava['frc_joystick_create'] = function(block) {
   const port = block.getFieldValue('PORT');
-  const axis = block.getFieldValue('AXIS');
-  return [`joystick${port}.getRawAxis(${axis})`, Blockly.FRCJava.ORDER_MEMBER];
+  return `Joystick joystick${port} = new Joystick(${port});\n`;
 };
 
-Blockly.FRCJava['frc_joystick_getbutton'] = function(block) {
-  const port = block.getFieldValue('PORT');
-  const button = block.getFieldValue('BUTTON');
-  return [`joystick${port}.getRawButton(${button})`, Blockly.FRCJava.ORDER_MEMBER];
+Blockly.FRCJava['frc_joystick_set_axis_channel'] = function(block) {
+  const axisType = block.getFieldValue('AXIS_TYPE');
+  const channel = block.getFieldValue('CHANNEL');
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  
+  const methodMap = {
+    'X': 'setXChannel',
+    'Y': 'setYChannel',
+    'Z': 'setZChannel',
+    'TWIST': 'setTwistChannel',
+    'THROTTLE': 'setThrottleChannel'
+  };
+  
+  return `${joystickName}.${methodMap[axisType]}(${channel});\n`;
 };
+
+Blockly.FRCJava['frc_joystick_get_axis'] = function(block) {
+  const axisType = block.getFieldValue('AXIS_TYPE');
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  
+  const methodMap = {
+    'X': 'getX',
+    'Y': 'getY',
+    'Z': 'getZ',
+    'TWIST': 'getTwist',
+    'THROTTLE': 'getThrottle'
+  };
+  
+  return [`${joystickName}.${methodMap[axisType]}()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_button'] = function(block) {
+  const button = block.getFieldValue('BUTTON');
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getRawButton(${button})`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_button_pressed'] = function(block) {
+  const button = block.getFieldValue('BUTTON');
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getRawButtonPressed(${button})`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_button_released'] = function(block) {
+  const button = block.getFieldValue('BUTTON');
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getRawButtonReleased(${button})`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_trigger'] = function(block) {
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getTrigger()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_top'] = function(block) {
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getTop()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_magnitude'] = function(block) {
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getMagnitude()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_direction_degrees'] = function(block) {
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getDirectionDegrees()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_joystick_get_direction_radians'] = function(block) {
+  const joystickName = block.getFieldValue('JOYSTICK_NAME');
+  return [`${joystickName}.getDirectionRadians()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+
+//  Xbox Controller Generators 
+Blockly.FRCJava['frc_xboxcontroller_create'] = function(block) {
+  const port = block.getFieldValue('PORT');
+  return `XboxController controller${port} = new XboxController(${port});\n`;
+};
+
+Blockly.FRCJava['frc_xboxcontroller_get_axis'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const axis = block.getFieldValue('AXIS');
+  
+  const methodMap = {
+    'LEFT_X': 'getLeftX',
+    'LEFT_Y': 'getLeftY',
+    'RIGHT_X': 'getRightX',
+    'RIGHT_Y': 'getRightY',
+    'LEFT_TRIGGER': 'getLeftTriggerAxis',
+    'RIGHT_TRIGGER': 'getRightTriggerAxis'
+  };
+  
+  return [`${controllerName}.${methodMap[axis]}()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_xboxcontroller_get_button'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const button = block.getFieldValue('BUTTON');
+  return [`${controllerName}.get${button}Button()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_xboxcontroller_get_button_pressed'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const button = block.getFieldValue('BUTTON');
+  return [`${controllerName}.get${button}ButtonPressed()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_xboxcontroller_get_button_released'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const button = block.getFieldValue('BUTTON');
+  return [`${controllerName}.get${button}ButtonReleased()`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_xboxcontroller_trigger_event'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const trigger = block.getFieldValue('TRIGGER').toLowerCase();
+  const threshold = Blockly.FRCJava.valueToCode(block, 'THRESHOLD', Blockly.FRCJava.ORDER_NONE) || '0.5';
+  return [`${controllerName}.${trigger}Trigger(${threshold}, loop)`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
+Blockly.FRCJava['frc_xboxcontroller_button_event'] = function(block) {
+  const controllerName = block.getFieldValue('CONTROLLER_NAME');
+  const button = block.getFieldValue('BUTTON').toLowerCase();
+  return [`${controllerName}.${button}(loop)`, Blockly.FRCJava.ORDER_MEMBER];
+};
+
 
 // PID Control Generators
 Blockly.FRCJava['frc_pidcontroller_create'] = function(block) {
@@ -1805,3 +2101,29 @@ Blockly.FRCJava.scrub_ = function(block, code) {
   const nextCode = nextBlock ? Blockly.FRCJava.blockToCode(nextBlock) : '';
   return code + nextCode;
 };
+
+Blockly.ContextMenuRegistry.registry.register({
+  displayText: 'Delete Block',
+  preconditionFn: function(scope) {
+    return scope.block.isDeletable() ? 'enabled' : 'disabled';
+  },
+  callback: function(scope) {
+    scope.block.dispose();
+  },
+  scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
+  id: 'deleteBlock',
+  weight: 1
+});
+
+Blockly.ContextMenuRegistry.registry.register({
+  displayText: 'Duplicate Block',
+  preconditionFn: function(scope) {
+    return scope.block.isDuplicatable() ? 'enabled' : 'disabled';
+  },
+  callback: function(scope) {
+    Blockly.duplicate_(scope.block);
+  },
+  scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
+  id: 'duplicateBlock',
+  weight: 2
+});

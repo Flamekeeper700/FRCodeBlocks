@@ -17,6 +17,147 @@ window.tabManagement = {
   isSaving: false,
   isLoading: false,
 
+
+  
+ 
+displayErrors: function(errors) {
+  const errorList = document.getElementById('errorList');
+  if (!errorList) return;
+  
+  errorList.innerHTML = '';
+  
+  if (!errors || errors.length === 0) {
+    errorList.innerHTML = '<div class="error-item info">No errors or warnings</div>';
+    return;
+  }
+  
+  // Add error count to the handle
+  const errorCount = errors.filter(e => e.type === 'error').length;
+  const warningCount = errors.filter(e => e.type === 'warning').length;
+  const handle = document.querySelector('.error-panel-handle span');
+  
+  if (errorCount > 0) {
+    handle.textContent = errorCount;
+    handle.style.color = '#f44336'; // Red for errors
+  } else if (warningCount > 0) {
+    handle.textContent = warningCount;
+    handle.style.color = '#ff9800'; // Orange for warnings
+  } else {
+    handle.textContent = '!';
+    handle.style.color = 'inherit';
+  }
+  
+  // Add the errors to the list
+  errors.forEach(error => {
+    const div = document.createElement('div');
+    div.className = `error-item ${error.type || 'error'}`;
+    div.innerHTML = `
+      <div>${error.message}</div>
+      ${error.location ? `<div class="error-location">${error.location}</div>` : ''}
+    `;
+    
+    if (error.location) {
+      div.querySelector('.error-location').addEventListener('click', () => {
+        if (error.blockId && this.workspaces[this.activeTabId]) {
+          const block = this.workspaces[this.activeTabId].getBlockById(error.blockId);
+          if (block) {
+            block.select();
+            this.workspaces[this.activeTabId].centerOnBlock(block.id);
+          }
+        }
+      });
+    }
+    
+    errorList.appendChild(div);
+  });
+},
+
+validateWorkspace: function(tabId) {
+  if (!tabId) tabId = this.activeTabId;
+  const workspace = this.workspaces[tabId];
+  if (!workspace) return [];
+  
+  const errors = [];
+  const blocks = workspace.getAllBlocks(false);
+  const tabName = this.tabs.find(t => t.id === tabId)?.title || tabId;
+  
+  // Java reserved keywords that can't be used as variable names
+  const JAVA_RESERVED_KEYWORDS = [
+    'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 
+    'class', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum',
+    'extends', 'final', 'finally', 'float', 'for', 'goto', 'if', 'implements',
+    'import', 'instanceof', 'int', 'interface', 'long', 'native', 'new',
+    'package', 'private', 'protected', 'public', 'return', 'short', 'static',
+    'strictfp', 'super', 'switch', 'synchronized', 'this', 'throw', 'throws',
+    'transient', 'try', 'void', 'volatile', 'while'
+  ];
+
+  blocks.forEach(block => {
+    // Check for disconnected blocks
+    if (!block.getParent() && !block.isShadow() && !block.isDeletable()) {
+      errors.push({
+        type: 'warning',
+        message: 'Disconnected block',
+        location: `Tab: ${tabName}`,
+        blockId: block.id
+      });
+    }
+    
+    // Validate variable declarations
+    if (block.type === 'frc_variable_declaration') {
+      const varName = block.getFieldValue('NAME');
+      
+      // Check if name is empty
+      if (!varName || varName.trim() === '') {
+        errors.push({
+          type: 'error',
+          message: 'Variable declaration missing name',
+          location: `Tab: ${tabName}`,
+          blockId: block.id
+        });
+      } 
+      // Check if name starts with a number
+      else if (/^[0-9]/.test(varName)) {
+        errors.push({
+          type: 'error',
+          message: 'Variable name cannot start with a number',
+          location: `Tab: ${tabName}`,
+          blockId: block.id
+        });
+      }
+      // Check for invalid characters
+      else if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(varName)) {
+        errors.push({
+          type: 'error',
+          message: 'Variable name contains invalid characters; Java allows for letters A-Z lowercase and uppercase, numbers, $, and _',
+          location: `Tab: ${tabName}`,
+          blockId: block.id
+        });
+      }
+      // Check if name is a reserved keyword
+      else if (JAVA_RESERVED_KEYWORDS.includes(varName.toLowerCase())) {
+        errors.push({
+          type: 'error',
+          message: `'${varName}' is a Java reserved keyword and cannot be used as a variable name`,
+          location: `Tab: ${tabName}`,
+          blockId: block.id
+        });
+      }
+      // Check if name is too long (optional)
+      else if (varName.length > 50) {
+        errors.push({
+          type: 'warning',
+          message: 'Variable name is unusually long',
+          location: `Tab: ${tabName}`,
+          blockId: block.id
+        });
+      }
+    }
+  });
+  
+  this.displayErrors(errors);
+  return errors;
+},
   /**
    * Creates and injects a Blockly workspace for the given tab.
    */
@@ -188,56 +329,64 @@ window.tabManagement = {
   /**
    * Generates Java code for the active tab.
    */
-  updateOutput() {
-    if (this.activeTabId && this.workspaces[this.activeTabId]) {
-      const code = window.codeGeneration.generateJavaCode(this.activeTabId);
-      window.domElements.outputArea.textContent = code;
+updateOutput: function() {
+  if (this.activeTabId && this.workspaces[this.activeTabId]) {
+    const code = window.codeGeneration.generateJavaCode(this.activeTabId);
+    window.domElements.outputArea.textContent = code;
 
-      if (window.hljs) {
-        window.hljs.highlightElement(window.domElements.outputArea);
-      }
+    if (window.hljs) {
+      window.hljs.highlightElement(window.domElements.outputArea);
     }
-  },
+    
+    // Validate the workspace after code generation
+    this.validateWorkspace(this.activeTabId);
+  }
+},
 
   /**
    * Loads a sample project by preset name.
    */
-  loadSampleProject(selectedSample) {
-    if (!selectedSample) throw new Error('No sample selected');
+  loadSampleProject: function(selectedSample) {
+  if (!selectedSample) throw new Error('No sample selected');
 
-    const sample = window.sampleProjects.tabPresets[selectedSample];
-    if (!sample) throw new Error('Sample not found');
+  const sample = window.sampleProjects.tabPresets[selectedSample];
+  if (!sample) throw new Error('Sample not found');
 
-    this.tabs = this.tabs.filter(tab => !tab.removable);
-    this.renderTabs();
+  // Ensure tabs is an array
+  if (!Array.isArray(this.tabs)) {
+    this.tabs = [];
+  }
 
-    let firstTab = null;
+  // Remove only removable tabs
+  this.tabs = this.tabs.filter(tab => !tab.removable);
+  this.renderTabs();
 
-    for (const [tabType, xml] of Object.entries(sample)) {
-      let tab = this.tabs.find(t => t.type === tabType);
-      if (!tab && this.coreTabs.some(t => t.type === tabType)) {
-        tab = { ...this.coreTabs.find(t => t.type === tabType) };
-        this.tabs.push(tab);
-        this.workspaces[tab.id] = this.createWorkspace(tab);
-      }
+  let firstTab = null;
 
-      if (tab && this.workspaces[tab.id]) {
-        try {
-          this.workspaces[tab.id].clear();
-          const dom = Blockly.Xml.textToDom(xml);
-          Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
-
-          if (!firstTab) firstTab = tab.id;
-        } catch (err) {
-          console.error(`Failed to load ${tabType}:`, err);
-        }
-      }
+  for (const [tabType, xml] of Object.entries(sample)) {
+    let tab = this.tabs.find(t => t.type === tabType);
+    if (!tab && this.coreTabs.some(t => t.type === tabType)) {
+      tab = { ...this.coreTabs.find(t => t.type === tabType) };
+      this.tabs.push(tab);
+      this.workspaces[tab.id] = this.createWorkspace(tab);
     }
 
-    this.switchTab(firstTab || this.coreTabs[0].id);
-    this.updateOutput();
-  },
+    if (tab && this.workspaces[tab.id]) {
+      try {
+        this.workspaces[tab.id].clear();
+        const dom = Blockly.Xml.textToDom(xml);
+        Blockly.Xml.domToWorkspace(dom, this.workspaces[tab.id]);
 
+        if (!firstTab) firstTab = tab.id;
+      } catch (err) {
+        console.error(`Failed to load ${tabType}:`, err);
+      }
+    }
+  }
+
+  this.switchTab(firstTab || this.coreTabs[0].id);
+  this.updateOutput();
+},
   /**
    * Creates a DOM button element for a tab.
    */
@@ -384,3 +533,4 @@ window.tabManagement = {
     });
   }
 };
+

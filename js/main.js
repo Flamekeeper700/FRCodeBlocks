@@ -1,15 +1,5 @@
-/**
- * main.js - Entry point for initializing the Blockly environment
- * 
- * Initializes theme manager, data types, tab management, and event listeners.
- * Designed to load cleanly and provide graceful fallbacks for missing components.
- */
-
 document.addEventListener('DOMContentLoaded', function () {
-
-  /** -------------------------------
-   *  1. Initialize Theme Manager
-   * ------------------------------- */
+  // 1. Initialize Theme Manager
   if (window.themeManager?.init) {
     try {
       window.themeManager.init();
@@ -18,9 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  /** -------------------------------
-   *  2. Initialize Data Types
-   * ------------------------------- */
+  // 2. Initialize Data Types
   if (window.dataTypes?.init) {
     try {
       window.dataTypes.init();
@@ -29,52 +17,40 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  /** ------------------------------------------------
-   *  3. Setup tabManagement (fallback if not defined)
-   * ------------------------------------------------ */
+  // 3. Setup tabManagement
   if (!window.tabManagement) {
-    window.tabManagement = {
-      workspaces: {},
-      tabs: [],
-      coreTabs: [],
-      // Optional: Define createWorkspace, renderTabs, switchTab, updateOutput here if needed
-    };
-    console.warn('tabManagement not found, created fallback');
+    console.error('tabManagement not found');
+    return;
   }
 
-  /** -------------------------------
-   *  4. Initialize Core Tabs
-   * ------------------------------- */
-  window.tabManagement.coreTabs.forEach(tab => {
-    window.tabManagement.tabs.push(tab);
-    window.tabManagement.workspaces[tab.id] = window.tabManagement.createWorkspace(tab);
-  });
+  // 4. Initialize Core Tabs
+  try {
+    window.tabManagement.coreTabs.forEach(tab => {
+      window.tabManagement.tabs.push(tab);
+      window.tabManagement.workspaces[tab.id] = window.tabManagement.createWorkspace(tab);
+    });
 
-  /** -------------------------------
-   *  5. Render Tabs and Switch to First
-   * ------------------------------- */
-  window.tabManagement.renderTabs();
+    // 5. Render Tabs and Switch to First
+    window.tabManagement.renderTabs();
 
-  if (window.tabManagement.coreTabs.length > 0) {
-    const firstTabId = window.tabManagement.coreTabs[0].id;
-    window.tabManagement.switchTab(firstTabId);
-    window.tabManagement.updateOutput();
+    if (window.tabManagement.coreTabs.length > 0) {
+      const firstTabId = window.tabManagement.coreTabs[0].id;
+      window.tabManagement.switchTab(firstTabId);
+      window.tabManagement.updateOutput();
+    }
+  } catch (e) {
+    console.error('Error initializing tabs:', e);
   }
 
-  /** -------------------------------
-   *  6. Setup Event Listeners
-   * ------------------------------- */
+  // 6. Setup Event Listeners
   if (window.eventHandlers?.setupEventListeners) {
     window.eventHandlers.setupEventListeners();
   }
 
-  /** -------------------------------------------------
-   *  7. Force Data Type Updates After Initial Load
-   * ------------------------------------------------- */
+  // 7. Force Data Type Updates After Initial Load
   setTimeout(() => {
     if (window.dataTypes?.updateAllBlocks) {
       window.dataTypes.updateAllBlocks();
     }
   }, 500);
-
 });

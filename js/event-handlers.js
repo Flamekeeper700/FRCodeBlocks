@@ -65,38 +65,39 @@ window.eventHandlers = {
     /** -----------------------------
      * Load Sample Project
      * ----------------------------- */
-    loadSampleBtn.addEventListener('click', () => {
-      const selectedSample = sampleProjects.value;
 
-      if (!selectedSample) {
-        alert('Please select a sample project first');
-        return;
-      }
+      sampleProjects?.addEventListener('change', (e) => {
+    loadSampleBtn.disabled = !e.target.value;
+  });
+  
+ loadSampleBtn.addEventListener('click', () => {
+  const selectedSample = sampleProjects.value;
 
-      const sampleData = window.sampleProjects?.tabPresets?.[selectedSample];
-      if (!sampleData) {
-        alert('Selected sample project not found');
-        return;
-      }
+  if (!selectedSample) {
+    alert('Please select a sample project first');
+    return;
+  }
 
-      loadSampleBtn.disabled = true;
-      loadSampleBtn.textContent = 'Loading...';
+  const sampleData = window.sampleProjects?.tabPresets?.[selectedSample];
+  if (!sampleData) {
+    alert('Selected sample project not found');
+    return;
+  }
 
-      try {
-        loadSampleProject(selectedSample);
-        sampleProjects.value = '';
-      } catch (error) {
-        console.error('Error loading sample:', error);
-        alert(`Failed to load sample: ${error.message}`);
-      } finally {
-        loadSampleBtn.disabled = false;
-        loadSampleBtn.textContent = 'Load Selected';
-      }
-    });
+  loadSampleBtn.disabled = true;
+  loadSampleBtn.textContent = 'Loading...';
 
-    sampleProjects.addEventListener('change', (e) => {
-      loadSampleBtn.disabled = !e.target.value;
-    });
+  try {
+    window.tabManagement.loadSampleProject(selectedSample);
+    sampleProjects.value = '';
+  } catch (error) {
+    console.error('Error loading sample:', error);
+    alert(`Failed to load sample: ${error.message}`);
+  } finally {
+    loadSampleBtn.disabled = false;
+    loadSampleBtn.textContent = 'Load Selected';
+  }
+});
 
     /** -----------------------------
      * Open Credits Tab
@@ -313,3 +314,29 @@ window.eventHandlers = {
     }
   }
 };
+
+const errorPanel = document.getElementById('errorPanel');
+if (errorPanel) {
+  const handle = errorPanel.querySelector('.error-panel-handle');
+  
+  // Toggle on click
+  handle.addEventListener('click', () => {
+    errorPanel.classList.toggle('expanded');
+    
+    // Resize Blockly workspace
+    const activeId = window.tabManagement.activeTabId;
+    const workspace = window.tabManagement.workspaces[activeId];
+    if (workspace) Blockly.svgResize(workspace);
+  });
+
+  // Keep expanded when mouse is over panel
+  errorPanel.addEventListener('mouseleave', () => {
+    if (errorPanel.classList.contains('expanded')) return;
+    errorPanel.classList.remove('expanded');
+    
+    // Resize Blockly workspace
+    const activeId = window.tabManagement.activeTabId;
+    const workspace = window.tabManagement.workspaces[activeId];
+    if (workspace) Blockly.svgResize(workspace);
+  });
+}

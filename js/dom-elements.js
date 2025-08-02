@@ -22,6 +22,8 @@ window.domElements = {
   themeVariablesEditor: document.getElementById('themeVariablesEditor'),
   newThemeName: document.getElementById('newThemeName'),
   saveCustomTheme: document.getElementById('saveCustomTheme'),
-  deleteCustomTheme: document.getElementById('deleteCustomTheme')
-
+  deleteCustomTheme: document.getElementById('deleteCustomTheme'),
+errorPanel: document.getElementById('errorPanel'),
+errorList: document.getElementById('errorList'),
+toggleErrorPanel: document.getElementById('toggleErrorPanel')
 };

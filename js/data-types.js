@@ -14,11 +14,8 @@ window.dataTypes = {
   // === FRC-Specific Types ===
   // Custom types relevant to FRC robot programming
   frcTypes: [
-    { value: 'MotorController', label: 'MotorController', default: '0.0' },
     { value: 'Joystick', label: 'Joystick', default: '0' },
-    { value: 'Encoder', label: 'Encoder', default: '0, 1' },
-    { value: 'PIDController', label: 'PIDController', default: '0.1, 0.0, 0.0' },
-    { value: 'Timer', label: 'Timer', default: '0.0' }
+    { value: 'XboxController', label: 'Xbox Controller', default: '0' }
   ],
 
   // === Utility Methods ===

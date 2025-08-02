@@ -30,116 +30,124 @@
   <div id="workspaceArea">
     <div id="toolboxContainer">
       <!-- Toolbox Definition -->
-      <xml id="toolbox">
-        <!-- Robot Category -->
-        <category name="Robot" colour="200">
-          <category name="Lifecycle">
-            <block type="frc_robot_init"></block>
-            <block type="frc_robot_periodic"></block>
-          </category>
-          <category name="Simulation">
-            <block type="frc_simulation_init"></block>
-            <block type="frc_simulation_periodic"></block>
-          </category>
-          <category name="Modes">
-            <block type="frc_disabled_init"></block>
-            <block type="frc_disabled_periodic"></block>
-            <block type="frc_autonomous_init"></block>
-            <block type="frc_autonomous_periodic"></block>
-            <block type="frc_teleop_init"></block>
-            <block type="frc_teleop_periodic"></block>
-            <block type="frc_test_init"></block>
-            <block type="frc_test_periodic"></block>
-          </category>
-        </category>
+<xml id="toolbox">
+  <!-- Robot Category -->
+  <category name="Robot" colour="200">
+    <category name="Lifecycle">
+      <block type="frc_robot_init"></block>
+      <block type="frc_robot_periodic"></block>
+    </category>
+    <category name="Simulation">
+      <block type="frc_simulation_init"></block>
+      <block type="frc_simulation_periodic"></block>
+    </category>
+    <category name="Modes">
+      <block type="frc_disabled_init"></block>
+      <block type="frc_disabled_periodic"></block>
+      <block type="frc_autonomous_init"></block>
+      <block type="frc_autonomous_periodic"></block>
+      <block type="frc_teleop_init"></block>
+      <block type="frc_teleop_periodic"></block>
+      <block type="frc_test_init"></block>
+      <block type="frc_test_periodic"></block>
+    </category>
+  </category>
 
-        <!-- Drive Subsystems -->
-        <category name="Drive" colour="120">
-          <block type="frc_bind_tankdrive"></block>
-          <block type="frc_subsystem_tankdrive"></block>
-        </category>
+  <!-- Drive Subsystems -->
+  <category name="Drive" colour="120">
+    <block type="frc_bind_tankdrive"></block>
+    <block type="frc_subsystem_tankdrive"></block>
+  </category>
 
-        <!-- Joystick Input -->
-        <category name="Joystick" colour="30">
-          <block type="frc_joystick_getaxis"></block>
-          <block type="frc_joystick_getbutton"></block>
-        </category>
+  <!-- Joystick Input -->
+   <category name="Controllers" colour = "30">
+<category name="Joystick" colour="30">
 
-        <!-- Motor Control -->
-        <category name="Motors" colour="160">
-          <category name="Control">
-            <block type="frc_motorcontroller_set"></block>
-            <block type="frc_motorcontroller_safety"></block>
-          </category>
-          <category name="Configuration">
-            <block type="frc_motorcontroller_setinverted"></block>
-          </category>
-        </category>
+  <!-- Joystick Creation -->
+  <block type="frc_joystick_create"></block>
+  
+  <!-- Axis Configuration -->
+  <category name="Axis Configuration" colour="30">
+    <block type="frc_joystick_set_axis_channel"></block>
+  </category>
+  
+  <!-- Axis Values -->
+  <category name="Axis Values" colour="30">
+    <block type="frc_joystick_get_axis"></block>
+    <block type="frc_joystick_get_magnitude"></block>
+    <block type="frc_joystick_get_direction_degrees"></block>
+    <block type="frc_joystick_get_direction_radians"></block>
+  </category>
+  <!-- Buttons -->
+  <category name="Buttons" colour="30">
+    <block type="frc_joystick_get_button"></block>
+    <block type="frc_joystick_get_button_pressed"></block>
+    <block type="frc_joystick_get_button_released"></block>
+    <block type="frc_joystick_get_trigger"></block>
+    <block type="frc_joystick_get_top"></block>
+  </category>
+</category>
+<category name="Xbox Controller" colour="30">
+  <block type="frc_xboxcontroller_create"></block>
+    <block type="frc_xboxcontroller_get_axis"></block>
+    <block type="frc_xboxcontroller_get_button"></block>
+    <block type="frc_xboxcontroller_get_button_pressed"></block>
+    <block type="frc_xboxcontroller_get_button_released"></block>
+    <block type="frc_xboxcontroller_trigger_event"></block>
+    <block type="frc_xboxcontroller_button_event"></block>
+</category>
+</category>
 
-        <!-- PID Controllers -->
-        <category name="PID" colour="220">
-          <block type="frc_pidcontroller_create"></block>
-          <block type="frc_pidcontroller_calculate"></block>
-          <block type="frc_pidcontroller_settolerance"></block>
-          <block type="frc_pidcontroller_at_setpoint"></block>
-        </category>
+  <!-- Command Framework -->
+  <category name="Commands" colour="260">
+    <block type="frc_command_init"></block>
+    <block type="frc_command_execute"></block>
+    <block type="frc_command_is_finished"></block>
+    <block type="frc_command_end"></block>
+  </category>
 
-        <!-- Command Framework -->
-        <category name="Commands" colour="260">
-          <block type="frc_command_init"></block>
-          <block type="frc_command_execute"></block>
-          <block type="frc_command_is_finished"></block>
-          <block type="frc_command_end"></block>
-        </category>
+  <!-- Variable Handling -->
+  <category name="Variables" colour="330">
+    <block type="frc_variable_declaration"></block>
+    <block type="frc_variable_set"></block>
+    <block type="frc_variable_get"></block>
+  </category>
 
-        <!-- Variable Handling -->
-        <category name="Variables" colour="330">
-          <block type="frc_variable_declaration"></block>
-          <block type="frc_variable_set"></block>
-          <block type="frc_variable_get"></block>
-        </category>
+  <!-- Comments -->
+  <category name="Comments" colour="160">
+    <block type="comment_block"></block>
+  </category>
 
-        <!-- Sensors -->
-        <category name="Sensors" colour="210">
-          <block type="frc_encoder_create"></block>
-          <block type="frc_encoder_getdistance"></block>
-        </category>
+  <!-- Functions -->
+  <category name="Functions" colour="280">
+    <block type="frc_custom_function_declare"></block>
+    <block type="frc_function_call_statement"></block>
+    <block type="frc_function_call_value"></block>
+    <block type="frc_function_return"></block>
+  </category>
 
-        <!-- Comments -->
-        <category name="Comments" colour="160">
-          <block type="comment_block"></block>
-        </category>
+  <!-- Logic + Control Flow -->
+  <category name="Logic" colour="230">
+    <category name="Operations">
+      <block type="frc_logic_compare"></block>
+      <block type="frc_logic_operation"></block>
+      <block type="frc_logic_negate"></block>
+      <block type="frc_logic_boolean"></block>
+    </category>
+    <category name="Control Flow">
+      <block type="frc_controls_if"></block>
+      <block type="frc_controls_ifelse"></block>
+    </category>
+  </category>
 
-        <!-- Functions -->
-        <category name="Functions" colour="280">
-          <block type="frc_custom_function_declare"></block>
-          <block type="frc_function_call_statement"></block>
-          <block type="frc_function_call_value"></block>
-          <block type="frc_function_return"></block>
-        </category>
-
-        <!-- Logic + Control Flow -->
-        <category name="Logic" colour="230">
-          <category name="Operations">
-            <block type="frc_logic_compare"></block>
-            <block type="frc_logic_operation"></block>
-            <block type="frc_logic_negate"></block>
-            <block type="frc_logic_boolean"></block>
-          </category>
-          <category name="Control Flow">
-            <block type="frc_controls_if"></block>
-            <block type="frc_controls_ifelse"></block>
-          </category>
-        </category>
-
-        <!-- Math -->
-        <category name="Math" colour="240">
-          <block type="frc_math_arithmetic"></block>
-          <block type="frc_math_single"></block>
-          <block type="frc_math_trig"></block>
-          <block type="frc_math_number"></block>
-        </category>
-      </xml>
+  <!-- Math -->
+  <category name="Math" colour="240">
+    <block type="frc_math_arithmetic"></block>
+    <block type="frc_math_single"></block>
+    <block type="frc_math_trig"></block>
+    <block type="frc_math_number"></block>
+  </category>
+</xml>
     </div>
 
     <!-- Blockly Workspace Div -->
@@ -147,6 +155,19 @@
       <div id="blocklyDiv" style="height: 100%; width: 100%;"></div>
     </div>
   </div>
+
+  <!-- Error Panel -->
+<div id="errorPanel" class="collapsed">
+  <div class="error-panel-handle">
+    <span>!</span>
+  </div>
+  <div class="error-panel-content">
+    <div class="error-panel-header">
+      <h3>Errors & Warnings</h3>
+    </div>
+    <div id="errorList"></div>
+  </div>
+</div>
 
   <!-- Code Controls -->
   <div id="controls">
@@ -163,12 +184,10 @@
     <button id="helpBtn">Help</button>
 
     <!-- Sample Projects Dropdown -->
-    <select id="sampleProjects">
-      <option value="">Load Sample...</option>
-      <option value="basicRobot">Basic Robot</option>
-      <option value="pidControllerDemo">PID Controller Demo</option>
-      <option value="tankDriveTemplate">Tank Drive Template</option>
-    </select>
+<select id="sampleProjects">
+  <option value="">Load Sample...</option>
+  <option value="basicLogicBot">Basic Logic Bot</option>
+</select>
     <button id="loadSampleBtn" disabled>Load Selected</button>
 
     <!-- Miscellaneous Controls -->
@@ -220,9 +239,9 @@
   <!-- App Scripts -->
   <script src="js/dom-elements.js"></script>
   <script src="js/custom-theme.js"></script>
+  <script src="js/blockly-config.js"></script>
   <script src="js/tab-management.js"></script>
   <script src="js/data-types.js"></script>
-  <script src="js/blockly-config.js"></script>
   <script src="js/code-generation.js"></script>
   <script src="js/event-handlers.js"></script>
   <script src="js/sample-projects.js"></script>
